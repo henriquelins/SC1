@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<GridPane prefHeight="480.0" prefWidth="420.0" style="-fx-background-color: #E8E8E8;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ServicoFormController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <VBox prefHeight="462.0" prefWidth="641.0">
+         <children>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                  <AnchorPane prefHeight="30.0" prefWidth="245.0">
+                     <children>
+                        <Label fx:id="labelTituloTela" layoutX="17.0" layoutY="1.0" prefHeight="27.0" prefWidth="769.0" text="Título da Tela">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </items>
+            </ToolBar>
+            <AnchorPane prefHeight="440.0" prefWidth="360.0">
+               <children>
+                  <Label fx:id="labelNomeFantasia" layoutX="35.0" layoutY="36.0" text="Label">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="35.0" layoutY="84.0" text="Nome do Serviço de Impressão" />
+                  <TextField fx:id="textFieldNomeDoServico" layoutX="35.0" layoutY="101.0" prefHeight="25.0" prefWidth="351.0" />
+                  <Label layoutX="34.0" layoutY="139.0" text="CNPJ  para Cobrança" />
+                  <TextField fx:id="textFieldCnpjParaCobranca" layoutX="35.0" layoutY="156.0" prefHeight="25.0" prefWidth="151.0" />
+                  <Label layoutX="203.0" layoutY="139.0" text="Valor Unitário" />
+                  <TextField fx:id="textFieldValorUnitario" layoutX="203.0" layoutY="156.0" prefHeight="25.0" prefWidth="80.0" />
+                  <Label layoutX="303.0" layoutY="139.0" text="Limite Mínimo" />
+                  <TextField fx:id="textFieldLimiteMinimo" layoutX="303.0" layoutY="156.0" prefHeight="25.0" prefWidth="80.0" />
+                  <Label layoutX="34.0" layoutY="193.0" text="Produto do Serviço de Impressão" />
+                  <ComboBox fx:id="comboBoxProduto" layoutX="34.0" layoutY="210.0" prefHeight="25.0" prefWidth="351.0" promptText="Selecione..." />
+                  <Label layoutX="35.0" layoutY="247.0" text="Observações do Serviço" />
+                  <TextArea fx:id="textAreaObservacoesDoServico" layoutX="34.0" layoutY="267.0" prefHeight="94.0" prefWidth="351.0" />
+                  <Button fx:id="buttonSalvarServico" defaultButton="true" layoutX="315.0" layoutY="383.0" mnemonicParsing="false" onAction="#onButtonSalvarServicoAction" prefHeight="25.0" prefWidth="70.0" text="Salvar" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</GridPane>

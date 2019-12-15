@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane prefHeight="671.0" prefWidth="897.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ClienteFormController">
+   <content>
+      <VBox prefHeight="669.0" prefWidth="895.0">
+         <children>
+            <ToolBar>
+               <items>
+                  <AnchorPane prefHeight="30.0" prefWidth="245.0">
+                     <children>
+                        <Label fx:id="lableTitulo" layoutX="17.0" layoutY="1.0" prefHeight="27.0" prefWidth="769.0">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </items>
+            </ToolBar>
+            <AnchorPane prefHeight="681.0" prefWidth="895.0">
+               <children>
+                  <Pane layoutX="15.0" layoutY="13.0" prefHeight="601.0" prefWidth="867.0" style="-fx-background-color: #E8E8E8; -fx-border-color: #8B8989;" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="13.0">
+                     <children>
+                        <Label layoutX="26.0" layoutY="26.0" prefHeight="20.0" prefWidth="417.0" text="Dados Cadastrais do Cliente">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="28.0" layoutY="64.0" text="Nome Fantasia" />
+                        <TextField fx:id="textFieldNomeFantasia" layoutX="28.0" layoutY="84.0" prefHeight="28.0" prefWidth="400.0" />
+                        <Label layoutX="438.0" layoutY="64.0" text="Razão Social" />
+                        <TextField fx:id="textFieldRazaoSocial" layoutX="438.0" layoutY="84.0" prefHeight="28.0" prefWidth="400.0" />
+                        <Label layoutX="28.0" layoutY="129.0" text="CNPJ" />
+                        <TextField fx:id="textFieldCnpj" layoutX="28.0" layoutY="149.0" prefHeight="28.0" prefWidth="201.0" />
+                        <Label layoutX="242.0" layoutY="129.0" text="Inscrição Estadual" />
+                        <TextField fx:id="textFieldInscEstadual" layoutX="243.0" layoutY="149.0" prefHeight="28.0" prefWidth="226.0" />
+                        <Label layoutX="482.0" layoutY="129.0" text="Inscrição Municipal" />
+                        <TextField fx:id="textFieldInscMunicipal" layoutX="482.0" layoutY="149.0" prefHeight="28.0" prefWidth="210.0" />
+                        <Label layoutX="708.0" layoutY="129.0" text="Cliente Desde" />
+                        <DatePicker fx:id="datePickerClienteDesde" layoutX="708.0" layoutY="149.0" prefHeight="28.0" prefWidth="130.0" />
+                        <Label layoutX="28.0" layoutY="194.0" text="Contato" />
+                        <TextField fx:id="textFieldContato" layoutX="28.0" layoutY="214.0" prefHeight="28.0" prefWidth="326.0" />
+                        <Label layoutX="370.0" layoutY="194.0" text="E-mail" />
+                        <TextField fx:id="textFieldEmail" layoutX="370.0" layoutY="214.0" prefHeight="28.0" prefWidth="468.0" />
+                        <Label layoutX="28.0" layoutY="259.0" text="Fone Celular" />
+                        <TextField fx:id="textFieldFoneCelular" layoutX="28.0" layoutY="279.0" prefHeight="28.0" prefWidth="182.0" />
+                        <Label layoutX="234.0" layoutY="256.0" text="Fone Fixo" />
+                        <TextField fx:id="textFieldFoneFixo" layoutX="234.0" layoutY="279.0" prefHeight="28.0" prefWidth="182.0" />
+                        <Label layoutX="437.0" layoutY="256.0" text="Vendedor" />
+                        <ComboBox fx:id="comboBoxVendedor" layoutX="437.0" layoutY="279.0" prefHeight="27.0" prefWidth="190.0" promptText="Selecione..." />
+                        <Label layoutX="649.0" layoutY="257.0" text="Unidade de Atendimento" />
+                        <ComboBox fx:id="comboBoxUnidadeAtendimento" layoutX="649.0" layoutY="279.0" prefHeight="27.0" prefWidth="190.0" promptText="Selecione..." />
+                        <Label layoutX="28.0" layoutY="324.0" text="Logradouro " />
+                        <TextField fx:id="textFieldLogradouro" layoutX="28.0" layoutY="344.0" prefHeight="28.0" prefWidth="471.0" />
+                        <Label layoutX="515.0" layoutY="324.0" text="Bairro" />
+                        <TextField fx:id="textFieldBairro" layoutX="515.0" layoutY="344.0" prefHeight="28.0" prefWidth="323.0" />
+                        <Label layoutX="28.0" layoutY="389.0" text="Cidade" />
+                        <TextField fx:id="textFieldCidade" layoutX="28.0" layoutY="409.0" prefHeight="28.0" prefWidth="350.0" />
+                        <Label layoutX="397.0" layoutY="389.0" text="CEP" />
+                        <TextField fx:id="textFieldCep" layoutX="397.0" layoutY="409.0" prefHeight="28.0" prefWidth="101.0" />
+                        <Label layoutX="518.0" layoutY="389.0" prefHeight="17.0" prefWidth="92.0" text="Estado" />
+                        <ComboBox fx:id="comboBoxUnidadeFederal" layoutX="517.0" layoutY="409.0" prefHeight="28.0" prefWidth="230.0" promptText="Selecione..." />
+                        <RadioButton fx:id="radioButtonEntrega" layoutX="775.0" layoutY="408.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="66.0" text="Entrega" />
+                        <Label layoutX="28.0" layoutY="450.0" text="Detalhes do Cliente" />
+                        <TextArea fx:id="textAreaDetalhesDoCliente" layoutX="28.0" layoutY="470.0" prefHeight="94.0" prefWidth="524.0" />
+                        <Button fx:id="buttonSalvarCliente" defaultButton="true" layoutX="724.0" layoutY="536.0" mnemonicParsing="false" onAction="#onButtonSalvarClienteAction" prefHeight="28.0" prefWidth="112.0" text="Salvar Cliente" />
+                     </children>
+                     <padding>
+                        <Insets bottom="100.0" left="200.0" right="200.0" top="100.0" />
+                     </padding>
+                  </Pane>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>

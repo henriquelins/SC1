@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane focusTraversable="true" prefHeight="400.0" prefWidth="321.0" snapToPixel="false" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LoginFormController">
+   <children>
+      <Separator layoutY="310.0" opacity="0.0" prefHeight="0.0" prefWidth="300.0" AnchorPane.bottomAnchor="87.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="310.0" />
+      <Label fx:id="labelTitle" alignment="CENTER" layoutX="57.0" layoutY="60.0" prefHeight="36.0" prefWidth="203.0">
+         <font>
+            <Font name="System Bold" size="25.0" />
+         </font>
+      </Label>
+      <Label layoutX="61.0" layoutY="135.0" text="Nome" />
+      <Label layoutX="60.0" layoutY="202.0" text="Senha" />
+      <TextField fx:id="txtLogin" alignment="CENTER" layoutX="59.0" layoutY="160.0" prefHeight="25.0" prefWidth="182.0" promptText="Digite o nome do usuário..." AnchorPane.leftAnchor="59.0" AnchorPane.rightAnchor="59.0" />
+      <PasswordField fx:id="pswSenha" alignment="CENTER" layoutX="59.0" layoutY="227.0" prefHeight="25.0" prefWidth="182.0" promptText="Digite a senha..." AnchorPane.leftAnchor="59.0" AnchorPane.rightAnchor="59.0" />
+      <Button fx:id="btOK" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="115.0" layoutY="337.0" onAction="#onBtOKAction" prefHeight="25.0" prefWidth="69.0" text="OK" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="115.0">
+         <effect>
+            <Reflection />
+         </effect>
+      </Button>
+   </children>
+</AnchorPane>
