@@ -300,13 +300,6 @@ public class ClienteDaoJDBC implements ClienteDao {
 
 	}
 
-	// método excluir
-
-	@Override
-	public void excluirPeloId(Integer id) {
-
-	}
-
 	// método buscar pelo id
 
 	@Override

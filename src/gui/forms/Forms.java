@@ -3,15 +3,12 @@ package gui.forms;
 import java.io.IOException;
 
 import application.Main;
-import gui.ClienteFormController;
-import gui.ClienteSelecionadoFormController;
 import gui.LancamentoListFormController;
 import gui.PrincipalFormController;
 import gui.ProdutoFormController;
 import gui.ServicoFormController;
 import gui.UnidadeFormController;
 import gui.VendedorFormController;
-import gui.listeners.DataChangeListener;
 import gui.util.Acesso;
 import gui.util.Alerts;
 import gui.util.Strings;
@@ -31,12 +28,13 @@ import javafx.util.Duration;
 import model.entities.Cliente;
 import model.entities.ServicoImpressao;
 import model.entities.Usuario;
-import model.services.ClienteService;
 import model.services.ProdutoService;
 import model.services.UnidadeService;
 import model.services.VendedorService;
 
 public class Forms {
+
+	// Todas são telas simples sem DataChangeList
 
 	// forms tela splash
 
@@ -153,54 +151,6 @@ public class Forms {
 		} catch (IOException e) {
 
 			Alerts.showAlert("IO Exception", Strings.erroCarregarTela(), e.getCause().toString(), AlertType.ERROR);
-
-		}
-
-	}
-
-	// forms tela cliente selecionado
-
-	public void clienteSelecionadoForm(Usuario usuario, Cliente cliente, String tela) {
-
-		boolean concedido = false;
-		Acesso acesso = new Acesso();
-
-		concedido = acesso.concederAcesso(usuario.getAcesso(), tela);
-
-		if (concedido == true) {
-
-			try {
-
-				FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
-				VBox pane = loader.load();
-
-				ClienteSelecionadoFormController controller = loader.getController();
-				controller.carregarCampos(cliente, usuario);
-
-				Stage primaryStage = new Stage();
-				primaryStage.setTitle(Strings.getTitle());
-				primaryStage.setScene(new Scene(pane));
-				primaryStage.setResizable(true);
-				primaryStage.initModality(Modality.APPLICATION_MODAL);
-
-				primaryStage.setResizable(true);
-				primaryStage.setMaximized(true);
-
-				Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
-				primaryStage.getIcons().add(applicationIcon);
-
-				primaryStage.showAndWait();
-
-			} catch (IOException e) {
-
-				Alerts.showAlert("IO Exception", Strings.erroCarregarTela(), e.getMessage(), AlertType.ERROR);
-
-			}
-
-		} else {
-
-			Alerts.showAlert("Acesso negado", "Acesso não concedido ao usuário logado",
-					"Entre em contato com o Administrador do sistema", AlertType.ERROR);
 
 		}
 
@@ -383,6 +333,8 @@ public class Forms {
 
 	}
 
+	// Tela unidade
+
 	public void unidadeForm(Usuario usuario, String tela) {
 
 		boolean concedido = false;
@@ -426,6 +378,8 @@ public class Forms {
 
 	}
 
+	// Tela vendedor
+
 	public void vendedorForm(Usuario usuario, String tela) {
 
 		boolean concedido = false;
@@ -468,6 +422,8 @@ public class Forms {
 		}
 
 	}
+
+	// Tela produto
 
 	public void produtoForm(Usuario usuario, String tela) {
 

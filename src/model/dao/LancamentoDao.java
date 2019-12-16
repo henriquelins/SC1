@@ -10,7 +10,6 @@ public interface LancamentoDao {
 	
 	void inserir(Lancamento lancamento, ServicoImpressao clienteServico);
 	void atualizar(Lancamento lancamento, ServicoImpressao clienteServico);
-	void excluirPeloId(Integer id);
 	List<Lancamento> buscarTodos(Integer idClienteServico);
 	List<Lancamento> verLancamentos(Date dataInicial, Date dataFinal, int idClienteServico);
 	

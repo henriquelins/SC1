@@ -266,12 +266,5 @@ public class LancamentoDaoJDBC implements LancamentoDao {
 		return lancamento;
 	}
 
-	// método excluir
 	
-	@Override
-	public void excluirPeloId(Integer id) {
-		
-
-	}
-
 }

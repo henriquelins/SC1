@@ -129,11 +129,15 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		}
 
 	}
+	
+	// Listener
 
 	@Override
 	public void onDataChanged() {
 
 	}
+	
+	// Inicia classe
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -141,6 +145,8 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		initializeNodes();
 
 	}
+	
+	// Método com os objetos que devem ser inicializados
 
 	private void initializeNodes() {
 
@@ -176,6 +182,8 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		tableColumnDetalhamento.setCellValueFactory(new PropertyValueFactory<>("observacoesLancamento"));
 
 	}
+	
+	// Carrega os campos da Classe Lançamento Lista
 
 	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario) {
 
@@ -186,6 +194,8 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		setServicoImpressao(servicoImpressao);
 
 	}
+	
+	// Getters e Setters
 
 	public Cliente getCliente() {
 		return cliente;

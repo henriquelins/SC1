@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import db.DB;
 import db.DbException;
 import model.dao.ContaDao;
-import model.entities.Cliente;
 import model.entities.Conta;
 import model.entities.ServicoImpressao;
 
@@ -155,47 +153,6 @@ public class ContaDaoJDBC implements ContaDao {
 
 	}
 
-	private Conta instantiateConta(ResultSet rs) throws SQLException {
-
-		Conta conta = new Conta();
-
-		conta.setIdConta(rs.getInt("id_conta"));
-		conta.setCnpj(rs.getString("cnpj"));
-		conta.setSaldo(rs.getInt("saldo"));
-
-		return conta;
-	}
-
-	@Override
-	public void excluirPeloId(Integer id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Conta buscarPeloId(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Conta buscarPeloCnpj(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Conta> buscarTodos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Conta> buscarPeloCnpj(String cnpj) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public int buscarConta(String cnpj) {
 
@@ -238,6 +195,12 @@ public class ContaDaoJDBC implements ContaDao {
 			DB.closeResultSet(rs);
 
 		}
+	}
+
+	@Override
+	public List<Conta> buscarPeloCnpj(String cnpj) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

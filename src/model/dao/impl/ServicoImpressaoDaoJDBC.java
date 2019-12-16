@@ -267,27 +267,4 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 		return conta;
 	}
 
-	@Override
-	public void excluirPeloId(Integer id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ServicoImpressao buscarPeloId(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<ServicoImpressao> buscarTodos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<ServicoImpressao> buscarPeloNomeFantasia(String nomeFantasia) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

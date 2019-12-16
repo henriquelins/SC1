@@ -14,11 +14,11 @@ import model.entities.Lancamento;
 public class LancamentoService {
 
 	// java variáveis
-	
+
 	private LancamentoDao lancamentoDao = DaoFactory.createLancamentoDao();
-	
+
 	// método novo ou editar lançamento
-	
+
 	public void lancamentoSaidaOuEntrada(Lancamento lancamento, ServicoImpressao clienteServico) {
 
 		// try {
@@ -32,7 +32,7 @@ public class LancamentoService {
 
 			if (result.get() == ButtonType.OK) {
 
-				lancamentoDao.inserir(lancamento , clienteServico);
+				lancamentoDao.inserir(lancamento, clienteServico);
 
 			}
 
@@ -51,24 +51,10 @@ public class LancamentoService {
 
 			break;
 
-		case ("Somatório de pedidos (++)"):
-
-			Optional<ButtonType> result2 = Alerts.showConfirmation("Confirmação",
-					"Você deseja adicionar no somatório de créditos no serviço " + clienteServico.getNomeDoServico()
-							+ " ?");
-
-			if (result2.get() == ButtonType.OK) {
-
-				lancamentoDao.inserir(lancamento, clienteServico);
-
-			}
-
-			break;
-
 		}
 
 	}
-	
+
 	// método ver lançamentos pela data
 
 	public List<Lancamento> verLancamentos(Date DataInicial, Date DataFinal, int idClienteServico) {

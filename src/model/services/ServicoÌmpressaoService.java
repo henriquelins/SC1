@@ -17,14 +17,6 @@ public class ServicoÌmpressaoService {
 	private ServicoImpressaoDao dao = DaoFactory.createServicoImpressaoDao();
 	private ContaDao contaDao = DaoFactory.createContaDao();
 
-	// método listar todos
-
-	public List<ServicoImpressao> findAll() {
-
-		return dao.buscarTodos();
-
-	}
-
 	// método novo ou editar cliente serviço
 
 	public void clienteServicoNovoOuEditar(ServicoImpressao servicoImpressao) {
@@ -50,7 +42,7 @@ public class ServicoÌmpressaoService {
 
 			if (result.get() == ButtonType.OK) {
 
-				dao.atualizar(servicoImpressao);
+				dao.atualizar(servicoImpressao); 
 
 			}
 
@@ -58,14 +50,7 @@ public class ServicoÌmpressaoService {
 
 	}
 
-	// método exluir cliente serviço
-
-	public void remove(ServicoImpressao servicoImpressao) {
-
-		dao.excluirPeloId(servicoImpressao.getIdServicoImpressao());
-
-	}
-
+	
 	// método listar serviços do cliente pelo id cliente
 
 	public List<ServicoImpressao> buscarServicosDoCliente(Integer idCliente) {

@@ -69,8 +69,9 @@ public class DaoFactory {
 	}
 
 	public static ContaDao createContaDao() {
-		// TODO Auto-generated method stub
+	
 		return new ContaDaoJDBC(DB.getConnection());
+		
 	}
 
 }

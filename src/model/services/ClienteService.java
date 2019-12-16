@@ -45,14 +45,6 @@ public class ClienteService {
 
 	}
 
-	// método excluir cliente
-
-	public void remove(Cliente cliente) {
-
-		dao.excluirPeloId(cliente.getIdCliente());
-
-	}
-
 	// método listar clientes pelo nome fantasia
 
 	public List<Cliente> pesquisarNomeFantasia(String nomeFantasia) {

@@ -29,8 +29,7 @@ public class Main extends Application {
 
 	private static int portSocket;
 	
-	//public static String style = "/application/darktheme.css";
-	
+		
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
 
@@ -52,10 +51,7 @@ public class Main extends Application {
 					// Define o Style
 					setUserAgentStylesheet(STYLESHEET_CASPIAN);
 					//setUserAgentStylesheet(STYLESHEET_MODENA);
-					
-					//Application.setUserAgentStylesheet(getClass().getResource(style).toExternalForm());
-					
-
+			
 					new Forms().splashForm(Strings.getSplashView());
 
 				} catch (Exception e) {

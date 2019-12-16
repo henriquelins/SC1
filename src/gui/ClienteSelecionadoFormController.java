@@ -301,8 +301,6 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 		}
 
-		System.out.println(listaServicoImpressao.toString());
-
 		return listaServicoImpressao;
 
 	}
@@ -345,10 +343,6 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 		Cliente clienteAtualizado = new Cliente();
 		clienteAtualizado = clienteService.buscarPeloId(idClienteSelecionado);
-
-		System.out.println(idClienteSelecionado);
-
-		System.out.println("1 " + clienteAtualizado.toString());
 
 		labelTituloCliente.setText("Cliente selecionado:  " + clienteAtualizado.getNomeFantasia());
 		labelNomeFantasia.setText(clienteAtualizado.getNomeFantasia());
@@ -455,13 +449,7 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 			setIdClienteSelecionado(cliente.getIdCliente());
 
-			System.out.println(idClienteSelecionado);
-
-			System.out.println("3 " + getCliente());
-
 			comboBoxServico.setItems(FXCollections.observableArrayList(listaServicos()));
-
-			// comboBoxServico.setItems(FXCollections.observableArrayList(listaServicos2()));
 
 		} catch (java.lang.NullPointerException e) {
 
@@ -573,6 +561,8 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 		}
 
 	}
+
+	// Telea servico
 
 	public void servicoForm(Usuario usuario, Cliente cliente, ServicoImpressao clienteServico, String tela) {
 

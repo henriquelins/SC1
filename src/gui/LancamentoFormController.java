@@ -29,7 +29,7 @@ import model.entities.Produto;
 import model.entities.Usuario;
 import model.services.LancamentoService;
 
-public class LancamentoFormController implements Initializable, DataChangeListener {
+public class LancamentoFormController implements Initializable, DataChangeListener { 
 
 	// Java variáveis
 
@@ -82,9 +82,7 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 	private TextArea textAreaObservacoesDoLancamento;
 
 	@FXML
-	private Button buttonSalvarLancamento;
-
-	
+	private Button buttonSalvarLancamento;	
 
 	// @FXML event
 
@@ -92,12 +90,7 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 	public void onButtonSalvarLancamentoAction(ActionEvent event) {
 
 		setLancamento(getFormData());
-		
-		
-		System.out.println(getServicoImpressao());
-		System.out.println(getLancamento());
-		
-
+	
 		if (lancamento != null) {
 			
 			lancamentoService.lancamentoSaidaOuEntrada(getLancamento(), getServicoImpressao());
@@ -167,8 +160,7 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 		List<String> lista = new ArrayList<>();
 		lista.add("Entrada de créditos (+)");
 		lista.add("Saída de créditos (-)");
-		lista.add("Somatório de pedidos (++)");
-
+		
 		return lista;
 
 	}
@@ -268,11 +260,6 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 
 			break;
 
-		case "Somatório de pedidos (++)":
-
-			saldoAtual = saldoAnterior + saldo;
-
-			break;
 		}
 
 		return saldoAtual;

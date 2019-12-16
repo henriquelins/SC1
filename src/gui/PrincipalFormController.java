@@ -139,25 +139,21 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 		if (event.getClickCount() == 2) {
 
 			event.consume();
-			
+
 			cliente = tableViewCliente.getSelectionModel().getSelectedItem();
-			
-			System.out.println("0 "+cliente);
-			
+
 			if (cliente != null) {
-				
+
 				clearTableView();
 				comboBoxListarClientes.setValue(null);
 				clienteSelecionadoForm(usuario, cliente, Strings.getClienteSelecionadoView());
-				
-				
-			} else {
-				
-				//Alerts.showAlert("Pesquisar Clientes", "Selecionar o cliente ", "Dê dois cliques na linha para selecionar o cliente", AlertType.ERROR);
-				
-			}
 
-			
+			} else {
+
+				// Alerts.showAlert("Pesquisar Clientes", "Selecionar o cliente ", "Dê dois
+				// cliques na linha para selecionar o cliente", AlertType.ERROR);
+
+			}
 
 		}
 
@@ -301,7 +297,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 		} catch (java.lang.NullPointerException e) {
 
-			//Alerts.showAlert("Lista Clientes", "Lista Vazia", "java.lang.NullPointerException", AlertType.ERROR);
+			// Alerts.showAlert("Lista Clientes", "Lista Vazia",
+			// "java.lang.NullPointerException", AlertType.ERROR);
 
 		}
 
@@ -480,8 +477,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 				primaryStage.setTitle(Strings.getTitle());
 				primaryStage.setScene(new Scene(pane));
 				primaryStage.initModality(Modality.APPLICATION_MODAL);
-				
-				primaryStage.setMaximized(true);			
+
+				primaryStage.setMaximized(true);
 
 				Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
 				primaryStage.getIcons().add(applicationIcon);
