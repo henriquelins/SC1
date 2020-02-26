@@ -67,4 +67,10 @@ public class ClienteService {
 		
 	}
 
+	public  List<Cliente>  buscarPeloVendedor(int codVendedor) {
+		
+		return dao.buscarPeloVendedor(codVendedor);
+		
+	}
+
 }

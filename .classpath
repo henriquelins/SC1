@@ -4,5 +4,18 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/DB Postgres"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JExcel"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/jxl-2.6.jar/jxl-2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/activation-1.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/commons-beanutils-1.8.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/commons-digester-2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/commons-email-1.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/groovy-all-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/iText-2.1.7.js2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/jasperreports-5.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/jasperreports-fonts-5.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Henrique Lins/Desktop/x2019/xCracha/src/lib/javax.mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

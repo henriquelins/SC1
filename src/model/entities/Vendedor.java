@@ -75,6 +75,8 @@ public class Vendedor implements Serializable {
 		Vendedor vendedor = new Vendedor();
 		vendedor = new VendedorService().buscarPeloId(id);
 
+		//String contatenado = vendedor.getIdVendedor() + " - " + vendedor.getNomeVendedor();
+		
 		String contatenado = vendedor.getIdVendedor() + " - " + vendedor.getNomeVendedor();
 
 		return contatenado;

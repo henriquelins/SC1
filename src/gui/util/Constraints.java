@@ -153,6 +153,15 @@ public class Constraints {
 		return dinheiro.format(numero);
 	}
 	
+	public static String dinheiro2(Double numero) {
+
+		NumberFormat dinheiro = new DecimalFormat("R$ 0.00");
+
+		return dinheiro.format(numero);
+	}
+	
+	
+	
 	// Mascara de CEP
 
 	public static void mascaraCEP(TextField textField) {

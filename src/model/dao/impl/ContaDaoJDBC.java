@@ -34,11 +34,12 @@ public class ContaDaoJDBC implements ContaDao {
 
 			conn.setAutoCommit(false);
 
-			st = conn.prepareStatement("INSERT INTO conta (cnpj, saldo) VALUES (?, ?)",
+			st = conn.prepareStatement("INSERT INTO conta (cnpj, saldo, tipo) VALUES (?, ?, ?)",
 					java.sql.Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, servicoImpressao.getConta().getCnpj());
 			st.setInt(2, servicoImpressao.getConta().getSaldo());
+			st.setBoolean(3,servicoImpressao.getConta().isTipo());
 
 			st.executeUpdate();
 
@@ -83,11 +84,12 @@ public class ContaDaoJDBC implements ContaDao {
 
 			conn.setAutoCommit(false);
 
-			st = conn.prepareStatement("UPDATE conta SET cnpj = ?, saldo = ? WHERE id_conta = ?");
+			st = conn.prepareStatement("UPDATE conta SET cnpj = ?, saldo = ?, tipo = ? WHERE id_conta = ?");
 
 			st.setString(1, servicoImpressao.getConta().getCnpj());
 			st.setInt(2, servicoImpressao.getConta().getSaldo());
-			st.setInt(3, servicoImpressao.getConta().getIdConta());
+			st.setBoolean(3,servicoImpressao.getConta().isTipo());
+			st.setInt(4, servicoImpressao.getConta().getIdConta());
 
 			st.executeUpdate();
 

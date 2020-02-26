@@ -23,11 +23,22 @@ public class ServicoÌmpressaoService {
 
 		servicoImpressao.getConta().setIdConta(contaDao.buscarConta(servicoImpressao.getConta().getCnpj()));
 
+		String tipoDeconta = "";
+
+		if (servicoImpressao.getConta().isTipo() == true) {
+
+			tipoDeconta = "Saldo";
+
+		} else {
+
+			tipoDeconta = "Faturar";
+		}
+
 		if (servicoImpressao.getIdServicoImpressao() == null) {
 
 			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
 
-					"Você deseja salvar um novo serviço?");
+					"Você deseja salvar um novo serviço\n com a conta do tipo " + tipoDeconta + " ?");
 
 			if (result.get() == ButtonType.OK) {
 
@@ -37,12 +48,36 @@ public class ServicoÌmpressaoService {
 
 		} else {
 
-			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-					"Você deseja salvar a edição do serviço?");
+			ServicoÌmpressaoService impressaoService = new ServicoÌmpressaoService();
 
-			if (result.get() == ButtonType.OK) {
+			String nome = impressaoService.buscarServicosDoClientePeloCnpj(servicoImpressao.getConta().getCnpj());
 
-				dao.atualizar(servicoImpressao); 
+			System.out.println(servicoImpressao.getConta().getCnpj());
+			System.out.println(nome);
+
+			if (nome.equals("")) {
+
+				Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
+						"Você deseja salvar a edição do serviço\n com a conta do tipo " + tipoDeconta + " ?");
+
+				if (result.get() == ButtonType.OK) {
+
+					int id_conta = contaDao.inserir(servicoImpressao);
+					servicoImpressao.getConta().setIdConta(id_conta);
+					dao.atualizar(servicoImpressao);
+
+				}
+
+			} else {
+
+				Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
+						"Você deseja salvar a edição do serviço\n com a conta do tipo " + tipoDeconta + " ?");
+
+				if (result.get() == ButtonType.OK) {
+
+					dao.atualizar(servicoImpressao);
+
+				}
 
 			}
 
@@ -50,7 +85,14 @@ public class ServicoÌmpressaoService {
 
 	}
 
-	
+	// método buscar serviços pelo CNPJ
+
+	public String buscarServicosDoClientePeloCnpj(String ServicoCNPJ) {
+
+		return dao.buscarServicosDoClientePeloCnpj(ServicoCNPJ);
+
+	}
+
 	// método listar serviços do cliente pelo id cliente
 
 	public List<ServicoImpressao> buscarServicosDoCliente(Integer idCliente) {

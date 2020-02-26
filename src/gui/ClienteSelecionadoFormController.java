@@ -46,6 +46,8 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
+	private List<ServicoImpressao> listaServicosGeral = new ArrayList<>();
+
 	private static int idClienteSelecionado;
 
 	private Usuario usuario;
@@ -144,6 +146,9 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	@FXML
 	private TextField textFieldCnpj;
+
+	@FXML
+	private TextField textFieldTipoDeConta;
 
 	@FXML
 	private TextArea textAreaDetalhesDoServico;
@@ -275,9 +280,20 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 			} else {
 
-				id_cliente_servico = servico_para_id_cliente_servico(
-						comboBoxServico.getSelectionModel().getSelectedItem());
+				String nome = comboBoxServico.getSelectionModel().getSelectedItem();
+
+				for (int i = 0; listaServicosGeral.size() > i; i++) {
+
+					if (listaServicosGeral.get(i).getNomeDoServico().equals(nome)) {
+
+						id_cliente_servico = listaServicosGeral.get(i).getIdServicoImpressao();
+
+					}
+
+				}
+
 				setServicoImpressao(servicoÌmpressaoService.buscarPeloIdCliente(id_cliente_servico));
+
 				carregarCamposClienteServico();
 
 			}
@@ -295,9 +311,11 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 		ServicoÌmpressaoService impressaoService = new ServicoÌmpressaoService();
 		List<String> listaServicoImpressao = new ArrayList<>();
 
-		for (ServicoImpressao cs : impressaoService.buscarServicosDoCliente(idClienteSelecionado)) {
+		listaServicosGeral = impressaoService.buscarServicosDoCliente(idClienteSelecionado);
 
-			listaServicoImpressao.add(cs.getIdServicoImpressao() + " - " + cs.getNomeDoServico());
+		for (ServicoImpressao cs : listaServicosGeral) {
+
+			listaServicoImpressao.add(cs.getNomeDoServico());
 
 		}
 
@@ -334,7 +352,21 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 		textFieldSaldo.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
 		textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
 		textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()) + " Unidades");
+		textFieldTipoDeConta.setText(String.valueOf(servicoImpressao.getConta().isTipo()));	
 		textFieldCnpj.setText(servicoImpressao.getConta().getCnpj());
+
+		String tipo = "";
+
+		if (servicoImpressao.getConta().isTipo()) {
+
+			tipo = "Saldo";
+
+		} else {
+
+			tipo = "Faturado";
+		}
+
+		textFieldTipoDeConta.setText(tipo);
 		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico());
 
 	}
@@ -423,7 +455,7 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 		try {
 
-			labelTituloCliente.setText("Cliente selecionado:  " + cliente.getNomeFantasia());
+			labelTituloCliente.setText("Cliente - " + cliente.getNomeFantasia());
 			labelNomeFantasia.setText(cliente.getNomeFantasia());
 			labelRazaoSocial.setText(cliente.getRazaoSocial());
 			labelCnpj.setText(cliente.getCnpjCliente());
@@ -506,6 +538,19 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 		textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
 		textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()) + " Unidades");
 		textFieldCnpj.setText(servicoImpressao.getConta().getCnpj());
+
+		String tipo = "";
+
+		if (servicoImpressao.getConta().isTipo()) {
+
+			tipo = "Saldo";
+
+		} else {
+
+			tipo = "Faturado";
+		}
+
+		textFieldTipoDeConta.setText(tipo);
 		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico());
 
 	}

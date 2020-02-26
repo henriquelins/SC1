@@ -3,6 +3,7 @@ package gui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import gui.listeners.DataChangeListener;
@@ -10,6 +11,8 @@ import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Strings;
 import gui.util.Utils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,10 +20,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import model.entities.Cliente;
 import model.entities.Conta;
 import model.entities.Produto;
@@ -80,6 +87,16 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	@FXML
 	private Button buttonSalvarServico;
 
+	@FXML
+	private RadioButton radiobuttonFaturamento;
+
+	@FXML
+	private RadioButton radiobuttonSaldo;
+
+	private ToggleGroup groupLancamento;
+
+	private boolean tipoLancamento = true;
+
 	// @FXML event
 
 	// Evento botão salvar ou editar serviço
@@ -88,23 +105,29 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	public void onButtonSalvarServicoAction(ActionEvent event) {
 
 		setServicoImpressao(getFormData());
-	
+
 		boolean ok = compararCampos();
 
-		if (ok == false) {
+		try {
 
-			service.clienteServicoNovoOuEditar(servicoImpressao);
-			notifyDataChangeListeners();
-			Utils.fecharTelaServicoFormAction();
+			if (ok == false) {
 
-		} else {
+				service.clienteServicoNovoOuEditar(servicoImpressao);
+				notifyDataChangeListeners();
+				Utils.fecharTelaServicoFormAction();
 
-			Alerts.showAlert("Cadastro de serviços", "Editar serviços", "Não houve alteração no registro",
-					AlertType.INFORMATION);
+			} else {
+
+				Alerts.showAlert("Cadastro de serviços", "Editar serviços", "Não houve alteração no registro",
+						AlertType.INFORMATION);
+
+			}
+
+		} catch (java.lang.NullPointerException e) {
 
 		}
 
-	} 
+	}
 
 	// Comparar todos os campos
 
@@ -194,7 +217,24 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 		Constraints.mascaraNumeroInteiro(textFieldValorUnitario);
 		Constraints.mascaraCNPJ(textFieldCnpjParaCobranca);
-		//Constraints.mascaraDinheiro(textFieldValorUnitario);
+
+		groupLancamento = new ToggleGroup();
+		radiobuttonFaturamento.setToggleGroup(groupLancamento);
+		radiobuttonSaldo.setToggleGroup(groupLancamento);
+
+		groupLancamento.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+			@Override
+			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+				// Quando selecionar.
+				if (groupLancamento.getSelectedToggle() != null) {
+
+					tipoLancamento = groupLancamento.getSelectedToggle().equals(radiobuttonSaldo);
+
+					System.out.println(tipoLancamento);
+
+				}
+			}
+		});
 
 	}
 
@@ -203,24 +243,32 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario) {
 
 		if (servicoImpressao != null) {
-			
-			System.out.println(new Produto().nomeProduto(servicoImpressao.getProdutoDoServico()));
-			
+
 			labelTituloTela.setText(Strings.getTitleServicos());
 			labelNomeFantasia.setText(cliente.getNomeFantasia());
 			textFieldNomeDoServico.setText(servicoImpressao.getNomeDoServico());
 			textFieldCnpjParaCobranca.setText(servicoImpressao.getConta().getCnpj());
 			comboBoxProduto.getSelectionModel()
 					.select(new Produto().nomeProduto(servicoImpressao.getProdutoDoServico()));
-			//textFieldValorUnitario.setText(String.valueOf(servicoImpressao.getValorUnitario()));
 			textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
 			textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()));
 			textAreaObservacoesDoServico.setText(String.valueOf(servicoImpressao.getObservacoesServico()));
+
+			if (servicoImpressao.getConta().isTipo() == true) {
+
+				radiobuttonSaldo.setSelected(true);
+
+			} else {
+
+				radiobuttonFaturamento.setSelected(true);
+
+			}
 
 		} else {
 
 			labelTituloTela.setText(Strings.getTitleServicos());
 			labelNomeFantasia.setText(cliente.getNomeFantasia());
+			textFieldCnpjParaCobranca.setText(cliente.getCnpjCliente());
 
 		}
 
@@ -257,14 +305,6 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 			servicoImpressao = null;
 
-		} else if (comboBoxProduto.getSelectionModel().getSelectedItem() == null) {
-
-			Alerts.showAlert("Cadastro de serviços", "Campo obrigatório", "Selecione o produto", AlertType.INFORMATION);
-
-			comboBoxProduto.requestFocus();
-
-			servicoImpressao = null;
-
 		} else if (textFieldValorUnitario.getText() == null || textFieldValorUnitario.getText().trim().equals("")) {
 
 			Alerts.showAlert("Cadastro de serviços", "Campo obrigatório", "Digite o valor unitário",
@@ -283,6 +323,14 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 			servicoImpressao = null;
 
+		} else if (comboBoxProduto.getSelectionModel().getSelectedItem() == null) {
+
+			Alerts.showAlert("Cadastro de serviços", "Campo obrigatório", "Selecione o produto", AlertType.INFORMATION);
+
+			comboBoxProduto.requestFocus();
+
+			servicoImpressao = null;
+
 		} else if (textAreaObservacoesDoServico.getText() == null
 				|| textAreaObservacoesDoServico.getText().trim().equals("")) {
 
@@ -295,34 +343,100 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 		} else {
 
-			if (getServicoImpressao() != null) {
+			if (textFieldCnpjParaCobranca.getText() != null || !textFieldCnpjParaCobranca.getText().trim().equals("")) {
 
-				servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
-				servicoImpressao.setIdCliente(getCliente().getIdCliente());
-				servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
-				conta.setCnpj(textFieldCnpjParaCobranca.getText());
-				servicoImpressao.setProdutoDoServico(
-						new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
-				servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
-				servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-				servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
-				conta.setSaldo(getServicoImpressao().getConta().getSaldo());
-				
-				servicoImpressao.setConta(conta);
+				ServicoÌmpressaoService impressaoService = new ServicoÌmpressaoService();
 
-			} else {
+				String nome = impressaoService.buscarServicosDoClientePeloCnpj(textFieldCnpjParaCobranca.getText());
 
-				servicoImpressao.setIdCliente(getCliente().getIdCliente());
-				servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
-				conta.setCnpj(textFieldCnpjParaCobranca.getText());
-				servicoImpressao.setProdutoDoServico(
-						new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
-				servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
-				servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-				servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
-				conta.setSaldo(0);
-				
-				servicoImpressao.setConta(conta);
+				if (!nome.equals("")) {
+
+					Optional<ButtonType> result = Alerts.showConfirmation("Atenção!",
+
+							"O CNPJ " + textFieldCnpjParaCobranca.getText()
+									+ " já está associado a serviços do cliente " + nome + " deseja continuar ?");
+
+					if (result.get() == ButtonType.OK) {
+
+						if (getServicoImpressao() != null) {
+
+							servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
+							servicoImpressao.setIdCliente(getCliente().getIdCliente());
+							servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+							conta.setCnpj(textFieldCnpjParaCobranca.getText());
+							servicoImpressao.setProdutoDoServico(
+									new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
+							servicoImpressao.setValorUnitario(
+									Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
+							servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
+							servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+							conta.setSaldo(getServicoImpressao().getConta().getSaldo());
+							conta.setTipo(tipoLancamento);
+
+							servicoImpressao.setConta(conta);
+
+						} else {
+
+							servicoImpressao.setIdCliente(getCliente().getIdCliente());
+							servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+							conta.setCnpj(textFieldCnpjParaCobranca.getText());
+							servicoImpressao.setProdutoDoServico(
+									new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
+							servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
+							servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
+							servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+							conta.setSaldo(0);
+							conta.setTipo(tipoLancamento);
+
+							servicoImpressao.setConta(conta);
+
+						}
+
+					} else {
+
+						textFieldValorUnitario.requestFocus();
+
+						servicoImpressao = null;
+
+					}
+
+				} else {
+
+					if (getServicoImpressao() != null) {
+
+						servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
+						servicoImpressao.setIdCliente(getCliente().getIdCliente());
+						servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+						conta.setCnpj(textFieldCnpjParaCobranca.getText());
+						servicoImpressao.setProdutoDoServico(
+								new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
+						servicoImpressao
+								.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
+						servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
+						servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+						conta.setSaldo(getServicoImpressao().getConta().getSaldo());
+						conta.setTipo(tipoLancamento);
+
+						servicoImpressao.setConta(conta);
+
+					} else {
+
+						servicoImpressao.setIdCliente(getCliente().getIdCliente());
+						servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+						conta.setCnpj(textFieldCnpjParaCobranca.getText());
+						servicoImpressao.setProdutoDoServico(
+								new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
+						servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
+						servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
+						servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+						conta.setSaldo(0);
+						conta.setTipo(tipoLancamento);
+
+						servicoImpressao.setConta(conta);
+
+					}
+
+				}
 
 			}
 
@@ -383,6 +497,45 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 	public void setClienteSelecionadoFormController(ClienteSelecionadoFormController clienteSelecionadoFormController) {
 		this.clienteSelecionadoFormController = clienteSelecionadoFormController;
+	}
+
+	public ServicoImpressao finalizar(ServicoImpressao servicoImpressao, Conta conta) {
+
+		if (getServicoImpressao() != null) {
+
+			servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
+			servicoImpressao.setIdCliente(getCliente().getIdCliente());
+			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+			conta.setCnpj(textFieldCnpjParaCobranca.getText());
+			servicoImpressao.setProdutoDoServico(
+					new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
+			servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
+			servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
+			servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+			conta.setSaldo(getServicoImpressao().getConta().getSaldo());
+			conta.setTipo(tipoLancamento);
+
+			servicoImpressao.setConta(conta);
+
+		} else {
+
+			servicoImpressao.setIdCliente(getCliente().getIdCliente());
+			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+			conta.setCnpj(textFieldCnpjParaCobranca.getText());
+			servicoImpressao.setProdutoDoServico(
+					new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
+			servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
+			servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
+			servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+			conta.setSaldo(0);
+			conta.setTipo(tipoLancamento);
+
+			servicoImpressao.setConta(conta);
+
+		}
+
+		return servicoImpressao;
+
 	}
 
 }

@@ -9,7 +9,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -19,20 +18,16 @@
    <content>
       <VBox prefHeight="669.0" prefWidth="895.0">
          <children>
-            <ToolBar>
-               <items>
-                  <AnchorPane prefHeight="30.0" prefWidth="245.0">
-                     <children>
-                        <Label fx:id="lableTitulo" layoutX="17.0" layoutY="1.0" prefHeight="27.0" prefWidth="769.0">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </AnchorPane>
-               </items>
-            </ToolBar>
-            <AnchorPane prefHeight="681.0" prefWidth="895.0">
+            <AnchorPane prefHeight="58.0" prefWidth="895.0" style="-fx-background-color: GRAY;">
+               <children>
+                  <Label fx:id="lableTitulo" layoutX="17.0" layoutY="10.0" prefHeight="37.0" prefWidth="769.0" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="681.0" prefWidth="895.0" style="-fx-background-color: GRAY;">
                <children>
                   <Pane layoutX="15.0" layoutY="13.0" prefHeight="601.0" prefWidth="867.0" style="-fx-background-color: #E8E8E8; -fx-border-color: #8B8989;" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="13.0">
                      <children>
@@ -48,9 +43,9 @@
                         <Label layoutX="28.0" layoutY="129.0" text="CNPJ" />
                         <TextField fx:id="textFieldCnpj" layoutX="28.0" layoutY="149.0" prefHeight="28.0" prefWidth="201.0" />
                         <Label layoutX="242.0" layoutY="129.0" text="Inscrição Estadual" />
-                        <TextField fx:id="textFieldInscEstadual" layoutX="243.0" layoutY="149.0" prefHeight="28.0" prefWidth="226.0" />
+                        <TextField fx:id="textFieldInscEstadual" layoutX="243.0" layoutY="149.0" prefHeight="28.0" prefWidth="226.0" promptText="ISENTO" />
                         <Label layoutX="482.0" layoutY="129.0" text="Inscrição Municipal" />
-                        <TextField fx:id="textFieldInscMunicipal" layoutX="482.0" layoutY="149.0" prefHeight="28.0" prefWidth="210.0" />
+                        <TextField fx:id="textFieldInscMunicipal" layoutX="482.0" layoutY="149.0" prefHeight="28.0" prefWidth="210.0" promptText="ISENTO" />
                         <Label layoutX="708.0" layoutY="129.0" text="Cliente Desde" />
                         <DatePicker fx:id="datePickerClienteDesde" layoutX="708.0" layoutY="149.0" prefHeight="28.0" prefWidth="130.0" />
                         <Label layoutX="28.0" layoutY="194.0" text="Contato" />

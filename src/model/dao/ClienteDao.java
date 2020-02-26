@@ -11,5 +11,6 @@ public interface ClienteDao {
 	Cliente buscarPeloId(Integer id);
 	List<Cliente> buscarTodos();
 	List<Cliente> buscarPeloNomeFantasia(String nomeFantasia);
+	List<Cliente> buscarPeloVendedor(int codVendedor);
 	
 }

@@ -10,5 +10,6 @@ public interface ServicoImpressaoDao {
 	void atualizar(ServicoImpressao clienteServico);
 	ServicoImpressao buscarPeloIdCliente(Integer id_cliente_servico);
 	List<ServicoImpressao> buscarServicosDoCliente(Integer idCliente);
+	String buscarServicosDoClientePeloCnpj(String servicoCNPJ);
 
 }

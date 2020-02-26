@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RelatorioListaClientes" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ba1c2fcf-4c66-4d60-9df8-cfc83011c3a1">
+	<property name="template.engine" value="tabular_template"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="tableDataset" uuid="40ed120a-863c-4a10-a15b-24dc63c8331d">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<subDataset name="Dataset1" uuid="eaea6a8e-bdf6-4a99-b70c-e5c4cc3e3e4b">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Saldo"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<parameter name="Total" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="saldoAnterior" class="java.lang.Integer">
+		<fieldDescription><![CDATA[saldoAnterior]]></fieldDescription>
+	</field>
+	<field name="quantidadeDoPedido" class="java.lang.Integer">
+		<fieldDescription><![CDATA[quantidadeDoPedido]]></fieldDescription>
+	</field>
+	<field name="dataDoLancamento" class="java.sql.Date">
+		<fieldDescription><![CDATA[dataDoLancamento]]></fieldDescription>
+	</field>
+	<field name="observacoesLancamento" class="java.lang.String">
+		<fieldDescription><![CDATA[observacoesLancamento]]></fieldDescription>
+	</field>
+	<field name="saldoAtual" class="java.lang.Integer">
+		<fieldDescription><![CDATA[saldoAtual]]></fieldDescription>
+	</field>
+	<field name="tipoDoLancamento" class="java.lang.String">
+		<fieldDescription><![CDATA[tipoDoLancamento]]></fieldDescription>
+	</field>
+	<title>
+		<band height="73" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="800" height="53" backcolor="#7C848F" uuid="75968b5b-d9b9-408c-944c-158c077dc5cf"/>
+				<staticText>
+					<reportElement style="Title" x="0" y="5" width="290" height="40" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="77409e86-3434-4dd2-a3fe-5b83030a0cea"/>
+					<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="26" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Relatório Lançamento]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement mode="Opaque" x="0" y="53" width="800" height="20" forecolor="#000000" backcolor="#0041CC" uuid="9ea0e7ef-8dfd-40bf-93aa-5a8062ba1296"/>
+				<staticText>
+					<reportElement x="4" y="0" width="136" height="20" forecolor="#FFFFFF" uuid="b01181c6-744d-477c-9588-543a7f53ddfb"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Data do Lançamento]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="120" y="0" width="85" height="20" forecolor="#FFFFFF" uuid="56f63f71-56fd-43f5-980c-efbd235caefc"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Saldo Anterior]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="219" y="0" width="140" height="20" forecolor="#FFFFFF" uuid="2efb84e8-75c0-4a54-9c87-4706f6d1d61b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Operação]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="377" y="0" width="87" height="20" forecolor="#FFFFFF" uuid="3427673f-c485-412c-8ef6-98abbfd275da"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Lançado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="580" y="0" width="212" height="20" forecolor="#FFFFFF" uuid="9e056940-da11-4871-9bb8-ba8b42ae5157"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Detalhamento]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="480" y="0" width="87" height="20" forecolor="#FFFFFF" uuid="85a65163-44af-4f8b-93f4-392e6237cf96"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Saldo Atual]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="18">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="4" y="0" width="96" height="18" uuid="75a5fd92-fe7e-4466-bebb-48eeaf8c294a"/>
+				<textFieldExpression><![CDATA[$F{dataDoLancamento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="0" width="85" height="18" uuid="8595c0f4-d381-40b6-bb2d-c4abe4fc3a56"/>
+				<textFieldExpression><![CDATA[$F{saldoAnterior}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="219" y="0" width="140" height="18" uuid="d87d4c6e-b11c-420d-a9c4-470a047a8316"/>
+				<textFieldExpression><![CDATA[$F{tipoDoLancamento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="377" y="0" width="87" height="18" uuid="0046d38f-eaa1-4bfe-8e1c-c34a3f1bd77c"/>
+				<textFieldExpression><![CDATA[$F{quantidadeDoPedido}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="0" width="212" height="18" uuid="e14248cd-2ae9-4340-91b1-8ae26b62b67a"/>
+				<textFieldExpression><![CDATA[$F{observacoesLancamento}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="16" width="800" height="1" uuid="51de34de-ac02-42c7-8b94-aeb8a529b64f"/>
+			</line>
+			<textField>
+				<reportElement x="480" y="0" width="87" height="18" uuid="34e53bc5-c68e-4cd1-99f5-f698dfc68b0c"/>
+				<textFieldExpression><![CDATA[$F{saldoAtual}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

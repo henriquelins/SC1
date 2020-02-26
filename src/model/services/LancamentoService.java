@@ -51,6 +51,34 @@ public class LancamentoService {
 
 			break;
 
+		case ("Faturado (++)"):
+
+			Optional<ButtonType> result2 = Alerts.showConfirmation("Confirmação",
+					"Você deseja somar os créditos para faturar no serviço " + clienteServico.getNomeDoServico()
+							+ " ?");
+
+			if (result2.get() == ButtonType.OK) {
+
+				lancamentoDao.inserir(lancamento, clienteServico);
+
+			}
+
+			break;
+
+		case ("Fatura Paga"):
+
+			Optional<ButtonType> result3 = Alerts.showConfirmation("Confirmação",
+					"Você deseja zerar o saldo após o pagamento da Fatura no serviço "
+							+ clienteServico.getNomeDoServico() + " ?");
+
+			if (result3.get() == ButtonType.OK) {
+
+				lancamentoDao.inserir(lancamento, clienteServico);
+
+			}
+
+			break;
+
 		}
 
 	}

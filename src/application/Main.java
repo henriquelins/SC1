@@ -28,8 +28,7 @@ public class Main extends Application {
 	private static ServerSocket serverSocket;
 
 	private static int portSocket;
-	
-		
+
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
 
@@ -41,6 +40,7 @@ public class Main extends Application {
 			try {
 
 				// impede que seja criada uma nova instância do programa
+				
 				portSocket = Integer
 						.parseInt(PropertiesFile.loadPropertiesSocket().getProperty(Strings.getPropertiessocketPort()));
 				setServerSocket(new ServerSocket(portSocket));
@@ -50,20 +50,20 @@ public class Main extends Application {
 
 					// Define o Style
 					setUserAgentStylesheet(STYLESHEET_CASPIAN);
-					//setUserAgentStylesheet(STYLESHEET_MODENA);
-			
+					// setUserAgentStylesheet(STYLESHEET_MODENA);
+
 					new Forms().splashForm(Strings.getSplashView());
 
 				} catch (Exception e) {
 
-					Alerts.showAlert("Controle de Estoque", "Erro ao abrir a tela", e.getLocalizedMessage(),
+					Alerts.showAlert("Controle de Saldo", "Erro ao abrir a tela", e.getLocalizedMessage(),
 							AlertType.ERROR);
 
 				}
 
 			} catch (IOException e) {
 
-				Alerts.showAlert("Controle de Estoque", "Erro ao abrir o programa",
+				Alerts.showAlert("Controle de Saldo", "Erro ao abrir o programa",
 						"Já existe uma instância do programa aberta!", AlertType.ERROR);
 
 			}
@@ -76,9 +76,8 @@ public class Main extends Application {
 		}
 
 	}
-	
-	
-	//Getters and Setters
+
+	// Getters and Setters
 
 	public static Scene getMainScene() {
 
@@ -112,7 +111,6 @@ public class Main extends Application {
 
 	}
 
-	
 	// inicia o aplicativo
 
 	public static void main(String[] args) {

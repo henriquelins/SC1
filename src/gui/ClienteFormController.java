@@ -50,6 +50,10 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 	private PrincipalFormController principalFormController;
 
 	private ClienteSelecionadoFormController clienteSelecionadoFormController;
+	
+	private List<Vendedor> listaVendedores = new ArrayList<>();
+	
+	private List<Unidade> listaUnidade = new ArrayList<>();
 
 	// Lista de ouvintes para receber alguma modificação
 
@@ -228,9 +232,10 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 			textFieldEmail.setText(cliente.getContato().getEmailCliente());
 			textFieldFoneCelular.setText(cliente.getContato().getFoneCelular());
 			textFieldFoneFixo.setText(cliente.getContato().getFoneFixo());
-			comboBoxVendedor.getSelectionModel().select(new Vendedor().cbVendedor(cliente.getCod_vendedor()));
-			comboBoxUnidadeAtendimento.getSelectionModel()
-					.select(new Unidade().cbUnidade(cliente.getUnidadeDeAtendimento()));
+			
+			comboBoxVendedor.getSelectionModel().select(new Vendedor().nomeVendedor(cliente.getCod_vendedor()));
+			comboBoxUnidadeAtendimento.getSelectionModel().select(new Unidade().nomeUnidade(cliente.getUnidadeDeAtendimento()));
+			
 			textFieldLogradouro.setText(cliente.getEndereco().getLogradouro());
 			textFieldCidade.setText(cliente.getEndereco().getCidade());
 			textFieldBairro.setText(cliente.getEndereco().getBairro());
@@ -435,10 +440,30 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 			contato.setEmailCliente(textFieldEmail.getText());
 			contato.setFoneCelular(textFieldFoneCelular.getText());
 			contato.setFoneFixo(textFieldFoneFixo.getText());
+			
+			
+			for (int i = 0; listaVendedores.size() > i; i++) {
 
-			cliente.setCod_vendedor(new Vendedor().codVendedor(comboBoxVendedor.getSelectionModel().getSelectedItem()));
-			cliente.setUnidadeDeAtendimento(
-					new Unidade().codUnidade(comboBoxUnidadeAtendimento.getSelectionModel().getSelectedItem()));
+				if (listaVendedores.get(i).getNomeVendedor().equalsIgnoreCase(comboBoxVendedor.getSelectionModel().getSelectedItem())) {
+
+					cliente.setCod_vendedor(listaVendedores.get(i).getIdVendedor());
+
+				}
+
+			}
+			
+			for (int i = 0; listaUnidade.size() > i; i++) {
+
+				if (listaUnidade.get(i).getNomeUnidade().equalsIgnoreCase(comboBoxUnidadeAtendimento.getSelectionModel().getSelectedItem())) {
+
+					cliente.setUnidadeDeAtendimento(listaUnidade.get(i).getIdUnidade());
+
+				}
+
+			}
+
+			//cliente.setCod_vendedor(new Vendedor().codVendedor(comboBoxVendedor.getSelectionModel().getSelectedItem()));
+			//cliente.setUnidadeDeAtendimento(new Unidade().codUnidade(comboBoxUnidadeAtendimento.getSelectionModel().getSelectedItem()));
 
 			endereco.setLogradouro(textFieldLogradouro.getText());
 			endereco.setBairro(textFieldBairro.getText());
@@ -464,9 +489,19 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 		List<String> lista = new ArrayList<>();
 
-		for (Vendedor v : new VendedorService().buscarTodos()) {
+		/*for (Vendedor v : new VendedorService().buscarTodos()) {
 
 			lista.add(v.getIdVendedor() + " - " + v.getNomeVendedor());
+
+		}*/
+		
+		VendedorService vendedorService = new VendedorService();
+		
+		listaVendedores = vendedorService.buscarTodos();
+		
+		for (Vendedor v : listaVendedores) {
+
+			lista.add( v.getNomeVendedor());
 
 		}
 
@@ -480,9 +515,19 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 		List<String> lista = new ArrayList<>();
 
-		for (Unidade u : new UnidadeService().buscarTodos()) {
+		/*for (Unidade u : new UnidadeService().buscarTodos()) {
 
 			lista.add(u.getIdUnidade() + " - " + u.getNomeUnidade());
+
+		}*/
+		
+		UnidadeService unidadeService = new UnidadeService();
+		
+		listaUnidade = unidadeService.buscarTodos();
+		
+		for (Unidade u : new UnidadeService().buscarTodos()) {
+
+			lista.add(u.getNomeUnidade());
 
 		}
 

@@ -247,5 +247,9 @@ public class Cliente implements Serializable {
 				+ ", unidadeDeAtendimento=" + unidadeDeAtendimento + ", contato=" + contato + ", endereco=" + endereco
 				+ "]";
 	}
-
+	
+	public String apresentacaoBasicaCliente() {
+		return  nomeFantasia + " - CNPJ: " + cnpjCliente + " - Cliente Desde: " + dataInicioCliente +  "  - Vendedor: " + cod_vendedor
+				+ " - Atendimento: " + unidadeDeAtendimento;
+	}
 }

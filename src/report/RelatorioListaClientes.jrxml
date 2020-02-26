@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RelatorioListaClientes" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ba1c2fcf-4c66-4d60-9df8-cfc83011c3a1">
+	<property name="template.engine" value="tabular_template"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="tableDataset" uuid="40ed120a-863c-4a10-a15b-24dc63c8331d">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<subDataset name="Dataset1" uuid="eaea6a8e-bdf6-4a99-b70c-e5c4cc3e3e4b">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Saldo"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeFantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeFantasia]]></fieldDescription>
+	</field>
+	<field name="razaoSocial" class="java.lang.String">
+		<fieldDescription><![CDATA[razaoSocial]]></fieldDescription>
+	</field>
+	<field name="cnpjCliente" class="java.lang.String">
+		<fieldDescription><![CDATA[cnpjCliente]]></fieldDescription>
+	</field>
+	<field name="dataInicioCliente" class="java.sql.Date">
+		<fieldDescription><![CDATA[dataInicioCliente]]></fieldDescription>
+	</field>
+	<field name="contato" class="model.entities.Contato">
+		<fieldDescription><![CDATA[contato]]></fieldDescription>
+	</field>
+	<title>
+		<band height="73" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="800" height="53" backcolor="#7C848F" uuid="75968b5b-d9b9-408c-944c-158c077dc5cf"/>
+				<staticText>
+					<reportElement style="Title" x="0" y="5" width="590" height="40" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="77409e86-3434-4dd2-a3fe-5b83030a0cea"/>
+					<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="26" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Relatório Clientes]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement mode="Opaque" x="0" y="53" width="800" height="20" forecolor="#000000" backcolor="#0041CC" uuid="9ea0e7ef-8dfd-40bf-93aa-5a8062ba1296"/>
+				<staticText>
+					<reportElement x="4" y="0" width="136" height="20" forecolor="#FFFFFF" uuid="b01181c6-744d-477c-9588-543a7f53ddfb"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nome Fantasia]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="185" y="0" width="100" height="20" forecolor="#FFFFFF" uuid="56f63f71-56fd-43f5-980c-efbd235caefc"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Razão Social]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="380" y="0" width="100" height="20" forecolor="#FFFFFF" uuid="2efb84e8-75c0-4a54-9c87-4706f6d1d61b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CNPJ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="490" y="0" width="100" height="20" forecolor="#FFFFFF" uuid="3427673f-c485-412c-8ef6-98abbfd275da"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cliente Desde]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="600" y="0" width="80" height="20" forecolor="#FFFFFF" uuid="9e056940-da11-4871-9bb8-ba8b42ae5157"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[E-mail]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="700" y="0" width="80" height="20" forecolor="#FFFFFF" uuid="695e4df7-2645-4c16-bf48-1cf74516491e"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fone]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="18">
+			<textField>
+				<reportElement x="4" y="0" width="176" height="18" uuid="75a5fd92-fe7e-4466-bebb-48eeaf8c294a"/>
+				<textFieldExpression><![CDATA[$F{nomeFantasia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="185" y="0" width="185" height="18" uuid="8595c0f4-d381-40b6-bb2d-c4abe4fc3a56"/>
+				<textFieldExpression><![CDATA[$F{razaoSocial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="100" height="18" uuid="d87d4c6e-b11c-420d-a9c4-470a047a8316"/>
+				<textFieldExpression><![CDATA[$F{cnpjCliente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="490" y="0" width="100" height="18" uuid="0046d38f-eaa1-4bfe-8e1c-c34a3f1bd77c"/>
+				<textFieldExpression><![CDATA[$F{dataInicioCliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="600" y="0" width="100" height="18" uuid="e14248cd-2ae9-4340-91b1-8ae26b62b67a"/>
+				<textFieldExpression><![CDATA[$F{contato}.getEmailCliente()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="700" y="0" width="100" height="18" uuid="56b15548-fe59-4a32-bc08-f4aee2473e99"/>
+				<textFieldExpression><![CDATA[$F{contato}.getFoneCelular()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="16" width="800" height="1" uuid="51de34de-ac02-42c7-8b94-aeb8a529b64f"/>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

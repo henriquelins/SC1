@@ -1,9 +1,12 @@
 package gui;
 
+import java.awt.HeadlessException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.Main;
+import exportarXLS.ExportarListaLancamentosXLS;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
@@ -23,16 +26,20 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import jxl.write.WriteException;
 import model.entities.Cliente;
-import model.entities.ServicoImpressao;
 import model.entities.Lancamento;
 import model.entities.Produto;
+import model.entities.ServicoImpressao;
 import model.entities.Usuario;
 import model.services.LancamentoService;
+import relatorio.Relatorio;
 
 public class LancamentoListFormController implements Initializable, DataChangeListener {
 
 	// Java variáveis
+
+	private int total;
 
 	private Cliente cliente;
 
@@ -43,6 +50,12 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 	private static ObservableList<Lancamento> listaVerLancamentos;
 
 	// @FXML variáveis
+
+	@FXML
+	private Label labelTotal;
+
+	@FXML
+	private Label labelSaldoAtual;
 
 	@FXML
 	private Label labelTituloCliente;
@@ -95,6 +108,12 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 	@FXML
 	private Button buttonPesquisar;
 
+	@FXML
+	private Button buttonExportar;
+
+	@FXML
+	private Button buttonImprimir;
+
 	// @FXML event
 
 	@FXML
@@ -124,19 +143,98 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 				tableViewLancamento.setItems(listaVerLancamentos);
 
+				for (int i = 0; listaVerLancamentos.size() > i; i++) {
+
+					if (!listaVerLancamentos.get(i).getTipoDoLancamento().equalsIgnoreCase("FATURA PAGA")) {
+
+						total = total + listaVerLancamentos.get(i).getQuantidadeDoPedido();
+
+					}
+
+				}
+
+				labelTotal.setText(String.valueOf(total));
+
 			}
 
 		}
 
 	}
-	
+
+	@FXML
+	public void onBtExportarAction(ActionEvent event) {
+
+		ExportarListaLancamentosXLS exportarXLS = new ExportarListaLancamentosXLS();
+
+		String caminho = "C:/temp/listaVerLancamentos.xls";
+
+		try {
+
+			try {
+
+				if (listaVerLancamentos.isEmpty() != true) {
+
+					try {
+
+						exportarXLS.exportarListaLancamentoXLS(caminho, listaVerLancamentos, servicoImpressao, total);
+
+					} catch (WriteException e) {
+
+						Alerts.showAlert("Exportar lista", "Erro ao criar o arquivo!", "Exportar ", AlertType.ERROR);
+
+					}
+
+				} else {
+
+					Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar ", AlertType.ERROR);
+				}
+
+			} catch (HeadlessException | IOException e2) {
+
+				Alerts.showAlert("Exportar lista", "Feche o arquivo primeiro!", "Exportar", AlertType.ERROR);
+
+			}
+
+		} catch (java.lang.NullPointerException e) {// TODO: handle exception
+
+			Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar ", AlertType.ERROR);
+
+		}
+
+	}
+
+	@FXML
+	public void onBtImprimirAction(ActionEvent event) {
+
+		Relatorio relatorio = new Relatorio();
+
+		try {
+
+			if (listaVerLancamentos.isEmpty() != true) {
+
+				relatorio.relatorioListaLancamentosPDF(listaVerLancamentos, servicoImpressao, total);
+
+			} else {
+
+				Alerts.showAlert("Relatório", "Lista vazia", "Exportar Relatório", AlertType.ERROR);
+
+			}
+
+		} catch (java.lang.NullPointerException e) {
+
+			Alerts.showAlert("Relatório", "Erro ao gerar o arquivo", "Imprimir Relatório ", AlertType.ERROR);
+
+		}
+
+	}
+
 	// Listener
 
 	@Override
 	public void onDataChanged() {
 
 	}
-	
+
 	// Inicia classe
 
 	@Override
@@ -145,7 +243,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		initializeNodes();
 
 	}
-	
+
 	// Método com os objetos que devem ser inicializados
 
 	private void initializeNodes() {
@@ -182,7 +280,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		tableColumnDetalhamento.setCellValueFactory(new PropertyValueFactory<>("observacoesLancamento"));
 
 	}
-	
+
 	// Carrega os campos da Classe Lançamento Lista
 
 	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario) {
@@ -190,11 +288,14 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		labelNomeCliente.setText(cliente.getNomeFantasia());
 		labelNomeServico.setText(servicoImpressao.getNomeDoServico());
 		labelNomeProduto.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()));
+		labelSaldoAtual.setText(String.valueOf(servicoImpressao.getConta().getSaldo()));
+
+		labelTotal.setText(String.valueOf(total));
 
 		setServicoImpressao(servicoImpressao);
 
 	}
-	
+
 	// Getters e Setters
 
 	public Cliente getCliente() {

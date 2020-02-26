@@ -299,6 +299,7 @@ public class ClienteDaoJDBC implements ClienteDao {
 		return cliente;
 
 	}
+	
 
 	// método buscar pelo id
 
@@ -329,6 +330,53 @@ public class ClienteDaoJDBC implements ClienteDao {
 			conn.commit();
 
 			return cliente;
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+	}
+
+	@Override
+	public List<Cliente> buscarPeloVendedor(int codVendedor) {
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		List<Cliente> list = new ArrayList<>();
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement("SELECT * FROM cliente as cl inner join contato as co on cl.id_cliente = co.id_cliente "
+					+ "inner join endereco as en on cl.id_cliente = en.id_cliente where cl.cod_vendedor = ? order by cl.id_cliente");
+			st.setInt(1,codVendedor);
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				Cliente cliente = instantiateCliente(rs);
+				list.add(cliente);
+
+			}
+
+			conn.commit();
+
+			return list;
 
 		} catch (SQLException e) {
 

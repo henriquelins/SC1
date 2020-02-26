@@ -10,17 +10,17 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1036.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PrincipalFormController">
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PrincipalFormController">
    <content>
-      <VBox alignment="CENTER" prefHeight="598.0" prefWidth="1021.0">
+      <VBox alignment="CENTER">
          <children>
-            <MenuBar fx:id="menuBarPrincipal">
+            <MenuBar fx:id="menuBarPrincipal" minHeight="-Infinity">
                <menus>
                   <Menu mnemonicParsing="false" text="Arquivo">
                      <items>
@@ -44,23 +44,27 @@
                   </Menu>
                </menus>
             </MenuBar>
-            <ToolBar prefHeight="60.0" prefWidth="1034.0">
+            <ToolBar minHeight="-Infinity" prefHeight="50.0" prefWidth="1091.0">
               <items>
-                  <AnchorPane prefHeight="14.0" prefWidth="1003.0">
-                     <children>
-                        <Button fx:id="buttonNovoCliente" layoutX="6.0" layoutY="9.0" mnemonicParsing="false" onAction="#onBtClienteAction" prefHeight="25.0" prefWidth="107.0" text="Novo Cliente" />
-                        <TextField fx:id="textFieldPesquisar" accessibleRole="IMAGE_VIEW" layoutX="372.0" layoutY="8.0" prefHeight="27.0" prefWidth="307.0" promptText="Filtrar" AnchorPane.leftAnchor="372.0" AnchorPane.rightAnchor="324.0">
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                        </TextField>
-                        <Button fx:id="buttonPesquisar" defaultButton="true" layoutX="700.0" layoutY="9.0" mnemonicParsing="false" onAction="#onBtPesquisarClienteAction" prefHeight="25.0" prefWidth="71.0" text="Pesquisar" AnchorPane.leftAnchor="700.0" AnchorPane.rightAnchor="232.0" />
-                        <ComboBox fx:id="comboBoxListarClientes" layoutX="816.0" layoutY="9.0" onAction="#onComboBoxListarClientesAction" prefHeight="27.0" prefWidth="150.0" promptText="Selecione..." />
-                     </children>
-                  </AnchorPane>
+                  <Button fx:id="buttonNovoCliente" mnemonicParsing="false" onAction="#onBtClienteAction" prefHeight="25.0" prefWidth="107.0" text="Novo Cliente" />
+                  <TextField fx:id="textFieldPesquisar" accessibleRole="IMAGE_VIEW" prefHeight="27.0" prefWidth="307.0" promptText="Pesquisar Clientes">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </TextField>
+                  <Button fx:id="buttonPesquisar" defaultButton="true" mnemonicParsing="false" onAction="#onBtPesquisarClienteAction" prefHeight="25.0" prefWidth="71.0" text="Pesquisar" />
+                  <ComboBox fx:id="comboBoxListarClientes" onAction="#onComboBoxListarClientesAction" prefHeight="27.0" prefWidth="247.0" promptText="Clientes (Todos / Limpar / Vendedores )" />
+                  <Button fx:id="buttonExportar" mnemonicParsing="false" onAction="#onBtExportarAction" prefHeight="26.0" prefWidth="150.0" text="Exportar para Excel" />
+                  <Button fx:id="buttonImprimir" mnemonicParsing="false" onAction="#onBtImprimirAction" prefHeight="26.0" prefWidth="150.0" text="Imprimir Listagem" />
               </items>
             </ToolBar>
-            <TableView fx:id="tableViewCliente" onMouseClicked="#onMouseClickedAction" prefHeight="492.0" prefWidth="1019.0" VBox.vgrow="SOMETIMES">
+            <AnchorPane minHeight="-Infinity" prefHeight="102.0" prefWidth="1091.0" style="-fx-background-color: gray;">
+               <children>
+                  <TextArea fx:id="textAreaDetalhes" editable="false" layoutX="14.0" layoutY="11.0" prefHeight="78.0" prefWidth="646.0" style="-fx-background-color: white;" />
+                  <TextArea fx:id="textAreaSaldoCnpj" editable="false" layoutX="682.0" layoutY="11.0" prefHeight="78.0" prefWidth="399.0" style="-fx-background-color: white;" />
+               </children>
+            </AnchorPane>
+            <TableView fx:id="tableViewCliente" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onMouseClickedAction" prefHeight="492.0" prefWidth="1019.0" VBox.vgrow="ALWAYS">
               <columns>
                   <TableColumn fx:id="tableColumnIndex" editable="false" prefWidth="30.0" style="-fx-alignment: CENTER;" text="#" />
                 <TableColumn fx:id="tableColumnId" editable="false" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Código" />
@@ -72,17 +76,14 @@
                   <TableColumn fx:id="tableColumnFone" editable="false" minWidth="0.0" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Fone Celular" />
               </columns>
             </TableView>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <ToolBar minHeight="-Infinity" prefHeight="30.0" prefWidth="1034.0" VBox.vgrow="NEVER">
                <items>
                   <AnchorPane prefHeight="0.0" prefWidth="1006.0">
                      <children>
-                        <Label fx:id="labelLogado" layoutY="5.0" prefHeight="18.0" prefWidth="303.0">
+                        <Label fx:id="labelLogado" layoutY="-1.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="303.0">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
-                           <font>
-                              <Font name="System Bold" size="13.0" />
-                           </font>
                         </Label>
                      </children>
                   </AnchorPane>

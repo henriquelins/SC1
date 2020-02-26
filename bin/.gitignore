@@ -1,6 +1,10 @@
+/imagens/
+/gui/
+/lib/
 /application/
 /db/
-/gui/
-/imagens/
+/exportarXLS/
 /model/
 /properties/
+/relatorio/
+/report/

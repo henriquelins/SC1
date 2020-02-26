@@ -202,7 +202,7 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 			conn.setAutoCommit(false);
 
 			st = conn.prepareStatement(
-					"SELECT * FROM  servico_impressao as si inner join conta as co on si.id_conta = co.id_conta WHERE si.id_cliente = ? ORDER BY si.id_servico_impressao");
+					"SELECT * FROM  servico_impressao as si inner join conta as co on si.id_conta = co.id_conta WHERE si.id_cliente = ? ORDER BY co.cnpj");
 			st.setInt(1, idCliente);
 			rs = st.executeQuery();
 
@@ -244,6 +244,7 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 	private ServicoImpressao instantiateServicoImpressao(ResultSet rs) throws SQLException {
 
 		ServicoImpressao servicoImpressao = new ServicoImpressao();
+		Conta conta = new Conta();
 
 		servicoImpressao.setIdServicoImpressao(rs.getInt("id_servico_impressao"));
 		servicoImpressao.setIdCliente(rs.getInt("id_cliente"));
@@ -252,6 +253,13 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 		servicoImpressao.setObservacoesServico(rs.getString("observacoes_servico"));
 		servicoImpressao.setLimiteMinimo(rs.getInt("limite_minimo"));
 		servicoImpressao.setValorUnitario(rs.getDouble("valor_unitario"));
+
+		conta.setIdConta(rs.getInt("id_conta"));
+		conta.setCnpj(rs.getString("cnpj"));
+		conta.setSaldo(rs.getInt("saldo"));
+		conta.setTipo(rs.getBoolean("tipo"));
+
+		servicoImpressao.setConta(conta);
 
 		return servicoImpressao;
 	}
@@ -263,8 +271,57 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 		conta.setIdConta(rs.getInt("id_conta"));
 		conta.setCnpj(rs.getString("cnpj"));
 		conta.setSaldo(rs.getInt("saldo"));
+		conta.setTipo(rs.getBoolean("tipo"));
 
 		return conta;
+	}
+
+	@Override
+	public String buscarServicosDoClientePeloCnpj(String servicoCNPJ) {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		String nome = "";
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement(
+					"SELECT * FROM  cliente as cl inner join servico_impressao as si on cl.id_cliente = si.id_cliente inner join conta as co on si.id_conta = co.id_conta WHERE co.cnpj = ?");
+			st.setString(1, servicoCNPJ);
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				nome =  rs.getString("nome_fantasia");
+
+				conn.commit();
+
+			}
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transaction rolled back. Cause by: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Error trying to rollback. Cause by: " + e.getLocalizedMessage());
+
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+
+		return nome;
+
 	}
 
 }

@@ -1,11 +1,13 @@
 package gui;
 
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import exportarXLS.ExportarListaClientesXLS;
 import gui.forms.Forms;
 import gui.listeners.DataChangeListener;
 import gui.util.Acesso;
@@ -30,6 +32,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -37,17 +40,24 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jxl.write.WriteException;
 import model.entities.Cliente;
 import model.entities.ServicoImpressao;
 import model.entities.Unidade;
 import model.entities.Usuario;
+import model.entities.Vendedor;
 import model.services.ClienteService;
+import model.services.ServicoÌmpressaoService;
+import model.services.VendedorService;
+import relatorio.Relatorio;
 
-public class PrincipalFormController implements Initializable, DataChangeListener {
+public class PrincipalFormController<ExportarCsv> implements Initializable, DataChangeListener {
 
 	// Java variáveis
 
 	private static int id_cliente;
+	
+	private String vendedor;
 
 	private Usuario usuario;
 
@@ -131,10 +141,98 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 	@FXML
 	private TableColumn<Cliente, Cliente> tableColumnClienteSelecionado;
 
+	@FXML
+	private TextArea textAreaDetalhes;
+
+	@FXML
+	private TextArea textAreaSaldoCnpj;
+
+	@FXML
+	private Button buttonExportar;
+
+	@FXML
+	private Button buttonImprimir;
+
+	private List<Vendedor> ListaVendedores = new ArrayList<>();
+
+	private VendedorService vendedorService = new VendedorService();
+
 	// @FXML event
 
 	@FXML
 	public void onMouseClickedAction(MouseEvent event) {
+
+		if (event.getClickCount() == 1) {
+
+			event.consume();
+
+			cliente = tableViewCliente.getSelectionModel().getSelectedItem();
+
+			if (cliente != null) {
+
+				StringBuffer servicos = new StringBuffer();
+				StringBuffer saldoCnpj = new StringBuffer();
+
+				String cnpj = "";
+
+				servicos.append("Cliente: " + cliente.getNomeFantasia()
+						+ " - Lista por Serviços do cliente - Mesmo CNPJ, mesmo saldo.\n");
+
+				saldoCnpj.append("Cliente: " + cliente.getNomeFantasia() + " - Lista por CNPJ.");
+
+				int index = 1;
+
+				ServicoÌmpressaoService impressaoService = new ServicoÌmpressaoService();
+
+				List<ServicoImpressao> ListaSi = new ArrayList<>();
+
+				ListaSi = impressaoService.buscarServicosDoCliente(cliente.getIdCliente());
+
+				if (!ListaSi.isEmpty() == true) {
+
+					for (ServicoImpressao si : ListaSi) {
+
+						servicos.append(index + " - CNPJ para cobrança: " + si.getConta().getCnpj() + " - Serviço: "
+								+ si.getNomeDoServico() + " - Saldo: " + String.valueOf(si.getConta().getSaldo())
+								+ " Unidades.");
+
+						if (!si.getConta().getCnpj().equals(cnpj)) {
+
+							saldoCnpj.append("\nSaldo no CNPJ " + si.getConta().getCnpj() + "- Saldo: "
+									+ String.valueOf(si.getConta().getSaldo()));
+
+						}
+
+						if (ListaSi.size() != index) {
+
+							servicos.append("\n");
+
+						}
+
+						cnpj = si.getConta().getCnpj();
+
+						index++;
+
+					}
+
+					textAreaDetalhes.setText(String.valueOf(servicos));
+					textAreaSaldoCnpj.setText(String.valueOf(saldoCnpj));
+
+				} else {
+
+					servicos.append("Não existem serviços cadastrados para o cliente.");
+					textAreaDetalhes.setText(String.valueOf(servicos));
+					saldoCnpj.append("Não existem serviços cadastrados para o cliente.");
+					textAreaSaldoCnpj.setText(String.valueOf(saldoCnpj));
+				}
+
+			} else {
+
+				textAreaDetalhes.setText("");
+				textAreaSaldoCnpj.setText("");
+			}
+
+		}
 
 		if (event.getClickCount() == 2) {
 
@@ -144,14 +242,18 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 			if (cliente != null) {
 
+				listaClientes.clear();
 				clearTableView();
 				comboBoxListarClientes.setValue(null);
+				textAreaDetalhes.setText("");
+				textAreaSaldoCnpj.setText("");
 				clienteSelecionadoForm(usuario, cliente, Strings.getClienteSelecionadoView());
 
 			} else {
 
-				// Alerts.showAlert("Pesquisar Clientes", "Selecionar o cliente ", "Dê dois
-				// cliques na linha para selecionar o cliente", AlertType.ERROR);
+				listaClientes.clear();
+				textAreaDetalhes.setText("");
+				textAreaSaldoCnpj.setText("");
 
 			}
 
@@ -168,6 +270,77 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 	}
 
+	@FXML
+	public void onBtExportarAction(ActionEvent event) {
+
+		ExportarListaClientesXLS exportarXLS = new ExportarListaClientesXLS();
+
+		String caminho = "C:/temp/listaCliente.xls";
+		
+		vendedor = comboBoxListarClientes.getSelectionModel().getSelectedItem();
+
+		try {
+
+			try {
+
+				if (listaClientes.isEmpty() != true) {
+
+					try {
+
+						exportarXLS.exportarListaClientesXLS(caminho, listaClientes, vendedor);
+
+					} catch (WriteException e) {
+
+						Alerts.showAlert("Exportar lista", "Erro ao criar o arquivo!", "Exportar ", AlertType.ERROR);
+
+					}
+
+				} else {
+
+					Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar ", AlertType.ERROR);
+				}
+
+			} catch (HeadlessException | IOException e2) {
+
+				Alerts.showAlert("Exportar lista", "Feche o arquivo primeiro!", "Exportar", AlertType.ERROR);
+
+			}
+
+		} catch (java.lang.NullPointerException e) {
+
+			Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar ", AlertType.ERROR);
+
+		}
+
+	}
+
+	@FXML
+	public void onBtImprimirAction(ActionEvent event) {
+
+		Relatorio relatorio = new Relatorio();
+		
+		vendedor = comboBoxListarClientes.getSelectionModel().getSelectedItem();
+
+		try {
+
+			if (listaClientes.isEmpty() != true) {
+
+				relatorio.relatorioListaClientesPDF(listaClientes, vendedor);
+
+			} else {
+
+				Alerts.showAlert("Relatório", "Lista vazia", "Exportar Relatório", AlertType.ERROR);
+
+			}
+
+		} catch (java.lang.NullPointerException e) {
+
+			Alerts.showAlert("Relatório", "Erro ao gerar o arquivo", "Imprimir Relatório ", AlertType.ERROR);
+
+		}
+
+	}
+
 	// evento botão pesquisar
 
 	@FXML
@@ -177,7 +350,13 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 			Alerts.showAlert("Pesquisar Clientes", "Campo obrigatório", "Digite no campo de pesquisa", AlertType.ERROR);
 
+			comboBoxListarClientes.getSelectionModel().select(null);
+
+			clearTableView();
+
 		} else {
+
+			comboBoxListarClientes.getSelectionModel().select(null);
 
 			List<Cliente> listaCliente = new ArrayList<Cliente>();
 
@@ -190,6 +369,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 				textFieldPesquisar.setText("");
 				textFieldPesquisar.requestFocus();
+				textAreaDetalhes.setText("");
+				textAreaSaldoCnpj.setText("");
 
 				clearTableView();
 
@@ -283,15 +464,50 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 	@FXML
 	public void onComboBoxListarClientesAction(ActionEvent event) {
 
+		String nome = comboBoxListarClientes.getSelectionModel().getSelectedItem();
+		int codVendedor = 0;
+
 		try {
 
-			if (comboBoxListarClientes.getSelectionModel().getSelectedItem().equalsIgnoreCase("Todos")) {
+			if (comboBoxListarClientes.getSelectionModel().getSelectedItem().equalsIgnoreCase("TODOS")) {
 
 				updateTableView();
 
-			} else if (comboBoxListarClientes.getSelectionModel().getSelectedItem().equalsIgnoreCase("Limpar")) {
+			} else if (comboBoxListarClientes.getSelectionModel().getSelectedItem().equalsIgnoreCase("LIMPAR")) {
 
+				listaClientes.clear();
 				clearTableView();
+				textAreaDetalhes.setText("");
+				textAreaSaldoCnpj.setText("");
+
+			} else {
+
+				for (int i = 0; ListaVendedores.size() > i; i++) {
+
+					if (ListaVendedores.get(i).getNomeVendedor().equalsIgnoreCase(nome)) {
+
+						codVendedor = ListaVendedores.get(i).getIdVendedor();
+
+					}
+
+				}
+
+				listaPorVendedor(codVendedor);
+
+				if (!listaClientes.isEmpty() == true) {
+
+					listarTableView();
+
+				} else {
+
+					clearTableView();
+					listaClientes.clear();
+					textAreaDetalhes.setText("");
+					textAreaSaldoCnpj.setText("");
+
+					Alerts.showAlert("Lista vazia", "A lista já está vazia!", "", AlertType.ERROR);
+
+				}
 
 			}
 
@@ -325,6 +541,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 	// Método com os objetos que devem ser inicializados
 
 	private void initializeNodes() {
+		
+		vendedor = "";
 
 		service = new ClienteService();
 
@@ -355,6 +573,12 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 	private void listaTodos() {
 
 		listaClientes = FXCollections.observableArrayList(service.findAll());
+
+	}
+
+	private void listaPorVendedor(int codVendedor) {
+
+		listaClientes = FXCollections.observableArrayList(service.buscarPeloVendedor(codVendedor));
 
 	}
 
@@ -393,9 +617,17 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 	private List<String> listarClientes() {
 
+		ListaVendedores = vendedorService.buscarTodos();
+
 		List<String> lista = new ArrayList<>();
-		lista.add("Todos");
-		lista.add("Limpar");
+		lista.add("TODOS");
+		lista.add("LIMPAR");
+
+		for (Vendedor v : ListaVendedores) {
+
+			lista.add(String.valueOf(v.getNomeVendedor()));
+
+		}
 
 		return lista;
 
@@ -504,6 +736,14 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 	public Label getLabelLogado() {
 		return labelLogado;
+	}
+
+	public String getVendedor() {
+		return vendedor;
+	}
+
+	public void setVendedor(String vendedor) {
+		this.vendedor = vendedor;
 	}
 
 	public Usuario getUsuario() {

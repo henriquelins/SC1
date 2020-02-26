@@ -1,8 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import gui.listeners.DataChangeListener;
@@ -14,8 +17,8 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -23,13 +26,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import model.entities.Cliente;
-import model.entities.ServicoImpressao;
 import model.entities.Lancamento;
 import model.entities.Produto;
+import model.entities.ServicoImpressao;
 import model.entities.Usuario;
 import model.services.LancamentoService;
 
-public class LancamentoFormController implements Initializable, DataChangeListener { 
+public class LancamentoFormController implements Initializable, DataChangeListener {
 
 	// Java variáveis
 
@@ -82,7 +85,7 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 	private TextArea textAreaObservacoesDoLancamento;
 
 	@FXML
-	private Button buttonSalvarLancamento;	
+	private Button buttonSalvarLancamento;
 
 	// @FXML event
 
@@ -90,14 +93,52 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 	public void onButtonSalvarLancamentoAction(ActionEvent event) {
 
 		setLancamento(getFormData());
-	
+
 		if (lancamento != null) {
-			
+
 			lancamentoService.lancamentoSaidaOuEntrada(getLancamento(), getServicoImpressao());
 			notifyDataChangeListeners();
 			Utils.fecharTelaLancamentoFormAction();
 
 		}
+	}
+	
+	
+	@FXML
+	public void onComboBoxFuturaPagaAction(ActionEvent event) {
+		
+		try {
+
+			if (comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem().equalsIgnoreCase("Fatura Paga")) {
+
+				Calendar c = Calendar.getInstance();
+		        java.util.Date data = c.getTime();
+		         
+		        Locale brasil = new Locale("pt", "BR"); //Retorna do país e a língua
+		        DateFormat f2 = DateFormat.getDateInstance(DateFormat.FULL, brasil);
+				
+				textFieldQuantidadeDoLancamento.setEditable(false);
+				textFieldQuantidadeDoLancamento.setText(String.valueOf(getServicoImpressao().getConta().getSaldo()));
+				
+				textAreaObservacoesDoLancamento.setText("Fatura paga no dia " + f2.format(data) );
+				
+				
+			} else {
+				
+				textFieldQuantidadeDoLancamento.setEditable(true);
+				textFieldQuantidadeDoLancamento.setText("");
+				textAreaObservacoesDoLancamento.setText("");
+				
+			}
+			
+			
+		} catch (java.lang.NullPointerException e) {
+
+			// Alerts.showAlert("Lista Clientes", "Lista Vazia",
+			// "java.lang.NullPointerException", AlertType.ERROR);
+
+		}
+
 	}
 
 	// Adiciona a lista um ouvinte, quando há uma modificação
@@ -147,20 +188,29 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 		lancamento = new Lancamento();
 		lancamentoService = new LancamentoService();
 		labelTituloTela.setText(Strings.getTitleLancamento());
-		comboBoxTipoDoLancamento.setItems(FXCollections.observableArrayList(listarTiposLancamento()));
-		
+
 		Constraints.mascaraNumeroInteiro(textFieldQuantidadeDoLancamento);
 
 	}
 
 	// Lista do comboBox
 
-	private List<String> listarTiposLancamento() {
+	private List<String> listarTipoSaldo() {
 
 		List<String> lista = new ArrayList<>();
 		lista.add("Entrada de créditos (+)");
 		lista.add("Saída de créditos (-)");
-		
+
+		return lista;
+
+	}
+
+	private List<String> listarTipoFaturado() {
+
+		List<String> lista = new ArrayList<>();
+		lista.add("Faturado (++)");
+		lista.add("Fatura Paga");
+
 		return lista;
 
 	}
@@ -175,6 +225,16 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 		textFieldCnpjDoLancamento.setText(servicoImpressao.getConta().getCnpj());
 		textFieldSaldoDoServico.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
 
+		if (servicoImpressao.getConta().isTipo()) {
+
+			comboBoxTipoDoLancamento.setItems(FXCollections.observableArrayList(listarTipoSaldo()));
+
+		} else {
+
+			comboBoxTipoDoLancamento.setItems(FXCollections.observableArrayList(listarTipoFaturado()));
+
+		}
+
 		setServicoImpressao(servicoImpressao);
 
 	}
@@ -184,6 +244,8 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 	private Lancamento getFormData() {
 
 		Lancamento lancamento = new Lancamento();
+		
+		System.out.println(comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem());
 
 		if (textFieldQuantidadeDoLancamento.getText() == null
 				|| textFieldQuantidadeDoLancamento.getText().trim().equals("")) {
@@ -213,7 +275,7 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 
 			lancamento = null;
 
-		} else if (textAreaObservacoesDoLancamento.getText() == null
+		}  else if (textAreaObservacoesDoLancamento.getText() == null
 				|| textAreaObservacoesDoLancamento.getText().trim().equals("")) {
 
 			Alerts.showAlert("Cadastro de clientes", "Campo obrigatório", "Digite as observações do lançamento",
@@ -225,16 +287,18 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 
 		} else {
 
-			lancamento.setIdServicoImpressao(servicoImpressao.getIdServicoImpressao());
-			lancamento.setQuantidadeDoPedido(Integer.valueOf(textFieldQuantidadeDoLancamento.getText()));
-			lancamento.setDataDoLancamento(Constraints.setLocalDateToDateSql(datePickerDataDoLancamento.getValue()));
-			lancamento.setTipoDoLancamento(comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem());
-			lancamento.setObservacoesLancamento(textAreaObservacoesDoLancamento.getText());
-			lancamento.setSaldoAnterior(servicoImpressao.getConta().getSaldo());
-			lancamento.setSaldoAtual(saltoAtual(servicoImpressao.getConta().getSaldo(),
-					Integer.valueOf(textFieldQuantidadeDoLancamento.getText()),
-					comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem()));
-
+				
+				lancamento.setIdServicoImpressao(servicoImpressao.getIdServicoImpressao());
+				lancamento.setQuantidadeDoPedido(Integer.valueOf(textFieldQuantidadeDoLancamento.getText()));
+				lancamento.setDataDoLancamento(Constraints.setLocalDateToDateSql(datePickerDataDoLancamento.getValue()));
+				lancamento.setTipoDoLancamento(comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem());
+				lancamento.setObservacoesLancamento(textAreaObservacoesDoLancamento.getText());
+				lancamento.setSaldoAnterior(servicoImpressao.getConta().getSaldo());
+				lancamento.setSaldoAtual(saltoAtual(servicoImpressao.getConta().getSaldo(),
+						Integer.valueOf(textFieldQuantidadeDoLancamento.getText()),
+						comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem()));
+				
+			
 		}
 
 		return lancamento;
@@ -256,6 +320,18 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 
 		case "Saída de créditos (-)":
 
+			saldoAtual = saldoAnterior - saldo;
+
+			break;
+
+		case "Faturado (++)":
+
+			saldoAtual = saldoAnterior + saldo;
+
+			break;
+
+		case "Fatura Paga":
+			
 			saldoAtual = saldoAnterior - saldo;
 
 			break;
