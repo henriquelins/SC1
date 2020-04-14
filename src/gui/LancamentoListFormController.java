@@ -3,9 +3,11 @@ package gui;
 import java.awt.HeadlessException;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-import application.Main;
+import application.SC1Main;
 import exportarXLS.ExportarListaLancamentosXLS;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
@@ -33,6 +35,7 @@ import model.entities.Produto;
 import model.entities.ServicoImpressao;
 import model.entities.Usuario;
 import model.services.LancamentoService;
+import model.services.LogSegurancaService;
 import relatorio.Relatorio;
 
 public class LancamentoListFormController implements Initializable, DataChangeListener {
@@ -47,7 +50,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 	private LancamentoService lancamentoService;
 
-	private static ObservableList<Lancamento> listaVerLancamentos;
+	private ObservableList<Lancamento> listaVerLancamentos;
 
 	// @FXML variáveis
 
@@ -114,6 +117,8 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 	@FXML
 	private Button buttonImprimir;
 
+	private Usuario usuario;
+
 	// @FXML event
 
 	@FXML
@@ -128,7 +133,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 			Alerts.showAlert("Ver lançamento", "Campo obrigatório", "A data final não pode ser maior que a inicial",
 					AlertType.ERROR);
 
-		} else {
+		} else { 
 
 			listaVerLancamentos = FXCollections.observableArrayList(lancamentoService.verLancamentos(
 					Constraints.setLocalDateToDateSql(datePickerDataInicial.getValue()),
@@ -141,19 +146,31 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 			} else {
 
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Pesquisa cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Serviço: "
+								+ servicoImpressao.getNomeDoServico().toUpperCase() + " - "
+								+ Constraints.setLocalDateToDateSql(datePickerDataInicial.getValue()) + " até "
+								+ Constraints.setLocalDateToDateSql(datePickerDataFinal.getValue()));
+
 				tableViewLancamento.setItems(listaVerLancamentos);
 
-				for (int i = 0; listaVerLancamentos.size() > i; i++) {
+				for (Lancamento l : listaVerLancamentos) {
 
-					if (!listaVerLancamentos.get(i).getTipoDoLancamento().equalsIgnoreCase("FATURA PAGA")) {
+					if (!l.getTipoDoLancamento().equalsIgnoreCase("ENTRADA DE CRÉDITOS (+)")) {
 
-						total = total + listaVerLancamentos.get(i).getQuantidadeDoPedido();
+						if (!l.getTipoDoLancamento().equalsIgnoreCase("FATURA PAGA")) {
+
+							total = total + l.getQuantidadeDoPedido();
+
+						}
 
 					}
 
+					labelTotal.setText(String.valueOf(total));
+
 				}
 
-				labelTotal.setText(String.valueOf(total));
+				total = 0;
 
 			}
 
@@ -168,6 +185,8 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 		String caminho = "C:/temp/listaVerLancamentos.xls";
 
+		String periodo = "";
+
 		try {
 
 			try {
@@ -175,29 +194,39 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 				if (listaVerLancamentos.isEmpty() != true) {
 
 					try {
+						
+						new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage016() + servicoImpressao.getNomeDoServico().toUpperCase());
 
-						exportarXLS.exportarListaLancamentoXLS(caminho, listaVerLancamentos, servicoImpressao, total);
+						DateFormat formatBR = new SimpleDateFormat("dd/MM/YYYY");
+
+						periodo = formatBR.format(Constraints.setLocalDateToDateSql(datePickerDataInicial.getValue()))
+								+ " até "
+								+ formatBR.format(Constraints.setLocalDateToDateSql(datePickerDataFinal.getValue()));
+
+						exportarXLS.exportarListaLancamentoXLS(caminho, listaVerLancamentos, servicoImpressao, periodo,
+								cliente.getNomeFantasia());
 
 					} catch (WriteException e) {
 
-						Alerts.showAlert("Exportar lista", "Erro ao criar o arquivo!", "Exportar ", AlertType.ERROR);
+						Alerts.showAlert("Exportar lista", "Erro ao criar o arquivo!", "Exportar para Excel",
+								AlertType.ERROR);
 
 					}
 
 				} else {
 
-					Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar ", AlertType.ERROR);
+					Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar para Excel", AlertType.ERROR);
 				}
 
 			} catch (HeadlessException | IOException e2) {
 
-				Alerts.showAlert("Exportar lista", "Feche o arquivo primeiro!", "Exportar", AlertType.ERROR);
+				Alerts.showAlert("Exportar lista", "Feche o arquivo primeiro!", "Exportar para Excel", AlertType.ERROR);
 
 			}
 
-		} catch (java.lang.NullPointerException e) {// TODO: handle exception
+		} catch (java.lang.NullPointerException e) {
 
-			Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar ", AlertType.ERROR);
+			Alerts.showAlert("Exportar lista", "Listagem nula", "Exportar para Excel", AlertType.ERROR);
 
 		}
 
@@ -211,9 +240,11 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		try {
 
 			if (listaVerLancamentos.isEmpty() != true) {
+				
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage017() + servicoImpressao.getNomeDoServico().toUpperCase());
 
 				relatorio.relatorioListaLancamentosPDF(listaVerLancamentos, servicoImpressao, total);
-
+				
 			} else {
 
 				Alerts.showAlert("Relatório", "Lista vazia", "Exportar Relatório", AlertType.ERROR);
@@ -222,7 +253,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 		} catch (java.lang.NullPointerException e) {
 
-			Alerts.showAlert("Relatório", "Erro ao gerar o arquivo", "Imprimir Relatório ", AlertType.ERROR);
+			Alerts.showAlert("Relatório", "Listagem nula", "Exportar Relatório", AlertType.ERROR);
 
 		}
 
@@ -250,9 +281,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 		lancamentoService = new LancamentoService();
 
-		labelTituloCliente.setText(new Strings().getTitleLancamentoList());
-
-		Stage stage = (Stage) Main.getMainScene().getWindow();
+		Stage stage = (Stage) SC1Main.getMainScene().getWindow();
 		tableViewLancamento.prefHeightProperty().bind(stage.heightProperty());
 
 		tableColumnIndex.setSortable(false);
@@ -285,14 +314,21 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario) {
 
-		labelNomeCliente.setText(cliente.getNomeFantasia());
-		labelNomeServico.setText(servicoImpressao.getNomeDoServico());
-		labelNomeProduto.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()));
+		labelTituloCliente
+				.setText(Strings.getTitleLancamentoList() + " - Cliente: " + cliente.getNomeFantasia().toUpperCase()
+						+ " - Serviço de Impressão: " + servicoImpressao.getNomeDoServico().toUpperCase());
+		labelNomeCliente.setText(cliente.getNomeFantasia().toUpperCase());
+		labelNomeServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
+		labelNomeProduto.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
 		labelSaldoAtual.setText(String.valueOf(servicoImpressao.getConta().getSaldo()));
 
 		labelTotal.setText(String.valueOf(total));
 
 		setServicoImpressao(servicoImpressao);
+
+		setCliente(cliente);
+
+		setUsuario(usuario);
 
 	}
 
@@ -320,6 +356,14 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 	public void setLancamentoService(LancamentoService lancamentoService) {
 		this.lancamentoService = lancamentoService;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

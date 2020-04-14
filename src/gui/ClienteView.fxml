@@ -29,7 +29,7 @@
             </AnchorPane>
             <AnchorPane prefHeight="681.0" prefWidth="895.0" style="-fx-background-color: GRAY;">
                <children>
-                  <Pane layoutX="15.0" layoutY="13.0" prefHeight="601.0" prefWidth="867.0" style="-fx-background-color: #E8E8E8; -fx-border-color: #8B8989;" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="13.0">
+                  <Pane layoutX="15.0" layoutY="13.0" prefHeight="601.0" prefWidth="867.0" style="-fx-background-color: #E8E8E8;" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="13.0">
                      <children>
                         <Label layoutX="26.0" layoutY="26.0" prefHeight="20.0" prefWidth="417.0" text="Dados Cadastrais do Cliente">
                            <font>
@@ -37,43 +37,43 @@
                            </font>
                         </Label>
                         <Label layoutX="28.0" layoutY="64.0" text="Nome Fantasia" />
-                        <TextField fx:id="textFieldNomeFantasia" layoutX="28.0" layoutY="84.0" prefHeight="28.0" prefWidth="400.0" />
+                        <TextField fx:id="textFieldNomeFantasia" layoutX="28.0" layoutY="84.0" prefHeight="30.0" prefWidth="400.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="438.0" layoutY="64.0" text="Razão Social" />
-                        <TextField fx:id="textFieldRazaoSocial" layoutX="438.0" layoutY="84.0" prefHeight="28.0" prefWidth="400.0" />
+                        <TextField fx:id="textFieldRazaoSocial" layoutX="438.0" layoutY="84.0" prefHeight="30.0" prefWidth="400.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="28.0" layoutY="129.0" text="CNPJ" />
-                        <TextField fx:id="textFieldCnpj" layoutX="28.0" layoutY="149.0" prefHeight="28.0" prefWidth="201.0" />
+                        <TextField fx:id="textFieldCnpj" layoutX="28.0" layoutY="149.0" prefHeight="30.0" prefWidth="201.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="242.0" layoutY="129.0" text="Inscrição Estadual" />
-                        <TextField fx:id="textFieldInscEstadual" layoutX="243.0" layoutY="149.0" prefHeight="28.0" prefWidth="226.0" promptText="ISENTO" />
+                        <TextField fx:id="textFieldInscEstadual" layoutX="243.0" layoutY="149.0" prefHeight="30.0" prefWidth="226.0" promptText="ISENTO" style="-fx-background-radius: 10;" />
                         <Label layoutX="482.0" layoutY="129.0" text="Inscrição Municipal" />
-                        <TextField fx:id="textFieldInscMunicipal" layoutX="482.0" layoutY="149.0" prefHeight="28.0" prefWidth="210.0" promptText="ISENTO" />
+                        <TextField fx:id="textFieldInscMunicipal" layoutX="482.0" layoutY="149.0" prefHeight="30.0" prefWidth="210.0" promptText="ISENTO" style="-fx-background-radius: 10;" />
                         <Label layoutX="708.0" layoutY="129.0" text="Cliente Desde" />
                         <DatePicker fx:id="datePickerClienteDesde" layoutX="708.0" layoutY="149.0" prefHeight="28.0" prefWidth="130.0" />
                         <Label layoutX="28.0" layoutY="194.0" text="Contato" />
-                        <TextField fx:id="textFieldContato" layoutX="28.0" layoutY="214.0" prefHeight="28.0" prefWidth="326.0" />
+                        <TextField fx:id="textFieldContato" layoutX="28.0" layoutY="214.0" prefHeight="30.0" prefWidth="326.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="370.0" layoutY="194.0" text="E-mail" />
-                        <TextField fx:id="textFieldEmail" layoutX="370.0" layoutY="214.0" prefHeight="28.0" prefWidth="468.0" />
+                        <TextField fx:id="textFieldEmail" layoutX="370.0" layoutY="214.0" prefHeight="30.0" prefWidth="468.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="28.0" layoutY="259.0" text="Fone Celular" />
-                        <TextField fx:id="textFieldFoneCelular" layoutX="28.0" layoutY="279.0" prefHeight="28.0" prefWidth="182.0" />
-                        <Label layoutX="234.0" layoutY="256.0" text="Fone Fixo" />
-                        <TextField fx:id="textFieldFoneFixo" layoutX="234.0" layoutY="279.0" prefHeight="28.0" prefWidth="182.0" />
-                        <Label layoutX="437.0" layoutY="256.0" text="Vendedor" />
-                        <ComboBox fx:id="comboBoxVendedor" layoutX="437.0" layoutY="279.0" prefHeight="27.0" prefWidth="190.0" promptText="Selecione..." />
-                        <Label layoutX="649.0" layoutY="257.0" text="Unidade de Atendimento" />
-                        <ComboBox fx:id="comboBoxUnidadeAtendimento" layoutX="649.0" layoutY="279.0" prefHeight="27.0" prefWidth="190.0" promptText="Selecione..." />
+                        <TextField fx:id="textFieldFoneCelular" layoutX="28.0" layoutY="279.0" prefHeight="30.0" prefWidth="182.0" style="-fx-background-radius: 10;" />
+                        <Label layoutX="234.0" layoutY="259.0" text="Fone Fixo" />
+                        <TextField fx:id="textFieldFoneFixo" layoutX="234.0" layoutY="279.0" prefHeight="30.0" prefWidth="182.0" style="-fx-background-radius: 10;" />
+                        <Label layoutX="437.0" layoutY="259.0" text="Vendedor" />
+                        <ComboBox fx:id="comboBoxVendedor" layoutX="437.0" layoutY="279.0" prefHeight="30.0" prefWidth="190.0" promptText="SELECIONE..." style="-fx-background-radius: 10;" />
+                        <Label layoutX="649.0" layoutY="259.0" text="Unidade de Atendimento" />
+                        <ComboBox fx:id="comboBoxUnidadeAtendimento" layoutX="649.0" layoutY="279.0" prefHeight="30.0" prefWidth="190.0" promptText="SELECIONE..." style="-fx-background-radius: 10;" />
                         <Label layoutX="28.0" layoutY="324.0" text="Logradouro " />
-                        <TextField fx:id="textFieldLogradouro" layoutX="28.0" layoutY="344.0" prefHeight="28.0" prefWidth="471.0" />
+                        <TextField fx:id="textFieldLogradouro" layoutX="28.0" layoutY="344.0" prefHeight="30.0" prefWidth="471.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="515.0" layoutY="324.0" text="Bairro" />
-                        <TextField fx:id="textFieldBairro" layoutX="515.0" layoutY="344.0" prefHeight="28.0" prefWidth="323.0" />
+                        <TextField fx:id="textFieldBairro" layoutX="515.0" layoutY="344.0" prefHeight="30.0" prefWidth="323.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="28.0" layoutY="389.0" text="Cidade" />
-                        <TextField fx:id="textFieldCidade" layoutX="28.0" layoutY="409.0" prefHeight="28.0" prefWidth="350.0" />
+                        <TextField fx:id="textFieldCidade" layoutX="28.0" layoutY="409.0" prefHeight="30.0" prefWidth="350.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="397.0" layoutY="389.0" text="CEP" />
-                        <TextField fx:id="textFieldCep" layoutX="397.0" layoutY="409.0" prefHeight="28.0" prefWidth="101.0" />
+                        <TextField fx:id="textFieldCep" layoutX="397.0" layoutY="409.0" prefHeight="30.0" prefWidth="101.0" style="-fx-background-radius: 10;" />
                         <Label layoutX="518.0" layoutY="389.0" prefHeight="17.0" prefWidth="92.0" text="Estado" />
-                        <ComboBox fx:id="comboBoxUnidadeFederal" layoutX="517.0" layoutY="409.0" prefHeight="28.0" prefWidth="230.0" promptText="Selecione..." />
+                        <ComboBox fx:id="comboBoxUnidadeFederal" layoutX="517.0" layoutY="409.0" prefHeight="30.0" prefWidth="230.0" promptText="SELECIONE..." style="-fx-background-radius: 10;" />
                         <RadioButton fx:id="radioButtonEntrega" layoutX="775.0" layoutY="408.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="66.0" text="Entrega" />
                         <Label layoutX="28.0" layoutY="450.0" text="Detalhes do Cliente" />
                         <TextArea fx:id="textAreaDetalhesDoCliente" layoutX="28.0" layoutY="470.0" prefHeight="94.0" prefWidth="524.0" />
-                        <Button fx:id="buttonSalvarCliente" defaultButton="true" layoutX="724.0" layoutY="536.0" mnemonicParsing="false" onAction="#onButtonSalvarClienteAction" prefHeight="28.0" prefWidth="112.0" text="Salvar Cliente" />
+                        <Button fx:id="buttonSalvarCliente" defaultButton="true" layoutX="724.0" layoutY="536.0" mnemonicParsing="false" onAction="#onButtonSalvarClienteAction" prefHeight="30.0" prefWidth="112.0" style="-fx-background-radius: 10;" text="SALVAR CLIENTE" />
                      </children>
                      <padding>
                         <Insets bottom="100.0" left="200.0" right="200.0" top="100.0" />

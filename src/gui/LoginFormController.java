@@ -16,17 +16,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import model.entities.Usuario;
+import model.services.LogSegurancaService;
 import model.services.UsuarioService;
 
 public class LoginFormController implements Initializable {
-	
-	// Java variáveis
-	
-	private UsuarioService usuarioService;
 
-	private Usuario usuario;
-	
-	// @FXML variáveis
+	private static Usuario logado;
+
+	private UsuarioService usuarioService;
 
 	@FXML
 	private TextField txtLogin;
@@ -35,29 +32,39 @@ public class LoginFormController implements Initializable {
 	private PasswordField pswSenha;
 
 	@FXML
-	private Button btOK;
+	private Button buttonLogin;
+
+	@FXML
+	private Button buttonFechar;
 
 	@FXML
 	private Label labelTitle;
-	
-	// @FXML event
 
 	@FXML
-	public void onBtOKAction(ActionEvent event) {
+	public void onButtonFecharAction(ActionEvent event) {
 
-		Usuario user = new Usuario();
-		user = getFormData();
+		System.exit(0);
 
-		if (user.getLogin() != null && user.getSenha() != null) {
+	}
 
-			setUsuario(usuarioService.login(user));
+	@FXML
+	public void onButtonLoginAction(ActionEvent event) {
+
+		Usuario usuario = new Usuario();
+		usuario = getFormData();
+
+		if (usuario.getLogin() != null && usuario.getSenha() != null) { 
 
 			try {
 
-				if (usuario != null) {
+				setLogado(usuarioService.login(usuario));
+
+				if (logado != null) {
 
 					Utils.currentStage(event).close();
-					new Forms().principalForm(usuario, Strings.getPrincipalView());
+					new Forms().principalForm(logado, Strings.getPrincipalView());
+
+					new LogSegurancaService().novoLogSeguranca(logado.getNome(), Strings.getLogMessage001());
 
 				} else {
 
@@ -71,15 +78,35 @@ public class LoginFormController implements Initializable {
 
 			} catch (NullPointerException e) {
 
-				Alerts.showAlert("Login", "NullPointerException", e.getMessage(), AlertType.ERROR);
+				Alerts.showAlert("Login", null, "Login não confirmado", AlertType.ERROR);
+
+				txtLogin.setText("");
+				pswSenha.setText("");
+				txtLogin.requestFocus();
 
 			}
 
 		}
 
 	}
-	
-	// Inicia classe
+
+	public static void setLogado(Usuario logado) {
+
+		LoginFormController.logado = logado;
+
+	}
+
+	public static Usuario getLogado() {
+
+		return logado;
+
+	}
+
+	public static String usuarioLogado() {
+
+		return logado.toUsuarioLogado();
+
+	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -87,18 +114,15 @@ public class LoginFormController implements Initializable {
 		initializeNodes();
 
 	}
-	
-	// Método com os objetos que devem ser inicializados
 
 	private void initializeNodes() {
 
-		usuario = new Usuario();
+		logado = new Usuario();
 		usuarioService = new UsuarioService();
+
 		labelTitle.setText(Strings.getTitleLogin());
 
 	}
-	
-	// Método para testar os textFields
 
 	private Usuario getFormData() {
 
@@ -131,16 +155,6 @@ public class LoginFormController implements Initializable {
 
 		return usuario;
 
-	}
-	
-	// Getters and Setters
-
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
 	}
 
 }

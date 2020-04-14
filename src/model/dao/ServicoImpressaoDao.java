@@ -11,5 +11,6 @@ public interface ServicoImpressaoDao {
 	ServicoImpressao buscarPeloIdCliente(Integer id_cliente_servico);
 	List<ServicoImpressao> buscarServicosDoCliente(Integer idCliente);
 	String buscarServicosDoClientePeloCnpj(String servicoCNPJ);
+	void excluir(Integer idServicoImpressao);
 
 }

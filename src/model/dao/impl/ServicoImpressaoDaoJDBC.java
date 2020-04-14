@@ -20,7 +20,7 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 	private Connection conn;
 
 	// método para criar a conexão
-
+ 
 	public ServicoImpressaoDaoJDBC(Connection conn) {
 
 		this.conn = conn;
@@ -322,6 +322,51 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 
 		return nome;
 
+	}
+
+	@Override
+	public void excluir(Integer id) {
+	
+		PreparedStatement st = null;
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement("DELETE FROM servico_impressao WHERE id_servico_impressao = ?");
+
+			st.setInt(1, id);
+
+			int rowsAffected = st.executeUpdate();
+
+			if (rowsAffected == 0) {
+
+				throw new DbException("Erro ao deletar o serviço");
+
+			}
+
+			conn.commit();
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+
+			}
+			
+		} finally {
+
+			DB.closeStatement(st);
+
+		}
+		
+		
 	}
 
 }

@@ -1,6 +1,6 @@
 package gui.util;
 
-import application.Main;
+import application.SC1Main;
 import gui.ClienteFormController;
 import gui.LancamentoFormController;
 import gui.ServicoFormController;
@@ -22,7 +22,7 @@ public class Utils {
 
 	public static void fecharTelaPrincipalFormAction() {
 
-		Stage stage = (Stage) Main.getMainScene().getWindow(); // Obtendo a janela atual
+		Stage stage = (Stage) SC1Main.getMainScene().getWindow(); // Obtendo a janela atual
 		stage.close();// Fechando o Stage
 
 	}

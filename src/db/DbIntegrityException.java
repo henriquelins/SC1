@@ -11,7 +11,7 @@ public class DbIntegrityException extends RuntimeException {
 		
 		super(msg);
 		
-		Alerts.showAlert("Controle de Estoque", " DbIntegrityException", msg, AlertType.ERROR);
+		Alerts.showAlert("Controle de Saldo", " DbIntegrityException", msg, AlertType.ERROR);
 		
 	}
 }

@@ -30,6 +30,7 @@ import model.entities.Unidade;
 import model.entities.Usuario;
 import model.entities.Vendedor;
 import model.services.ClienteService;
+import model.services.LogSegurancaService;
 import model.services.UnidadeService;
 import model.services.VendedorService;
 
@@ -47,12 +48,8 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 	private ClienteService service;
 
-	private PrincipalFormController principalFormController;
-
-	private ClienteSelecionadoFormController clienteSelecionadoFormController;
-	
 	private List<Vendedor> listaVendedores = new ArrayList<>();
-	
+
 	private List<Unidade> listaUnidade = new ArrayList<>();
 
 	// Lista de ouvintes para receber alguma modificação
@@ -124,6 +121,8 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 	@FXML
 	private Button buttonSalvarCliente;
 
+	private Usuario usuario;
+
 	// @FXML event
 
 	@FXML
@@ -142,6 +141,7 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 				service.clienteNovoOuEditar(getCliente());
 				Utils.fecharTelaClienteFormAction();
 				notifyDataChangeListeners();
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(), "Cliente cadastrado: " + cliente.getNomeFantasia().toUpperCase());
 
 			} else {
 
@@ -200,9 +200,6 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 		service = new ClienteService();
 
-		setPrincipalFormController(new PrincipalFormController());
-		setClienteSelecionadoFormController(new ClienteSelecionadoFormController());
-
 		lableTitulo.setText(Strings.getTitleCliente());
 		comboBoxVendedor.setItems(FXCollections.observableArrayList(listaVendedores()));
 		comboBoxUnidadeAtendimento.setItems(FXCollections.observableArrayList(listaUnidadesAtendimento()));
@@ -222,8 +219,8 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 		if (cliente != null) {
 
-			textFieldNomeFantasia.setText(cliente.getNomeFantasia());
-			textFieldRazaoSocial.setText(cliente.getRazaoSocial());
+			textFieldNomeFantasia.setText(cliente.getNomeFantasia().toUpperCase());
+			textFieldRazaoSocial.setText(cliente.getRazaoSocial().toUpperCase());
 			textFieldCnpj.setText(cliente.getCnpjCliente());
 			textFieldInscEstadual.setText(cliente.getInscricaoEstadual());
 			textFieldInscMunicipal.setText(cliente.getInscricaoMunicipal());
@@ -232,20 +229,22 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 			textFieldEmail.setText(cliente.getContato().getEmailCliente());
 			textFieldFoneCelular.setText(cliente.getContato().getFoneCelular());
 			textFieldFoneFixo.setText(cliente.getContato().getFoneFixo());
-			
+
 			comboBoxVendedor.getSelectionModel().select(new Vendedor().nomeVendedor(cliente.getCod_vendedor()));
-			comboBoxUnidadeAtendimento.getSelectionModel().select(new Unidade().nomeUnidade(cliente.getUnidadeDeAtendimento()));
-			
-			textFieldLogradouro.setText(cliente.getEndereco().getLogradouro());
-			textFieldCidade.setText(cliente.getEndereco().getCidade());
-			textFieldBairro.setText(cliente.getEndereco().getBairro());
+			comboBoxUnidadeAtendimento.getSelectionModel()
+					.select(new Unidade().nomeUnidade(cliente.getUnidadeDeAtendimento()));
+
+			textFieldLogradouro.setText(cliente.getEndereco().getLogradouro().toUpperCase());
+			textFieldCidade.setText(cliente.getEndereco().getCidade().toUpperCase());
+			textFieldBairro.setText(cliente.getEndereco().getBairro().toUpperCase());
 			textFieldCep.setText(cliente.getEndereco().getCep());
 			comboBoxUnidadeFederal.setValue(cliente.getEndereco().uf);
 			radioButtonEntrega.selectedProperty().setValue(cliente.isEntregaNoCliente());
-			textAreaDetalhesDoCliente.setText(cliente.getDetalhesDoCliente());
+			textAreaDetalhesDoCliente.setText(cliente.getDetalhesDoCliente().toUpperCase());
 
 			setCliente(cliente);
 			clienteComparar = cliente;
+			setUsuario(usuario);
 
 		} else {
 
@@ -271,6 +270,7 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 			setCliente(null);
 			clienteComparar = null;
+			setUsuario(usuario);
 
 		}
 
@@ -431,30 +431,43 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 				cliente.setInscricaoMunicipal(textFieldInscMunicipal.getText());
 			}
 
-			cliente.setNomeFantasia(textFieldNomeFantasia.getText());
-			cliente.setRazaoSocial(textFieldRazaoSocial.getText());
+			if (Constraints.isValidEmailAddressRegex(textFieldEmail.getText()) != true) {
+
+				Alerts.showAlert("Cadastro de clientes", "Campo obrigatório", "O e-mail não é válido",
+						AlertType.INFORMATION);
+
+				textFieldEmail.setText("");
+				textFieldEmail.requestFocus();
+
+				cliente = null;
+
+			}
+
+			cliente.setNomeFantasia(textFieldNomeFantasia.getText().toUpperCase());
+			cliente.setRazaoSocial(textFieldRazaoSocial.getText().toUpperCase());
 			cliente.setCnpjCliente(textFieldCnpj.getText());
 			cliente.setDataInicioCliente(Constraints.setLocalDateToDateSql(datePickerClienteDesde.getValue()));
 
-			contato.setContatoCliente(textFieldContato.getText());
+			contato.setContatoCliente(textFieldContato.getText().toUpperCase());
 			contato.setEmailCliente(textFieldEmail.getText());
 			contato.setFoneCelular(textFieldFoneCelular.getText());
 			contato.setFoneFixo(textFieldFoneFixo.getText());
-			
-			
+
 			for (int i = 0; listaVendedores.size() > i; i++) {
 
-				if (listaVendedores.get(i).getNomeVendedor().equalsIgnoreCase(comboBoxVendedor.getSelectionModel().getSelectedItem())) {
+				if (listaVendedores.get(i).getNomeVendedor()
+						.equalsIgnoreCase(comboBoxVendedor.getSelectionModel().getSelectedItem())) {
 
 					cliente.setCod_vendedor(listaVendedores.get(i).getIdVendedor());
 
 				}
 
 			}
-			
+
 			for (int i = 0; listaUnidade.size() > i; i++) {
 
-				if (listaUnidade.get(i).getNomeUnidade().equalsIgnoreCase(comboBoxUnidadeAtendimento.getSelectionModel().getSelectedItem())) {
+				if (listaUnidade.get(i).getNomeUnidade()
+						.equalsIgnoreCase(comboBoxUnidadeAtendimento.getSelectionModel().getSelectedItem())) {
 
 					cliente.setUnidadeDeAtendimento(listaUnidade.get(i).getIdUnidade());
 
@@ -462,16 +475,13 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 			}
 
-			//cliente.setCod_vendedor(new Vendedor().codVendedor(comboBoxVendedor.getSelectionModel().getSelectedItem()));
-			//cliente.setUnidadeDeAtendimento(new Unidade().codUnidade(comboBoxUnidadeAtendimento.getSelectionModel().getSelectedItem()));
-
-			endereco.setLogradouro(textFieldLogradouro.getText());
-			endereco.setBairro(textFieldBairro.getText());
-			endereco.setCidade(textFieldCidade.getText());
+			endereco.setLogradouro(textFieldLogradouro.getText().toUpperCase());
+			endereco.setBairro(textFieldBairro.getText().toUpperCase());
+			endereco.setCidade(textFieldCidade.getText().toUpperCase());
 			endereco.setCep(textFieldCep.getText());
 			endereco.setUf(comboBoxUnidadeFederal.getSelectionModel().getSelectedItem());
 			cliente.setEntregaNoCliente(radioButtonEntrega.isSelected());
-			cliente.setDetalhesDoCliente(textAreaDetalhesDoCliente.getText());
+			cliente.setDetalhesDoCliente(textAreaDetalhesDoCliente.getText().toUpperCase());
 
 			cliente.setContato(contato);
 			cliente.setEndereco(endereco);
@@ -489,19 +499,13 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 		List<String> lista = new ArrayList<>();
 
-		/*for (Vendedor v : new VendedorService().buscarTodos()) {
-
-			lista.add(v.getIdVendedor() + " - " + v.getNomeVendedor());
-
-		}*/
-		
 		VendedorService vendedorService = new VendedorService();
-		
+
 		listaVendedores = vendedorService.buscarTodos();
-		
+
 		for (Vendedor v : listaVendedores) {
 
-			lista.add( v.getNomeVendedor());
+			lista.add(v.getNomeVendedor());
 
 		}
 
@@ -515,16 +519,10 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 		List<String> lista = new ArrayList<>();
 
-		/*for (Unidade u : new UnidadeService().buscarTodos()) {
-
-			lista.add(u.getIdUnidade() + " - " + u.getNomeUnidade());
-
-		}*/
-		
 		UnidadeService unidadeService = new UnidadeService();
-		
+
 		listaUnidade = unidadeService.buscarTodos();
-		
+
 		for (Unidade u : new UnidadeService().buscarTodos()) {
 
 			lista.add(u.getNomeUnidade());
@@ -542,7 +540,7 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 		List<String> lista = new ArrayList<>();
 
 		String[] uf = { "ACRE", "ALAGOAS", "AMAPÁ", "AMAZONAS", "BAHIA", "CEARÁ", "DISTRITO FEDERAL", "ESPÍRITO SANTO",
-				"GOIÁS", "MARANHÃO", "MATO GROSSO", "MATO GROSSO DO SUL", "MINAS GERAIS", "PARA", "PARAÍBA", "PARANÁ",
+				"GOIÁS", "MARANHÃO", "MATO GROSSO", "MATO GROSSO DO SUL", "MINAS GERAIS", "PARÁ", "PARAÍBA", "PARANÁ",
 				"PERNAMBUCO", "PIAUÍ", "RIO JANEIRO", "RIO GRANDE DO NORTE", "RIO GRANDE DO SUL", "RONDÔNIA", "RORAIMA",
 				"SANTA CATARINA", "SÃO PAULO", "SERGIPE", "TOCANTINS" };
 
@@ -617,28 +615,20 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 	}
 
-	public PrincipalFormController getPrincipalFormController() {
-		return principalFormController;
-	}
-
-	public void setPrincipalFormController(PrincipalFormController principalFormController) {
-		this.principalFormController = principalFormController;
-	}
-
-	public ClienteSelecionadoFormController getClienteSelecionadoFormController() {
-		return clienteSelecionadoFormController;
-	}
-
-	public void setClienteSelecionadoFormController(ClienteSelecionadoFormController clienteSelecionadoFormController) {
-		this.clienteSelecionadoFormController = clienteSelecionadoFormController;
-	}
-
 	public int getIdClienteSelecionado() {
 		return idClienteSelecionado;
 	}
 
 	public void setIdClienteSelecionado(int idClienteSelecionado) {
 		this.idClienteSelecionado = idClienteSelecionado;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

@@ -32,7 +32,8 @@ public class ExportarListaLancamentosXLS {
 	private WritableCellFormat tahoma;
 
 	// Método responsável pela definição das labels
-	private void criaLabel(WritableSheet sheet, int total, ServicoImpressao servicoImpressao) throws WriteException {
+	private void criaLabel(WritableSheet sheet, String periodo, ServicoImpressao servicoImpressao, String nomeCliente)
+			throws WriteException {
 		// Cria o tipo de fonte como TIMES e tamanho
 		WritableFont tahoma10pt = new WritableFont(WritableFont.TAHOMA, 10);
 
@@ -61,41 +62,29 @@ public class ExportarListaLancamentosXLS {
 		// MESCLAR CÉLULAS: colunaInicial, linhaInicial, colunaFinal, linhaFinal
 		sheet.mergeCells(0, 0, 6, 0);
 		sheet.mergeCells(0, 1, 6, 1);
+		sheet.mergeCells(0, 2, 6, 2);
 
-		addCaption(sheet, 0, 0,
-				servicoImpressao.getNomeDoServico());
-		addCaption(sheet, 1, 0, "");
-		addCaption(sheet, 2, 0, "");
-		addCaption(sheet, 3, 0, "");
-		addCaption(sheet, 4, 0, "");
-		addCaption(sheet, 5, 0, "");
-		addCaption(sheet, 6, 0, "");
-		
-		addCaption(sheet, 0, 1, "Saldo Atual: "
-						+ String.valueOf(servicoImpressao.getConta().getSaldo()) + " / Produzidos no período: "
-						+ String.valueOf(total));
-		addCaption(sheet, 1, 1, "");
-		addCaption(sheet, 2, 1, "");
-		addCaption(sheet, 3, 1, "");
-		addCaption(sheet, 4, 1, "");
-		addCaption(sheet, 5, 1, "");
-		addCaption(sheet, 6, 1, "");
-		
+		addCaption(sheet, 0, 0, "Cliente: " + nomeCliente.toUpperCase());
 
-		addCaption(sheet, 0, 2, "#");
-		addCaption(sheet, 1, 2, "Data do lançamento");
-		addCaption(sheet, 2, 2, "Saldo Anterior");
-		addCaption(sheet, 3, 2, "Operação");
-		addCaption(sheet, 4, 2, "Valor Lançamento");
-		addCaption(sheet, 5, 2, "Saldo Atual");
-		addCaption(sheet, 6, 2, "Detalhes");
+		addCaption(sheet, 0, 1, "Serviço: " + servicoImpressao.getNomeDoServico());
+
+		addCaption(sheet, 0, 2, "Saldo Atual: " + String.valueOf(servicoImpressao.getConta().getSaldo())
+				+ " / Período pesquisado: " + periodo);
+
+		addCaption(sheet, 0, 3, "#");
+		addCaption(sheet, 1, 3, "Data do lançamento");
+		addCaption(sheet, 2, 3, "Saldo Anterior");
+		addCaption(sheet, 3, 3, "Operação");
+		addCaption(sheet, 4, 3, "Valor Lançamento");
+		addCaption(sheet, 5, 3, "Saldo Atual");
+		addCaption(sheet, 6, 3, "Detalhes");
 
 	}
 
 	private void defineConteudo(WritableSheet sheet, List<Lancamento> listaLancamentos)
 			throws WriteException, RowsExceededException {
 
-		int i = 3;
+		int i = 4;
 		int contador = 1;
 
 		NumberFormat tresDigitos = new DecimalFormat("000");
@@ -140,7 +129,7 @@ public class ExportarListaLancamentosXLS {
 	}
 
 	public void exportarListaLancamentoXLS(String inputArquivo, ObservableList<Lancamento> listaLancamentos,
-			ServicoImpressao servicoImpressao, int total) throws IOException, WriteException {
+			ServicoImpressao servicoImpressao, String periodo, String nomeCliente) throws IOException, WriteException {
 
 		// Cria um novo arquivo
 		File arquivo = new File(inputArquivo);
@@ -151,7 +140,7 @@ public class ExportarListaLancamentosXLS {
 		// Define um nome para a planilha
 		workbook.createSheet("Lista Lançamentos", 0);
 		WritableSheet excelSheet = workbook.getSheet(0);
-		criaLabel(excelSheet, total, servicoImpressao);
+		criaLabel(excelSheet, periodo, servicoImpressao, nomeCliente);
 		defineConteudo(excelSheet, listaLancamentos);
 
 		workbook.write();

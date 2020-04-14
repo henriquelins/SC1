@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -9,20 +11,27 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="292.0" prefWidth="457.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConfigurarPerpetiesFormController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConfigurarPerpetiesDBFormController">
    <children>
-      <ToolBar prefHeight="40.0" prefWidth="200.0">
-        <items>
-          <Button fx:id="btEditarSalvar" mnemonicParsing="false" onAction="#onBtEditarSalvarAction" text="Editar" />
-        </items>
-      </ToolBar>
-      <AnchorPane prefHeight="249.0" prefWidth="546.0">
+      <ToolBar prefHeight="36.0" prefWidth="500.0" style="-fx-background-color: gray;">
+         <items>
+            <Label prefHeight="27.0" prefWidth="456.0" text="Configurar Banco de Dados" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <padding>
+                  <Insets left="30.0" />
+               </padding>
+            </Label>
+         </items></ToolBar>
+      <AnchorPane prefHeight="269.0" prefWidth="500.0">
          <children>
-            <GridPane layoutX="67.0" layoutY="61.0" prefHeight="103.0" prefWidth="315.0">
+            <GridPane layoutX="37.0" layoutY="26.0" prefHeight="170.0" prefWidth="424.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="10.0" prefWidth="77.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.0" minWidth="10.0" prefWidth="230.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="10.0" prefWidth="91.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.0" minWidth="10.0" prefWidth="333.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -30,14 +39,28 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="URL" />
-                  <Label text="PASSWORD" GridPane.rowIndex="1" />
-                  <Label text="USER" GridPane.rowIndex="2" />
-                  <TextField fx:id="txtUrl" editable="false" promptText="ex: jdbc:postgresql://localhost:5432/banco" GridPane.columnIndex="1" />
-                  <TextField fx:id="txtPassword" editable="false" promptText="ex: 1000 " GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="txtUser" editable="false" promptText="ex: user" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="URL">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <Label text="PASSWORD" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <Label text="USER" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <TextField fx:id="textFieldUrl" editable="false" prefHeight="30.0" promptText="jdbc:postgresql://localhost:5432/banco" style="-fx-background-radius: 20;" GridPane.columnIndex="1">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></TextField>
+                  <PasswordField fx:id="textFieldPassword" prefHeight="30.0" promptText="*******" style="-fx-background-radius: 20;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <PasswordField fx:id="textFieldUser" prefHeight="30.0" promptText="*******" style="-fx-background-radius: 20;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
             </GridPane>
+          <Button fx:id="buttonEditarSalvar" defaultButton="true" layoutX="292.0" layoutY="206.0" mnemonicParsing="false" onAction="#onButtonEditarSalvarAction" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="EDITAR" />
+            <Button fx:id="buttonConfirmar" defaultButton="true" layoutX="370.0" layoutY="206.0" mnemonicParsing="false" onAction="#onButtonConfirmarAction" prefHeight="30.0" prefWidth="91.0" style="-fx-background-radius: 10;" text="CONFIRMAR" />
          </children>
       </AnchorPane>
    </children>

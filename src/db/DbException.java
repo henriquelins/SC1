@@ -18,7 +18,7 @@ public class DbException extends RuntimeException {
 
 		super(msg);
 
-		Alerts.showAlert("Controle de Estoque", "DbException - Erro ao acessar o Bando de Dados", msg, AlertType.ERROR);
+		Alerts.showAlert("Controle de Saldo", "DbException - Erro ao acessar o Bando de Dados", msg, AlertType.ERROR);
 		 
 	}
 

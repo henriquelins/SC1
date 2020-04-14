@@ -45,6 +45,18 @@ public class Acesso {
 
 			concedido = true;
 
+		} else if (acesso == 1 && tela.equalsIgnoreCase("Excluir Serviço")) {
+
+			concedido = true;
+
+		} else if (acesso == 1 && tela.equalsIgnoreCase(Strings.getBackupBancoView())) {
+
+			concedido = true;
+
+		} else if (acesso == 1 && tela.equalsIgnoreCase(Strings.getLogSegurancaView())) {
+
+			concedido = true;
+
 		} else {
 
 			concedido = false;
@@ -56,3 +68,4 @@ public class Acesso {
 	}
 
 }
+

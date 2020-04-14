@@ -1,11 +1,14 @@
 package gui;
 
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
+import exportarXLS.ExportarListaSaldoClienteXLS;
 import gui.forms.Forms;
 import gui.listeners.DataChangeListener;
 import gui.util.Acesso;
@@ -20,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -29,6 +33,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jxl.write.WriteException;
+import model.dao.DaoFactory;
+import model.dao.ServicoImpressaoDao;
 import model.entities.Cliente;
 import model.entities.Produto;
 import model.entities.ServicoImpressao;
@@ -36,6 +43,7 @@ import model.entities.Unidade;
 import model.entities.Usuario;
 import model.entities.Vendedor;
 import model.services.ClienteService;
+import model.services.LogSegurancaService;
 import model.services.ServicoÌmpressaoService;
 
 public class ClienteSelecionadoFormController implements Initializable, DataChangeListener {
@@ -59,8 +67,6 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	private ClienteService clienteService;
 
 	private ServicoImpressao servicoImpressao;
-
-	private PrincipalFormController principalFormController;
 
 	private static int id_cliente_servico;
 
@@ -168,14 +174,192 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	@FXML
 	private Button buttonEditarCliente;
 
+	@FXML
+	private Button buttonRelatorioDoCliente;
+
+	@FXML
+	private Button buttonExcluirServico;
+
 	// @FXML event
+
+	// Evento boto relatório do cliente
+
+	@FXML
+	public void onButtonRelatorioDoClienteAction(ActionEvent event) {
+
+		Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
+
+				"Você deseja ver o relatório do cliente " + cliente.getNomeFantasia().toUpperCase() + " ?");
+
+		if (result.get() == ButtonType.OK) {
+
+			String serv = "";
+			String saldo = "";
+
+			StringBuffer servicos = new StringBuffer();
+			StringBuffer saldoCnpj = new StringBuffer();
+
+			List<String> listaSaldoCliente = new ArrayList<>();
+
+			if (cliente != null) {
+
+				String cnpj = "";
+
+				saldoCnpj.append("Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n");
+
+				saldo = "Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n";
+				listaSaldoCliente.add(saldo);
+
+				int index = 1;
+				int index2 = 1;
+
+				ServicoÌmpressaoService impressaoService = new ServicoÌmpressaoService();
+
+				List<ServicoImpressao> ListaSi = new ArrayList<>();
+
+				ListaSi = impressaoService.buscarServicosDoCliente(cliente.getIdCliente());
+
+				if (!ListaSi.isEmpty() == true) {
+
+					for (ServicoImpressao si : ListaSi) {
+
+						if (!si.getConta().getCnpj().equals(cnpj)) {
+
+							saldoCnpj.append(index + " - Saldo ou Fatura no CNPJ: " + si.getConta().getCnpj()
+									+ " - total: " + String.valueOf(si.getConta().getSaldo()) + " Unidades.\n");
+
+							saldo = index + " - Saldo ou Fatura no CNPJ: " + si.getConta().getCnpj() + " - total: "
+									+ String.valueOf(si.getConta().getSaldo()) + " Unidades.\n";
+
+							listaSaldoCliente.add(saldo.toString());
+
+							index++;
+						}
+
+						cnpj = si.getConta().getCnpj();
+
+						index++;
+
+					}
+
+					servicos.append("Cliente: " + cliente.getNomeFantasia().toUpperCase()
+							+ " - Lista por Serviços do cliente - Mesmo CNPJ, mesmo total.\n");
+
+					serv = "Cliente: " + cliente.getNomeFantasia().toUpperCase()
+							+ " - Lista por Serviços do cliente - Mesmo CNPJ, mesmo total.\n";
+
+					listaSaldoCliente.add("\n");
+					listaSaldoCliente.add(serv);
+
+					new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+							"seleção do cliente " + cliente.getNomeFantasia().toUpperCase());
+
+				} else {
+
+					servicos.append("Não existem serviços cadastrados para o cliente.");
+					saldoCnpj.append("Não existem serviços cadastrados para o cliente.");
+
+					servicos = new StringBuffer();
+					saldoCnpj = new StringBuffer();
+
+				}
+
+				if (!ListaSi.isEmpty() == true) {
+
+					for (ServicoImpressao si : ListaSi) {
+
+						servicos.append(index2 + " - CNPJ para cobrança: " + si.getConta().getCnpj() + " - Serviço: "
+								+ si.getNomeDoServico().toUpperCase() + " - total: "
+								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.");
+
+						serv = index2 + " - CNPJ para cobrança: " + si.getConta().getCnpj() + " - Serviço: "
+								+ si.getNomeDoServico().toUpperCase() + " - total: "
+								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.";
+
+						listaSaldoCliente.add(serv);
+
+						if (ListaSi.size() != index2) {
+
+							servicos.append("\n");
+
+						}
+
+						cnpj = si.getConta().getCnpj();
+
+						index2++;
+
+					}
+
+				} else {
+
+					servicos.append("Não existem serviços cadastrados para o cliente.");
+					saldoCnpj.append("Não existem serviços cadastrados para o cliente.");
+
+					servicos = new StringBuffer();
+					saldoCnpj = new StringBuffer();
+
+				}
+
+			} else {
+
+				servicos = new StringBuffer();
+				saldoCnpj = new StringBuffer();
+
+			}
+
+			ExportarListaSaldoClienteXLS exportarXLS = new ExportarListaSaldoClienteXLS();
+
+			String caminho = "C:/temp/listaSaldoCliente.xls";
+
+			try {
+
+				try {
+
+					if (listaSaldoCliente.isEmpty() != true) {
+
+						try {
+
+							exportarXLS.exportarListaSaldoClienteXLS(caminho, listaSaldoCliente, cliente);
+
+						} catch (WriteException e) {
+
+							Alerts.showAlert("Exportar lista", "Erro ao criar o arquivo!", "Exportar ",
+									AlertType.ERROR);
+
+						}
+
+					} else {
+
+						Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar para Excel", AlertType.ERROR);
+					}
+
+				} catch (HeadlessException | IOException e2) {
+
+					Alerts.showAlert("Exportar lista", "Feche o arquivo primeiro!", "Exportar para Excel",
+							AlertType.ERROR);
+
+				}
+
+			} catch (java.lang.NullPointerException e) {
+
+				Alerts.showAlert("Exportar lista", "Listagem nula", "Exportar para Excel", AlertType.ERROR);
+
+			}
+
+		}
+
+	}
 
 	// Evento botão novo serviço
 
 	@FXML
 	public void onButtonNovoServicoAction(ActionEvent event) {
 
-		servicoForm(usuario, cliente, null, Strings.getServicoView());
+		boolean editar = false;
+		servicoForm(usuario, cliente, null, Strings.getServicoView(), editar);
+		new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage013());
+		onDataChanged();
+		updateDadosServicos();
 
 	}
 
@@ -183,6 +367,8 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	@FXML
 	public void onButtonEditarServicoAction(ActionEvent event) {
+
+		boolean editar = true;
 
 		if (listaServicos().isEmpty() == true) {
 
@@ -193,7 +379,10 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 			try {
 
-				servicoForm(usuario, cliente, servicoImpressao, Strings.getServicoView());
+				servicoForm(usuario, cliente, servicoImpressao, Strings.getServicoView(), editar);
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage014());
+				onDataChanged();
+				updateDadosServicos();
 
 			} catch (java.lang.NullPointerException e) {
 
@@ -220,6 +409,7 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 			try {
 
 				lancamentoForm(usuario, cliente, servicoImpressao, Strings.getLancamentoView());
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage015());
 
 			} catch (java.lang.NullPointerException e) {
 
@@ -246,6 +436,7 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 			try {
 
 				new Forms().lancamentoListForm(usuario, cliente, servicoImpressao, Strings.getLancamentoListView());
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage016());
 
 			} catch (java.lang.NullPointerException e) {
 
@@ -263,6 +454,45 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	public void onButtoEditarClienteServicoAction(ActionEvent event) {
 
 		clienteForm(usuario, cliente, Strings.getClienteView());
+		new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+				"Editar cliente: " + cliente.getNomeFantasia().toUpperCase());
+
+	}
+
+	// Evento botão editar cliente serviço
+
+	@FXML
+	public void onButtoExcluirClienteServicoAction(ActionEvent event) {
+
+		boolean concedido = false;
+		Acesso acesso = new Acesso();
+
+		concedido = acesso.concederAcesso(usuario.getAcesso(), "Excluir Serviço");
+
+		if (concedido == true) {
+
+			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
+
+					"Você deseja excluir o serviço  " + servicoImpressao.getNomeDoServico().toUpperCase() + " ?");
+
+			if (result.get() == ButtonType.OK) {
+
+				ServicoImpressaoDao dao = DaoFactory.createServicoImpressaoDao();
+				dao.excluir(servicoImpressao.getIdServicoImpressao());
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Excluir cliente: " + cliente.getNomeFantasia().toUpperCase());
+
+			}
+
+			onDataChanged();
+			limparDadosServicos();
+
+		} else {
+
+			Alerts.showAlert("Acesso negado", "Acesso não concedido ao usuário logado",
+					"Entre em contato com o Administrador do sistema", AlertType.ERROR);
+
+		}
 
 	}
 
@@ -280,21 +510,28 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 			} else {
 
-				String nome = comboBoxServico.getSelectionModel().getSelectedItem();
+				if (!comboBoxServico.getSelectionModel().getSelectedItem().equals("SELECIONE O SERVIÇO...")) {
 
-				for (int i = 0; listaServicosGeral.size() > i; i++) {
+					String nome = comboBoxServico.getSelectionModel().getSelectedItem();
 
-					if (listaServicosGeral.get(i).getNomeDoServico().equals(nome)) {
+					new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+							"Serviço selecionado: " + nome.toUpperCase());
 
-						id_cliente_servico = listaServicosGeral.get(i).getIdServicoImpressao();
+					for (int i = 0; listaServicosGeral.size() > i; i++) {
+
+						if (listaServicosGeral.get(i).getNomeDoServico().equals(nome)) {
+
+							id_cliente_servico = listaServicosGeral.get(i).getIdServicoImpressao();
+
+						}
 
 					}
 
+					setServicoImpressao(servicoÌmpressaoService.buscarPeloIdCliente(id_cliente_servico));
+
+					carregarCamposClienteServico();
+
 				}
-
-				setServicoImpressao(servicoÌmpressaoService.buscarPeloIdCliente(id_cliente_servico));
-
-				carregarCamposClienteServico();
 
 			}
 
@@ -313,6 +550,8 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 		listaServicosGeral = impressaoService.buscarServicosDoCliente(idClienteSelecionado);
 
+		listaServicoImpressao.add("SELECIONE O SERVIÇO");
+
 		for (ServicoImpressao cs : listaServicosGeral) {
 
 			listaServicoImpressao.add(cs.getNomeDoServico());
@@ -327,11 +566,57 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	public void updateDadosServicos() {
 
-		principalFormController.updateTableView();
+		// principalFormController.updateTableView();
 
 		setServicoImpressao(servicoÌmpressaoService.buscarPeloIdCliente(id_cliente_servico));
 
 		carregarCamposClienteServico();
+
+	}
+
+	// Método para atualizar comboBox serviços
+
+	public void atualizarDadosServicosNovo() {
+
+		textFieldServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
+		textFieldProdutoDoServico
+				.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
+		textFieldSaldo.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
+		textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
+		textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()) + " Unidades");
+		textFieldCnpj.setText(servicoImpressao.getConta().getCnpj());
+
+		String tipo = "";
+
+		if (servicoImpressao.getConta().isTipo()) {
+
+			tipo = "SALDO";
+
+		} else {
+
+			tipo = "FATURADO";
+		}
+
+		textFieldTipoDeConta.setText(tipo);
+		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico().toUpperCase());
+		comboBoxServico.getSelectionModel().selectLast();
+
+	}
+
+	public void limparDadosServicos() {
+
+		comboBoxServico.setItems(FXCollections.observableArrayList(listaServicos()));
+		comboBoxServico.getSelectionModel().selectFirst();
+
+		textFieldServico.setText("");
+		textFieldProdutoDoServico.setText("");
+		textFieldSaldo.setText("");
+		textFieldValorUnitario.setText("");
+		textFieldLimiteMinimo.setText("");
+		textFieldTipoDeConta.setText("");
+		textFieldCnpj.setText("");
+		textFieldTipoDeConta.setText("");
+		textAreaDetalhesDoServico.setText("");
 
 	}
 
@@ -347,55 +632,57 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 			comboBoxServico.setItems(FXCollections.observableArrayList(listaServicos()));
 		}
 
-		textFieldServico.setText(servicoImpressao.getNomeDoServico());
-		textFieldProdutoDoServico.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()));
+		textFieldServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
+		textFieldProdutoDoServico
+				.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
 		textFieldSaldo.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
 		textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
 		textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()) + " Unidades");
-		textFieldTipoDeConta.setText(String.valueOf(servicoImpressao.getConta().isTipo()));	
+		textFieldTipoDeConta.setText(String.valueOf(servicoImpressao.getConta().isTipo()).toUpperCase());
 		textFieldCnpj.setText(servicoImpressao.getConta().getCnpj());
 
 		String tipo = "";
 
 		if (servicoImpressao.getConta().isTipo()) {
 
-			tipo = "Saldo";
+			tipo = "SALDO";
 
 		} else {
 
-			tipo = "Faturado";
+			tipo = "FATURADO";
 		}
 
 		textFieldTipoDeConta.setText(tipo);
-		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico());
+		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico().toUpperCase());
 
 	}
 
-	public void AtualizarCliente() {
+	public void atualizarCliente() {
 
 		Cliente clienteAtualizado = new Cliente();
 		clienteAtualizado = clienteService.buscarPeloId(idClienteSelecionado);
 
-		labelTituloCliente.setText("Cliente selecionado:  " + clienteAtualizado.getNomeFantasia());
-		labelNomeFantasia.setText(clienteAtualizado.getNomeFantasia());
-		labelRazaoSocial.setText(clienteAtualizado.getRazaoSocial());
+		labelTituloCliente.setText("Cliente:  " + clienteAtualizado.getNomeFantasia().toUpperCase());
+		labelNomeFantasia.setText(clienteAtualizado.getNomeFantasia().toUpperCase());
+		labelRazaoSocial.setText(clienteAtualizado.getRazaoSocial().toUpperCase());
 		labelCnpj.setText(clienteAtualizado.getCnpjCliente());
 		labelInscricaoEstadual.setText(clienteAtualizado.getInscricaoEstadual());
 		labelInscricaoMuncipal.setText(clienteAtualizado.getInscricaoMunicipal());
 		labelClienteDesde.setText(Constraints.setDateFormat(clienteAtualizado.getDataInicioCliente()));
-		labelContato.setText(clienteAtualizado.getContato().getContatoCliente());
-		labelEmail.setText(clienteAtualizado.getContato().getEmailCliente());
+		labelContato.setText(clienteAtualizado.getContato().getContatoCliente().toUpperCase());
+		labelEmail.setText(clienteAtualizado.getContato().getEmailCliente().toLowerCase());
 		labelFoneCelular.setText(clienteAtualizado.getContato().getFoneCelular());
 		labelFoneFixo.setText(clienteAtualizado.getContato().getFoneFixo());
-		labelVendedor.setText(new Vendedor().nomeVendedor((clienteAtualizado.getCod_vendedor())));
+		labelVendedor.setText(new Vendedor().nomeVendedor((clienteAtualizado.getCod_vendedor())).toUpperCase());
 		labelUnidadeDeAtendimento.setText(new Unidade().nomeUnidade(clienteAtualizado.getUnidadeDeAtendimento()));
-		labelLogradouro.setText(clienteAtualizado.getEndereco().getLogradouro());
-		labelBairro.setText(clienteAtualizado.getEndereco().getBairro());
-		labelCidade.setText(clienteAtualizado.getEndereco().getCidade());
+		labelLogradouro.setText(clienteAtualizado.getEndereco().getLogradouro().toUpperCase());
+		labelBairro.setText(clienteAtualizado.getEndereco().getBairro().toUpperCase());
+		labelCidade.setText(clienteAtualizado.getEndereco().getCidade().toUpperCase());
 		labelCep.setText(clienteAtualizado.getEndereco().getCep());
 		labelUf.setText(clienteAtualizado.getEndereco().getUf());
-		labelEntrega.setText(String.valueOf(Constraints.setBooleanEntrega(clienteAtualizado.isEntregaNoCliente())));
-		textAreaDetalhesDoCliente.setText(clienteAtualizado.getDetalhesDoCliente());
+		labelEntrega.setText(
+				String.valueOf(Constraints.setBooleanEntrega(clienteAtualizado.isEntregaNoCliente())).toUpperCase());
+		textAreaDetalhesDoCliente.setText(clienteAtualizado.getDetalhesDoCliente().toUpperCase());
 
 		setCliente(clienteAtualizado);
 
@@ -417,11 +704,11 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 		try {
 
 			atualizarSalvoEditado();
-			AtualizarCliente();
+			atualizarCliente();
 
 		} catch (java.lang.NullPointerException e) {
 
-			AtualizarCliente();
+			atualizarCliente();
 		}
 
 	}
@@ -439,13 +726,9 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	private void initializeNodes() {
 
-		// servicoFormController = new ServicoFormController ();
-
 		setClienteService(new ClienteService());
 
 		servicoÌmpressaoService = new ServicoÌmpressaoService();
-
-		principalFormController = new PrincipalFormController();
 
 	}
 
@@ -455,26 +738,28 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 		try {
 
-			labelTituloCliente.setText("Cliente - " + cliente.getNomeFantasia());
-			labelNomeFantasia.setText(cliente.getNomeFantasia());
-			labelRazaoSocial.setText(cliente.getRazaoSocial());
+			labelTituloCliente.setText("Cliente - " + cliente.getNomeFantasia().toUpperCase());
+			labelNomeFantasia.setText(cliente.getNomeFantasia().toUpperCase());
+			labelRazaoSocial.setText(cliente.getRazaoSocial().toUpperCase());
 			labelCnpj.setText(cliente.getCnpjCliente());
 			labelInscricaoEstadual.setText(cliente.getInscricaoEstadual());
 			labelInscricaoMuncipal.setText(cliente.getInscricaoMunicipal());
 			labelClienteDesde.setText(Constraints.setDateFormat(cliente.getDataInicioCliente()));
-			labelContato.setText(cliente.getContato().getContatoCliente());
-			labelEmail.setText(cliente.getContato().getEmailCliente());
+			labelContato.setText(cliente.getContato().getContatoCliente().toUpperCase());
+			labelEmail.setText(cliente.getContato().getEmailCliente().toLowerCase());
 			labelFoneCelular.setText(cliente.getContato().getFoneCelular());
 			labelFoneFixo.setText(cliente.getContato().getFoneFixo());
 			labelVendedor.setText(new Vendedor().nomeVendedor(cliente.getCod_vendedor()));
-			labelUnidadeDeAtendimento.setText(new Unidade().nomeUnidade(cliente.getUnidadeDeAtendimento()));
-			labelLogradouro.setText(cliente.getEndereco().getLogradouro());
-			labelBairro.setText(cliente.getEndereco().getBairro());
-			labelCidade.setText(cliente.getEndereco().getCidade());
+			labelUnidadeDeAtendimento
+					.setText(new Unidade().nomeUnidade(cliente.getUnidadeDeAtendimento()).toUpperCase());
+			labelLogradouro.setText(cliente.getEndereco().getLogradouro().toUpperCase());
+			labelBairro.setText(cliente.getEndereco().getBairro().toUpperCase());
+			labelCidade.setText(cliente.getEndereco().getCidade().toUpperCase());
 			labelCep.setText(cliente.getEndereco().getCep());
 			labelUf.setText(cliente.getEndereco().getUf());
-			labelEntrega.setText(String.valueOf(Constraints.setBooleanEntrega(cliente.isEntregaNoCliente())));
-			textAreaDetalhesDoCliente.setText(cliente.getDetalhesDoCliente());
+			labelEntrega
+					.setText(String.valueOf(Constraints.setBooleanEntrega(cliente.isEntregaNoCliente())).toUpperCase());
+			textAreaDetalhesDoCliente.setText(cliente.getDetalhesDoCliente().toUpperCase());
 
 			setCliente(cliente);
 			setUsuario(usuario);
@@ -489,31 +774,33 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	}
 
+	// Atualizar campos
+
 	public void atualizarCampos() {
 
 		ClienteService clienteService = new ClienteService();
 		setCliente(clienteService.buscarPeloId(idClienteSelecionado));
 
-		labelTituloCliente.setText("Cliente selecionado:  " + cliente.getNomeFantasia());
-		labelNomeFantasia.setText(cliente.getNomeFantasia());
-		labelRazaoSocial.setText(cliente.getRazaoSocial());
+		labelTituloCliente.setText("Cliente:  " + cliente.getNomeFantasia().toUpperCase());
+		labelNomeFantasia.setText(cliente.getNomeFantasia().toUpperCase());
+		labelRazaoSocial.setText(cliente.getRazaoSocial().toUpperCase());
 		labelCnpj.setText(cliente.getCnpjCliente());
 		labelInscricaoEstadual.setText(cliente.getInscricaoEstadual());
 		labelInscricaoMuncipal.setText(cliente.getInscricaoMunicipal());
 		labelClienteDesde.setText(Constraints.setDateFormat(cliente.getDataInicioCliente()));
-		labelContato.setText(cliente.getContato().getContatoCliente());
-		labelEmail.setText(cliente.getContato().getEmailCliente());
+		labelContato.setText(cliente.getContato().getContatoCliente().toUpperCase());
+		labelEmail.setText(cliente.getContato().getEmailCliente().toLowerCase());
 		labelFoneCelular.setText(cliente.getContato().getFoneCelular());
 		labelFoneFixo.setText(cliente.getContato().getFoneFixo());
 		labelVendedor.setText(new Vendedor().nomeVendedor((cliente.getCod_vendedor())));
-		labelUnidadeDeAtendimento.setText(new Unidade().nomeUnidade(cliente.getUnidadeDeAtendimento()));
-		labelLogradouro.setText(cliente.getEndereco().getLogradouro());
-		labelBairro.setText(cliente.getEndereco().getBairro());
-		labelCidade.setText(cliente.getEndereco().getCidade());
+		labelUnidadeDeAtendimento.setText(new Unidade().nomeUnidade(cliente.getUnidadeDeAtendimento()).toUpperCase());
+		labelLogradouro.setText(cliente.getEndereco().getLogradouro().toUpperCase());
+		labelBairro.setText(cliente.getEndereco().getBairro().toUpperCase());
+		labelCidade.setText(cliente.getEndereco().getCidade().toUpperCase());
 		labelCep.setText(cliente.getEndereco().getCep());
 		labelUf.setText(cliente.getEndereco().getUf());
 		labelEntrega.setText(String.valueOf(Constraints.setBooleanEntrega(cliente.isEntregaNoCliente())));
-		textAreaDetalhesDoCliente.setText(cliente.getDetalhesDoCliente());
+		textAreaDetalhesDoCliente.setText(cliente.getDetalhesDoCliente().toUpperCase());
 
 	}
 
@@ -532,8 +819,9 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	public void carregarCamposClienteServico() {
 
-		textFieldServico.setText(servicoImpressao.getNomeDoServico());
-		textFieldProdutoDoServico.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()));
+		textFieldServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
+		textFieldProdutoDoServico
+				.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
 		textFieldSaldo.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
 		textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
 		textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()) + " Unidades");
@@ -543,15 +831,15 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 		if (servicoImpressao.getConta().isTipo()) {
 
-			tipo = "Saldo";
+			tipo = "SALDO";
 
 		} else {
 
-			tipo = "Faturado";
+			tipo = "FATURADO";
 		}
 
 		textFieldTipoDeConta.setText(tipo);
-		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico());
+		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico().toUpperCase());
 
 	}
 
@@ -609,7 +897,8 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	// Telea servico
 
-	public void servicoForm(Usuario usuario, Cliente cliente, ServicoImpressao clienteServico, String tela) {
+	public void servicoForm(Usuario usuario, Cliente cliente, ServicoImpressao clienteServico, String tela,
+			boolean editar) {
 
 		boolean concedido = false;
 		Acesso acesso = new Acesso();
@@ -626,7 +915,7 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 				ServicoFormController controller = loader.getController();
 				controller.setService(new ServicoFormController());
 				controller.subscribeDataChangeListener(this);
-				controller.carregarCampos(cliente, clienteServico, usuario);
+				controller.carregarCampos(cliente, clienteServico, usuario, editar);
 
 				ServicoFormController.setServicoFormScene(new Scene(pane));
 

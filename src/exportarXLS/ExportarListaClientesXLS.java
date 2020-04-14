@@ -62,27 +62,13 @@ public class ExportarListaClientesXLS {
 		sheet.mergeCells(0, 1, 7, 1);
 
 		addCaption(sheet, 0, 0, "Lista de Clientes");
-		addCaption(sheet, 1, 0, "");
-		addCaption(sheet, 2, 0, "");
-		addCaption(sheet, 3, 0, "");
-		addCaption(sheet, 4, 0, "");
-		addCaption(sheet, 5, 0, "");
-		addCaption(sheet, 6, 0, "");
-		addCaption(sheet, 7, 0, "");
-		
+
 		if (vendedor == null) {
-			
+
 			vendedor = "PESQUISA";
 		}
 
 		addCaption(sheet, 0, 1, "Vendedor: " + vendedor);
-		addCaption(sheet, 1, 1, "");
-		addCaption(sheet, 2, 1, "");
-		addCaption(sheet, 3, 1, "");
-		addCaption(sheet, 4, 1, "");
-		addCaption(sheet, 5, 1, "");
-		addCaption(sheet, 6, 1, "");
-		addCaption(sheet, 7, 1, "");
 
 		addCaption(sheet, 0, 2, "#");
 		addCaption(sheet, 1, 2, "Nome Fantasia");
@@ -118,7 +104,7 @@ public class ExportarListaClientesXLS {
 			addLabel(sheet, 7, i, c.getContato().getFoneCelular());
 
 			i++;
-			contador ++;
+			contador++;
 		}
 
 	}

@@ -38,7 +38,7 @@ import model.services.ServicoÌmpressaoService;
 
 public class ServicoFormController implements Initializable, DataChangeListener {
 
-	// Java variáveis
+	// Java variáveis 
 
 	// Lista de ouvintes para receber alguma modificação
 
@@ -49,7 +49,7 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	private static Scene servicoFormScene;
 
 	private Usuario usuario;
-
+ 
 	private Cliente cliente;
 
 	private ServicoImpressao servicoImpressao;
@@ -214,10 +214,10 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 		service = new ServicoÌmpressaoService();
 
 		comboBoxProduto.setItems(FXCollections.observableArrayList(listaProdutos()));
-
-		Constraints.mascaraNumeroInteiro(textFieldValorUnitario);
+		
+		Constraints.mascaraNumero(textFieldValorUnitario);
 		Constraints.mascaraCNPJ(textFieldCnpjParaCobranca);
-
+		
 		groupLancamento = new ToggleGroup();
 		radiobuttonFaturamento.setToggleGroup(groupLancamento);
 		radiobuttonSaldo.setToggleGroup(groupLancamento);
@@ -225,12 +225,11 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 		groupLancamento.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+				
 				// Quando selecionar.
 				if (groupLancamento.getSelectedToggle() != null) {
 
 					tipoLancamento = groupLancamento.getSelectedToggle().equals(radiobuttonSaldo);
-
-					System.out.println(tipoLancamento);
 
 				}
 			}
@@ -240,19 +239,32 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 	// Carregar campos
 
-	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario) {
-
+	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario, boolean editar) {
+		
+		if (editar == true) {
+			
+			radiobuttonFaturamento.setDisable(true);
+			radiobuttonSaldo.setDisable(true);
+			
+		} else {
+			
+			radiobuttonFaturamento.setDisable(false);
+			radiobuttonSaldo.setDisable(false);
+			
+		}
+		
+		
 		if (servicoImpressao != null) {
 
 			labelTituloTela.setText(Strings.getTitleServicos());
-			labelNomeFantasia.setText(cliente.getNomeFantasia());
-			textFieldNomeDoServico.setText(servicoImpressao.getNomeDoServico());
+			labelNomeFantasia.setText(cliente.getNomeFantasia().toUpperCase());
+			textFieldNomeDoServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
 			textFieldCnpjParaCobranca.setText(servicoImpressao.getConta().getCnpj());
 			comboBoxProduto.getSelectionModel()
 					.select(new Produto().nomeProduto(servicoImpressao.getProdutoDoServico()));
-			textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
+			textFieldValorUnitario.setText(String.valueOf(servicoImpressao.getValorUnitario()));
 			textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()));
-			textAreaObservacoesDoServico.setText(String.valueOf(servicoImpressao.getObservacoesServico()));
+			textAreaObservacoesDoServico.setText(String.valueOf(servicoImpressao.getObservacoesServico()).toUpperCase());
 
 			if (servicoImpressao.getConta().isTipo() == true) {
 
@@ -267,7 +279,7 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 		} else {
 
 			labelTituloTela.setText(Strings.getTitleServicos());
-			labelNomeFantasia.setText(cliente.getNomeFantasia());
+			labelNomeFantasia.setText(cliente.getNomeFantasia().toUpperCase());
 			textFieldCnpjParaCobranca.setText(cliente.getCnpjCliente());
 
 		}
@@ -362,14 +374,14 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 							servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
 							servicoImpressao.setIdCliente(getCliente().getIdCliente());
-							servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+							servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 							conta.setCnpj(textFieldCnpjParaCobranca.getText());
 							servicoImpressao.setProdutoDoServico(
 									new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 							servicoImpressao.setValorUnitario(
 									Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
 							servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-							servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+							servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
 							conta.setSaldo(getServicoImpressao().getConta().getSaldo());
 							conta.setTipo(tipoLancamento);
 
@@ -378,13 +390,13 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 						} else {
 
 							servicoImpressao.setIdCliente(getCliente().getIdCliente());
-							servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+							servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 							conta.setCnpj(textFieldCnpjParaCobranca.getText());
 							servicoImpressao.setProdutoDoServico(
 									new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 							servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
 							servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-							servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+							servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
 							conta.setSaldo(0);
 							conta.setTipo(tipoLancamento);
 
@@ -406,14 +418,14 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 						servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
 						servicoImpressao.setIdCliente(getCliente().getIdCliente());
-						servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+						servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 						conta.setCnpj(textFieldCnpjParaCobranca.getText());
 						servicoImpressao.setProdutoDoServico(
 								new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 						servicoImpressao
 								.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
 						servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-						servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+						servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
 						conta.setSaldo(getServicoImpressao().getConta().getSaldo());
 						conta.setTipo(tipoLancamento);
 
@@ -422,13 +434,13 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 					} else {
 
 						servicoImpressao.setIdCliente(getCliente().getIdCliente());
-						servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+						servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 						conta.setCnpj(textFieldCnpjParaCobranca.getText());
 						servicoImpressao.setProdutoDoServico(
 								new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 						servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
 						servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-						servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+						servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
 						conta.setSaldo(0);
 						conta.setTipo(tipoLancamento);
 
@@ -505,13 +517,13 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 			servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
 			servicoImpressao.setIdCliente(getCliente().getIdCliente());
-			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 			conta.setCnpj(textFieldCnpjParaCobranca.getText());
 			servicoImpressao.setProdutoDoServico(
 					new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 			servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
 			servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-			servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+			servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
 			conta.setSaldo(getServicoImpressao().getConta().getSaldo());
 			conta.setTipo(tipoLancamento);
 
@@ -520,13 +532,13 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 		} else {
 
 			servicoImpressao.setIdCliente(getCliente().getIdCliente());
-			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText());
+			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 			conta.setCnpj(textFieldCnpjParaCobranca.getText());
 			servicoImpressao.setProdutoDoServico(
 					new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 			servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
 			servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
-			servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText());
+			servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
 			conta.setSaldo(0);
 			conta.setTipo(tipoLancamento);
 

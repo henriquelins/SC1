@@ -5,7 +5,9 @@ import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.stage.StageStyle;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class Alerts {
 
@@ -17,17 +19,21 @@ public class Alerts {
 		alert.setHeaderText(header);
 		alert.setContentText(content);
 
-		alert.initStyle(StageStyle.UTILITY);
+		alert.initModality(Modality.WINDOW_MODAL);
+
+		Stage dialogStage = (Stage) alert.getDialogPane().getScene().getWindow();
+		dialogStage.getIcons().add(new Image(Strings.getIcone()));
+
+
 
 		alert.show();
 	}
-	
+
 	public static void closeAlert(Alert alert) {
 
 		alert.close();
-		
-	}
 
+	}
 
 	public static Optional<ButtonType> showConfirmation(String title, String content) {
 
@@ -37,10 +43,14 @@ public class Alerts {
 		alert.setHeaderText(null);
 		alert.setContentText(content);
 
-		alert.initStyle(StageStyle.UTILITY);
+		Stage dialogStage = (Stage) alert.getDialogPane().getScene().getWindow();
+		dialogStage.getIcons().add(new Image(Strings.getIcone()));
 
+	
 		return alert.showAndWait();
 
 	}
+	
+	
 
 }

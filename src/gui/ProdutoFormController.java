@@ -25,6 +25,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.entities.Produto;
+import model.entities.Usuario;
+import model.services.LogSegurancaService;
 import model.services.ProdutoService;
 
 public class ProdutoFormController implements Initializable, DataChangeListener {
@@ -71,6 +73,8 @@ public class ProdutoFormController implements Initializable, DataChangeListener 
 	@FXML
 	private Button buttonExcluir;
 
+	private Usuario usuario;
+
 	// FXML eventos
 
 	@FXML
@@ -100,11 +104,14 @@ public class ProdutoFormController implements Initializable, DataChangeListener 
 				produtoService.produtoNovoOuEditar(produto);
 				limparCampos();
 				onDataChanged();
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Produto cadastrado ou Editado: " + usuario.getNome().toUpperCase());
+
 
 			} else {
 
-				Alerts.showAlert("Cadastro de Produtos", "Editar produtos",
-						"Não houve alteração no registro", AlertType.INFORMATION);
+				Alerts.showAlert("Cadastro de Produtos", "Editar produtos", "Não houve alteração no registro",
+						AlertType.INFORMATION);
 
 			}
 
@@ -117,7 +124,7 @@ public class ProdutoFormController implements Initializable, DataChangeListener 
 	@FXML
 	public void onButtonExcluirAction(ActionEvent event) {
 
-		if (produtoService == null)  {
+		if (produtoService == null) {
 
 			throw new IllegalThreadStateException("produtoService está nulo");
 
@@ -144,8 +151,7 @@ public class ProdutoFormController implements Initializable, DataChangeListener 
 
 		} catch (DbIntegrityException e) {
 
-			Alerts.showAlert("Cadastro de Produtos", "Excluir", "Erro ao excluir o produto",
-					AlertType.INFORMATION);
+			Alerts.showAlert("Cadastro de Produtos", "Excluir", "Erro ao excluir o produto", AlertType.INFORMATION);
 			limparCampos();
 
 		}
@@ -175,10 +181,11 @@ public class ProdutoFormController implements Initializable, DataChangeListener 
 				.addListener((observable, oldValue, newValue) -> carregarCampos(newValue));
 
 		tableColumnIndex.setSortable(false);
-		tableColumnIndex.setCellValueFactory( column -> new ReadOnlyObjectWrapper<String>(Constraints.tresDigitos(
-				tableViewProduto.getItems().indexOf(column.getValue()) + 1)));
+		tableColumnIndex.setCellValueFactory(column -> new ReadOnlyObjectWrapper<String>(
+				Constraints.tresDigitos(tableViewProduto.getItems().indexOf(column.getValue()) + 1)));
 
-		tableColumnId.setCellValueFactory((param) -> new SimpleStringProperty(Constraints.quatroDigitos(param.getValue().getIdProduto())));
+		tableColumnId.setCellValueFactory(
+				(param) -> new SimpleStringProperty(Constraints.quatroDigitos(param.getValue().getIdProduto())));
 		tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
 
 		atualizarTableView();
@@ -316,6 +323,20 @@ public class ProdutoFormController implements Initializable, DataChangeListener 
 
 	public void setProdutoService(ProdutoService produtoService) {
 		this.produtoService = produtoService;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public void carregarCampos(Usuario usuario) {
+
+		setUsuario(usuario);
+
 	}
 
 }

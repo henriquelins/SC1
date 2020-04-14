@@ -3,7 +3,9 @@ package model.services;
 import java.util.List;
 import java.util.Optional;
 
+import gui.LoginFormController;
 import gui.util.Alerts;
+import gui.util.Strings;
 import javafx.scene.control.ButtonType;
 import model.dao.ContaDao;
 import model.dao.DaoFactory;
@@ -27,12 +29,12 @@ public class ServicoÌmpressaoService {
 
 		if (servicoImpressao.getConta().isTipo() == true) {
 
-			tipoDeconta = "Saldo";
+			tipoDeconta = "SALDO";
 
 		} else {
 
-			tipoDeconta = "Faturar";
-		}
+			tipoDeconta = "FATURAR";
+		} 
 
 		if (servicoImpressao.getIdServicoImpressao() == null) {
 
@@ -40,9 +42,11 @@ public class ServicoÌmpressaoService {
 
 					"Você deseja salvar um novo serviço\n com a conta do tipo " + tipoDeconta + " ?");
 
-			if (result.get() == ButtonType.OK) {
+			if (result.get() == ButtonType.OK) { 
 
 				dao.inserir(servicoImpressao);
+				new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
+						Strings.getLogMessage020() + servicoImpressao.getNomeDoServico().toUpperCase());
 
 			}
 
@@ -52,30 +56,31 @@ public class ServicoÌmpressaoService {
 
 			String nome = impressaoService.buscarServicosDoClientePeloCnpj(servicoImpressao.getConta().getCnpj());
 
-			System.out.println(servicoImpressao.getConta().getCnpj());
-			System.out.println(nome);
-
 			if (nome.equals("")) {
 
 				Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-						"Você deseja salvar a edição do serviço\n com a conta do tipo " + tipoDeconta + " ?");
+						"Você deseja salvar a edição do serviço de impressão "  + servicoImpressao.getNomeDoServico().toUpperCase() + " ?");
 
 				if (result.get() == ButtonType.OK) {
 
 					int id_conta = contaDao.inserir(servicoImpressao);
 					servicoImpressao.getConta().setIdConta(id_conta);
 					dao.atualizar(servicoImpressao);
+					new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
+							Strings.getLogMessage021() + servicoImpressao.getNomeDoServico().toUpperCase());
 
 				}
 
 			} else {
 
 				Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-						"Você deseja salvar a edição do serviço\n com a conta do tipo " + tipoDeconta + " ?");
+						"Você deseja salvar a edição do serviço de impressão " + servicoImpressao.getNomeDoServico().toUpperCase() + " ?");
 
 				if (result.get() == ButtonType.OK) {
 
 					dao.atualizar(servicoImpressao);
+					new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
+							Strings.getLogMessage021() + servicoImpressao.getNomeDoServico().toUpperCase());
 
 				}
 
@@ -84,6 +89,8 @@ public class ServicoÌmpressaoService {
 		}
 
 	}
+	
+	
 
 	// método buscar serviços pelo CNPJ
 

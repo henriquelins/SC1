@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import criptografia.Criptografar;
 import db.DB;
 import db.DbException;
 import model.dao.UsuarioDao;
@@ -15,9 +16,9 @@ import model.entities.Usuario;
 public class UsuarioDaoJDBC implements UsuarioDao {
 
 	// connection variável
-	
+
 	private Connection conn;
-	
+
 	// método para criar a conexão
 
 	public UsuarioDaoJDBC(Connection conn) {
@@ -25,15 +26,17 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 		this.conn = conn;
 
 	}
-	
+
 	// método inserir
 
 	@Override
 	public void insert(Usuario usuario) {
 
-		PreparedStatement st = null;
+		PreparedStatement st = null; 
 
 		try {
+
+			usuario = new Criptografar().adicionarCriptografia(usuario);
 
 			conn.setAutoCommit(false);
 
@@ -74,51 +77,91 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 
 		}
 	}
-	
+
 	// método atualizar
-	
+
 	@Override
 	public void update(Usuario usuario) {
 
 		PreparedStatement st = null;
-
-		try {
-
-			conn.setAutoCommit(false);
-
-			st = conn.prepareStatement(
-					"UPDATE usuario SET nome_usuario = ?, login = ?, senha = ?, acesso = ? WHERE id_usuario = ?");
-
-			st.setString(1, usuario.getNome().toUpperCase());
-			st.setString(2, usuario.getLogin());
-			st.setString(3, usuario.getSenha());
-			st.setInt(4, usuario.getAcesso());
-			st.setInt(5, usuario.getIdUsuario());
-
-			st.executeUpdate();
-
-			conn.commit();
-
-		} catch (SQLException e) {
+		
+		
+		if (usuario.getLogin().equalsIgnoreCase("******")) {
 
 			try {
 
-				conn.rollback();
-				throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+				conn.setAutoCommit(false);
 
-			} catch (SQLException e1) {
+				st = conn.prepareStatement(
+						"UPDATE usuario SET nome_usuario = ?, login = ?, acesso = ? WHERE id_usuario = ?");
 
-				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+				st.setString(1, usuario.getNome().toUpperCase());
+				st.setString(2, usuario.getLogin());
+				st.setInt(3, usuario.getAcesso());
+				st.setInt(4, usuario.getIdUsuario());
+
+				st.executeUpdate();
+
+				conn.commit();
+
+			} catch (SQLException e) {
+
+				try {
+
+					conn.rollback();
+					throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+				} catch (SQLException e1) {
+
+					throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+
+				}
 
 			}
 
-		} finally {
+		} else {
 
-			DB.closeStatement(st);
+			try {
+
+				conn.setAutoCommit(false);
+				
+				usuario = new Criptografar().adicionarCriptografia(usuario);
+
+				st = conn.prepareStatement(
+						"UPDATE usuario SET nome_usuario = ?, login = ?, senha = ?, acesso = ? WHERE id_usuario = ?");
+
+				st.setString(1, usuario.getNome().toUpperCase());
+				st.setString(2, usuario.getLogin());
+				st.setString(3, usuario.getSenha());
+				st.setInt(4, usuario.getAcesso());
+				st.setInt(5, usuario.getIdUsuario());
+
+				st.executeUpdate();
+
+				conn.commit();
+
+			} catch (SQLException e) {
+
+				try {
+
+					conn.rollback();
+					throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+				} catch (SQLException e1) {
+
+					throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+
+				}
+
+			} finally {
+
+				DB.closeStatement(st);
+
+			}
 
 		}
 	}
-	
+
 	// método deletar pelo id
 
 	@Override
@@ -156,14 +199,14 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
 
 			}
-			
+
 		} finally {
 
 			DB.closeStatement(st);
 
 		}
 	}
-	
+
 	// método buscar pelo id
 
 	@Override
@@ -204,7 +247,7 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
 
 			}
-			
+
 		} finally {
 
 			DB.closeStatement(st);
@@ -212,7 +255,7 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 
 		}
 	}
-	
+
 	// instanciar classe
 
 	private Usuario instantiateUsuario(ResultSet rs) throws SQLException {
@@ -226,7 +269,7 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 		return usuario;
 
 	}
-	
+
 	// método listar todos
 
 	@Override
@@ -276,7 +319,7 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 
 		}
 	}
-	
+
 	// método login
 
 	@Override
@@ -285,14 +328,14 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		Usuario logado = null;
+		boolean autenticado = false;
 
 		try {
 
 			conn.setAutoCommit(false);
 
-			st = conn.prepareStatement("SELECT * FROM usuario WHERE login = ? AND senha = ?");
+			st = conn.prepareStatement("SELECT * FROM usuario WHERE login = ?");
 			st.setString(1, usuario.getLogin());
-			st.setString(2, usuario.getSenha());
 			rs = st.executeQuery();
 
 			while (rs.next()) {
@@ -301,9 +344,25 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 
 			}
 
-			conn.commit();
+			if (!logado.equals(null)) {
 
-			return logado;
+				autenticado = new Criptografar().autenticar(usuario, logado);
+
+				if (autenticado == true) {
+
+					logado.setSenha(usuario.getSenha());
+
+					return logado;
+
+				}
+
+			} else {
+
+				return null;
+
+			}
+
+			conn.commit();
 
 		} catch (SQLException e) {
 
@@ -324,6 +383,8 @@ public class UsuarioDaoJDBC implements UsuarioDao {
 			DB.closeResultSet(rs);
 
 		}
+
+		return null;
 
 	}
 

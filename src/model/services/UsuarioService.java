@@ -21,8 +21,7 @@ public class UsuarioService {
 
 	public Usuario login(Usuario usuario) {
 
-		user = dao.login(usuario);
-		return user;
+		return dao.login(usuario);
 
 	}
 
@@ -30,25 +29,29 @@ public class UsuarioService {
 
 	public void usuarioNovoOuEditar(Usuario usuario) {
 
-		if (usuario.getIdUsuario() == null) {
+ 		if (usuario.getIdUsuario() == null) {
 
 			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-					"Você deseja salvar o usuário " + usuario.getNome() + " ?");
+					"Você deseja salvar o usuário " + usuario.getNome().toUpperCase() + " ?");
 
 			if (result.get() == ButtonType.OK) {
 
 				dao.insert(usuario);
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Usuário salvo: " + usuario.getNome().toUpperCase());
 
 			}
 
 		} else {
 
 			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-					"Você deseja editar o usuário " + usuario.getNome() + " ?");
+					"Você deseja editar o usuário " + usuario.getNome().toUpperCase() + " ?");
 
 			if (result.get() == ButtonType.OK) {
 
 				dao.update(usuario);
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Usuário editado: " + usuario.getNome().toUpperCase());
 
 			}
 

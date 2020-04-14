@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="607.0" prefWidth="616.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.BackupBancoFormController">
+   <children>
+      <ToolBar prefHeight="36.0" prefWidth="500.0" style="-fx-background-color: gray;">
+         <items>
+            <Label prefHeight="27.0" prefWidth="456.0" text="Backup Banco de Dados" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <padding>
+                  <Insets left="30.0" />
+               </padding>
+            </Label>
+         </items></ToolBar>
+      <TabPane prefHeight="518.0" prefWidth="616.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Bakup Banco">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="364.0" prefWidth="500.0">
+                     <children>
+                        <Label layoutX="40.0" layoutY="16.0" text="Ferramenta de Backup">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="40.0" layoutY="219.0" text="User">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldFerramentaDeBackup" editable="false" layoutX="40.0" layoutY="40.0" prefHeight="30.0" prefWidth="450.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <PasswordField fx:id="textFieldPasswordBackup" layoutX="200.0" layoutY="243.0" prefHeight="30.0" prefWidth="150.0" style="-fx-background-radius: 20;" />
+                        <PasswordField fx:id="textFieldUserBackup" layoutX="40.0" layoutY="243.0" prefHeight="30.0" prefWidth="150.0" style="-fx-background-radius: 20;" />
+                      <Button fx:id="buttonEditarBackup" layoutX="363.0" layoutY="243.0" mnemonicParsing="false" onAction="#onButtonEditarBackupAction" prefHeight="30.0" prefWidth="90.0" style="-fx-background-radius: 10;" text="EDITAR" />
+                        <Button fx:id="buttonFazerBackup" defaultButton="true" layoutX="465.0" layoutY="243.0" mnemonicParsing="false" onAction="#onButtonFazerBackupAction" prefHeight="30.0" prefWidth="106.0" style="-fx-background-radius: 10;" text="FAZER BACKUP" />
+                        <Button fx:id="buttonBuscarFerramentaBackup" layoutX="500.0" layoutY="40.0" mnemonicParsing="false" onAction="#onButtonBuscarFerramentaBackupAction" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="ABRIR" />
+                        <Label layoutX="40.0" layoutY="160.0" text="Porta">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldHostBackup" editable="false" layoutX="132.0" layoutY="184.0" prefHeight="30.0" prefWidth="173.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="202.0" layoutY="219.0" text="Password">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="40.0" layoutY="77.0" text="Salvar arquivo de Backup">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldSalvarArquivoDeBackup" editable="false" layoutX="40.0" layoutY="100.0" prefHeight="30.0" prefWidth="450.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="buttonSalvarArquivoDeBackup" layoutX="500.0" layoutY="100.0" mnemonicParsing="false" onAction="#onButtonSalvarArquivoDeBackupAction" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="SALVAR" />
+                        <Label layoutX="309.0" layoutY="160.0" text="Nome do banco de dados">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldNomeDoBancoBackup" editable="false" layoutX="310.0" layoutY="184.0" prefHeight="30.0" prefWidth="261.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <TextArea fx:id="textAreaBackup" layoutX="39.0" layoutY="294.0" prefHeight="168.0" prefWidth="533.0" />
+                        <Separator layoutX="-3.0" layoutY="148.0" prefHeight="0.0" prefWidth="624.0" />
+                        <TextField fx:id="textFieldPortaBackup" editable="false" layoutX="37.0" layoutY="184.0" prefHeight="30.0" prefWidth="87.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="132.0" layoutY="160.0" text="Host">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Restore Banco">
+            <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="364.0" prefWidth="500.0">
+                     <children>
+                        <Label layoutX="40.0" layoutY="16.0" text="Ferramenta de Restore">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="40.0" layoutY="219.0" text="User">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldFerramentaDeRestore" editable="false" layoutX="40.0" layoutY="40.0" prefHeight="30.0" prefWidth="450.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <PasswordField fx:id="textFieldPasswordRestore" layoutX="200.0" layoutY="243.0" prefHeight="30.0" prefWidth="150.0" style="-fx-background-radius: 20;" />
+                        <PasswordField fx:id="textFieldUserRestore" layoutX="40.0" layoutY="243.0" prefHeight="30.0" prefWidth="150.0" style="-fx-background-radius: 20;" />
+                        <Button fx:id="buttonEditarRestore" layoutX="363.0" layoutY="243.0" mnemonicParsing="false" onAction="#onButtonEditarRestoreAction" prefHeight="30.0" prefWidth="90.0" style="-fx-background-radius: 10;" text="EDITAR" />
+                        <Button fx:id="buttonFazerRestore" defaultButton="true" layoutX="465.0" layoutY="243.0" mnemonicParsing="false" onAction="#onButtonFazerRestoreAction" prefHeight="30.0" prefWidth="106.0" style="-fx-background-radius: 10;" text="FAZER RESTORE" />
+                        <Button fx:id="buttonBuscarFerramentaRestore" layoutX="500.0" layoutY="40.0" mnemonicParsing="false" onAction="#onButtonBuscarFerramentaRestoreAction" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="ABRIR" />
+                        <Label layoutX="132.0" layoutY="160.0" text="Host">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldHostRestore" editable="false" layoutX="132.0" layoutY="184.0" prefHeight="30.0" prefWidth="173.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="202.0" layoutY="219.0" prefHeight="20.0" prefWidth="126.0" text="Password">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="40.0" layoutY="77.0" prefHeight="20.0" prefWidth="368.0" text="Localizar arquivo de Backup para restaurar">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldSalvarArquivoDeRestore" editable="false" layoutX="40.0" layoutY="100.0" prefHeight="30.0" prefWidth="429.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="buttonLocalizarRestore" layoutX="480.0" layoutY="100.0" mnemonicParsing="false" onAction="#onButtonbuttonLocalizarRestoreAction" prefHeight="30.0" prefWidth="90.0" style="-fx-background-radius: 10;" text="LOCALIZAR" />
+                        <Label layoutX="310.0" layoutY="160.0" text="Nome do banco de dados">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textFieldNomeDoBancoRestore" editable="false" layoutX="310.0" layoutY="184.0" prefHeight="30.0" prefWidth="261.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <TextArea fx:id="textAreaRestore" layoutX="39.0" layoutY="294.0" prefHeight="168.0" prefWidth="533.0" />
+                        <Separator layoutX="-3.0" layoutY="148.0" prefHeight="0.0" prefWidth="624.0" />
+                        <TextField fx:id="textFieldPortaRestore" editable="false" layoutX="37.0" layoutY="184.0" prefHeight="30.0" prefWidth="87.0" style="-fx-background-radius: 20;">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="40.0" layoutY="160.0" text="Porta">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <AnchorPane prefHeight="54.0" prefWidth="616.0">
+         <children>
+            <Button fx:id="buttonFechar" layoutX="506.0" layoutY="3.0" mnemonicParsing="false" onAction="#onButtonFecharAction" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="FECHAR" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

@@ -2,7 +2,9 @@ package gui.forms;
 
 import java.io.IOException;
 
-import application.Main;
+import application.SC1Main;
+import gui.ClienteSelecionadoFormController;
+import gui.ConfigurarPerpetiesDBFormController;
 import gui.LancamentoListFormController;
 import gui.PrincipalFormController;
 import gui.ProdutoFormController;
@@ -14,13 +16,14 @@ import gui.util.Alerts;
 import gui.util.Strings;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -34,8 +37,6 @@ import model.services.VendedorService;
 
 public class Forms {
 
-	// Todas são telas simples sem DataChangeList
-
 	// forms tela splash
 
 	public void splashForm(String tela) throws IOException {
@@ -44,8 +45,11 @@ public class Forms {
 
 			StackPane pane = FXMLLoader.load(getClass().getResource(tela));
 
+			Scene scene = new Scene(pane);
+			scene.setFill(Color.TRANSPARENT);
+
 			Stage primaryStage = new Stage();
-			primaryStage.setScene(new Scene(pane));
+			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			primaryStage.initStyle(StageStyle.TRANSPARENT);
 
@@ -98,21 +102,29 @@ public class Forms {
 
 		try {
 
-			AnchorPane pane = FXMLLoader.load(getClass().getResource((tela)));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
+			Parent root = loader.load();
+			Scene scene = new Scene(root);
+			scene.setFill(Color.TRANSPARENT);
 
-			Stage primaryStage = new Stage();
-			primaryStage.setTitle(Strings.getTitle());
-			primaryStage.setScene(new Scene(pane));
-			primaryStage.setResizable(false);
+			SC1Main.setMainScene(scene);
+
+			Stage principalStage = new Stage();
+			principalStage.setTitle(Strings.getTitle());
+			principalStage.setScene(SC1Main.getMainScene());
+			principalStage.setResizable(false);
+
+			principalStage.initStyle(StageStyle.TRANSPARENT);
+			// principalStage.setOpacity(0.7);
 
 			Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
-			primaryStage.getIcons().add(applicationIcon);
+			principalStage.getIcons().add(applicationIcon);
 
-			primaryStage.show();
+			principalStage.show();
 
 		} catch (IOException e) {
 
-			Alerts.showAlert("IO Exception", Strings.erroCarregarTela(), e.getCause().toString(), AlertType.ERROR);
+			Alerts.showAlert("IO Exception", "Erro ao carregar a tela", e.getCause().toString(), AlertType.ERROR);
 
 		}
 
@@ -127,7 +139,7 @@ public class Forms {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
 			ScrollPane pane = loader.load();
 
-			Main.setMainScene(new Scene(pane));
+			SC1Main.setMainScene(new Scene(pane));
 
 			PrincipalFormController controller = loader.getController();
 			controller.setLabelLogado(usuario.toUsuarioLogado());
@@ -138,7 +150,7 @@ public class Forms {
 
 			Stage primaryStage = new Stage();
 			primaryStage.setTitle(Strings.getTitle());
-			primaryStage.setScene(Main.getMainScene());
+			primaryStage.setScene(SC1Main.getMainScene());
 
 			primaryStage.setResizable(true);
 			primaryStage.setMaximized(true);
@@ -156,6 +168,54 @@ public class Forms {
 
 	}
 
+	// forms tela cliente selecionado
+
+	public void clienteSelecionadoForm(Usuario usuario, Cliente cliente, String tela) {
+
+		boolean concedido = false;
+		Acesso acesso = new Acesso();
+
+		concedido = acesso.concederAcesso(usuario.getAcesso(), tela);
+
+		if (concedido == true) {
+
+			try {
+
+				FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
+				VBox pane = loader.load();
+
+				ClienteSelecionadoFormController controller = loader.getController();
+				controller.carregarCampos(cliente, usuario);
+
+				Stage primaryStage = new Stage();
+				primaryStage.setTitle(Strings.getTitle());
+				primaryStage.setScene(new Scene(pane));
+				primaryStage.setResizable(true);
+				primaryStage.initModality(Modality.APPLICATION_MODAL);
+
+				primaryStage.setResizable(true);
+				primaryStage.setMaximized(true);
+
+				Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
+				primaryStage.getIcons().add(applicationIcon);
+
+				primaryStage.showAndWait();
+
+			} catch (IOException e) {
+
+				Alerts.showAlert("IO Exception", Strings.erroCarregarTela(), e.getMessage(), AlertType.ERROR);
+
+			}
+
+		} else {
+
+			Alerts.showAlert("Acesso negado", "Acesso não concedido ao usuário logado",
+					"Entre em contato com o Administrador do sistema", AlertType.ERROR);
+
+		}
+
+	}
+
 	// forms tela usuário
 
 	public void usuarioForm(Usuario usuario, String tela) {
@@ -168,7 +228,7 @@ public class Forms {
 		if (concedido == true) {
 
 			try {
-
+ 
 				FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
 				ScrollPane pane = loader.load();
 
@@ -285,7 +345,8 @@ public class Forms {
 
 	// forms tela serviço
 
-	public void servicoForm(Usuario usuario, Cliente cliente, ServicoImpressao clienteServico, String tela) {
+	public void servicoForm(Usuario usuario, Cliente cliente, ServicoImpressao clienteServico, String tela,
+			boolean editar) {
 
 		boolean concedido = false;
 		Acesso acesso = new Acesso();
@@ -300,7 +361,7 @@ public class Forms {
 				ScrollPane pane = loader.load();
 
 				ServicoFormController controller = loader.getController();
-				controller.carregarCampos(cliente, clienteServico, usuario);
+				controller.carregarCampos(cliente, clienteServico, usuario, editar);
 
 				pane.setFitToHeight(true);
 				pane.setFitToWidth(true);
@@ -333,8 +394,6 @@ public class Forms {
 
 	}
 
-	// Tela unidade
-
 	public void unidadeForm(Usuario usuario, String tela) {
 
 		boolean concedido = false;
@@ -351,6 +410,7 @@ public class Forms {
 
 				UnidadeFormController controller = loader.getController();
 				controller.setUnidadeService(new UnidadeService());
+				controller.carregarCampos(usuario);
 
 				Stage primaryStage = new Stage();
 				primaryStage.setTitle(Strings.getTitle());
@@ -377,8 +437,6 @@ public class Forms {
 		}
 
 	}
-
-	// Tela vendedor
 
 	public void vendedorForm(Usuario usuario, String tela) {
 
@@ -396,6 +454,7 @@ public class Forms {
 
 				VendedorFormController controller = loader.getController();
 				controller.setVendedorService(new VendedorService());
+				controller.carregarCampos(usuario);
 
 				Stage primaryStage = new Stage();
 				primaryStage.setTitle(Strings.getTitle());
@@ -423,8 +482,6 @@ public class Forms {
 
 	}
 
-	// Tela produto
-
 	public void produtoForm(Usuario usuario, String tela) {
 
 		boolean concedido = false;
@@ -441,6 +498,7 @@ public class Forms {
 
 				ProdutoFormController controller = loader.getController();
 				controller.setProdutoService(new ProdutoService());
+				controller.carregarCampos(usuario);
 
 				Stage primaryStage = new Stage();
 				primaryStage.setTitle(Strings.getTitle());
@@ -463,6 +521,87 @@ public class Forms {
 
 			Alerts.showAlert("Acesso negado", "Acesso não concedido ao usuário logado",
 					"Entre em contato com o Administrador do sistema", AlertType.ERROR);
+
+		}
+
+	}
+
+	public void ConfigurarPerpetiesDBForm(String tela) {
+
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
+			VBox pane = loader.load();
+
+			ConfigurarPerpetiesDBFormController controller = loader.getController();
+			controller.carregarCampos();
+
+			Stage primaryStage = new Stage();
+			primaryStage.setTitle(Strings.getTitle());
+			primaryStage.setScene(new Scene(pane));
+			primaryStage.setResizable(false);
+			primaryStage.initModality(Modality.APPLICATION_MODAL);
+
+			Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
+			primaryStage.getIcons().add(applicationIcon);
+
+			primaryStage.showAndWait();
+
+		} catch (IOException e) {
+
+			Alerts.showAlert("IO Exception", "Erro ao carregar a tela", e.getCause().toString(), AlertType.ERROR);
+
+		}
+
+	}
+	
+	public void LogSegurancaForm(String tela) {
+
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
+			VBox pane = loader.load();
+
+			Stage primaryStage = new Stage();
+			primaryStage.setTitle(Strings.getTitle());
+			primaryStage.setScene(new Scene(pane));
+			primaryStage.setResizable(false);
+			primaryStage.initModality(Modality.APPLICATION_MODAL);
+
+			Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
+			primaryStage.getIcons().add(applicationIcon);
+
+			primaryStage.showAndWait();
+
+		} catch (IOException e) {
+
+			Alerts.showAlert("IO Exception", "Erro ao carregar a tela", e.getCause().toString(), AlertType.ERROR);
+
+		}
+
+	}
+	
+	public void BackupBancoForm(String tela) {
+
+		try {
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
+			VBox pane = loader.load();
+
+			Stage primaryStage = new Stage();
+			primaryStage.setTitle(Strings.getTitle());
+			primaryStage.setScene(new Scene(pane));
+			primaryStage.setResizable(false);
+			primaryStage.initModality(Modality.APPLICATION_MODAL);
+
+			Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
+			primaryStage.getIcons().add(applicationIcon);
+
+			primaryStage.showAndWait();
+
+		} catch (IOException e) {
+
+			Alerts.showAlert("IO Exception", "Erro ao carregar a tela", e.getCause().toString(), AlertType.ERROR);
 
 		}
 

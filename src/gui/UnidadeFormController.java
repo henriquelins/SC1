@@ -25,6 +25,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.entities.Unidade;
+import model.entities.Usuario;
+import model.services.LogSegurancaService;
 import model.services.UnidadeService;
 
 public class UnidadeFormController implements Initializable, DataChangeListener {
@@ -52,7 +54,7 @@ public class UnidadeFormController implements Initializable, DataChangeListener 
 
 	@FXML
 	private TableView<Unidade> tableViewUnidade;
-	
+
 	@FXML
 	private TableColumn<Unidade, String> tableColumnIndex;
 
@@ -70,6 +72,8 @@ public class UnidadeFormController implements Initializable, DataChangeListener 
 
 	@FXML
 	private Button buttonExcluir;
+
+	private Usuario usuario;
 
 	// FXML eventos
 
@@ -100,6 +104,8 @@ public class UnidadeFormController implements Initializable, DataChangeListener 
 				unidadeService.produtoNovoOuEditar(unidade);
 				limparCampos();
 				onDataChanged();
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Unidade cadastrada ou Editada: " + usuario.getNome().toUpperCase());
 
 			} else {
 
@@ -164,7 +170,7 @@ public class UnidadeFormController implements Initializable, DataChangeListener 
 	// Método com os objetos que devem ser inicializados
 
 	private void initializeNodes() {
-		
+
 		labelTituloTela.setText(Strings.getTitleUnidade());
 
 		unidade = new Unidade();
@@ -173,12 +179,13 @@ public class UnidadeFormController implements Initializable, DataChangeListener 
 
 		tableViewUnidade.getSelectionModel().selectedItemProperty()
 				.addListener((observable, oldValue, newValue) -> carregarCampos(newValue));
-		
-		tableColumnIndex.setSortable(false);
-		tableColumnIndex.setCellValueFactory( column -> new ReadOnlyObjectWrapper<String>(Constraints.tresDigitos(
-				tableViewUnidade.getItems().indexOf(column.getValue()) + 1)));
 
-		tableColumnId.setCellValueFactory((param) -> new SimpleStringProperty(Constraints.quatroDigitos(param.getValue().getIdUnidade())));
+		tableColumnIndex.setSortable(false);
+		tableColumnIndex.setCellValueFactory(column -> new ReadOnlyObjectWrapper<String>(
+				Constraints.tresDigitos(tableViewUnidade.getItems().indexOf(column.getValue()) + 1)));
+
+		tableColumnId.setCellValueFactory(
+				(param) -> new SimpleStringProperty(Constraints.quatroDigitos(param.getValue().getIdUnidade())));
 		tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("nomeUnidade"));
 
 		atualizarTableView();
@@ -316,6 +323,20 @@ public class UnidadeFormController implements Initializable, DataChangeListener 
 
 	public void setUnidadeService(UnidadeService unidadeService) {
 		this.unidadeService = unidadeService;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public void carregarCampos(Usuario usuario) {
+
+		setUsuario(usuario);
+
 	}
 
 }

@@ -3,6 +3,7 @@ package model.services;
 import java.util.List;
 import java.util.Optional;
 
+import gui.LoginFormController;
 import gui.util.Alerts;
 import javafx.scene.control.ButtonType;
 import model.dao.ClienteDao;
@@ -22,22 +23,26 @@ public class ClienteService {
 		if (cliente.getIdCliente() == null) {
 
 			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-					"Você deseja salvar o novo cliente " + cliente.getNomeFantasia() + " ?");
+					"Você deseja salvar o novo cliente " + cliente.getNomeFantasia().toUpperCase() + " ?");
 
 			if (result.get() == ButtonType.OK) {
 
 				dao.inserir(cliente);
+				new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
+						"Cliente salvo: " + cliente.getNomeFantasia().toUpperCase());
 
 			}
 
 		} else {
 
 			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-					"Você deseja salvar a edição do cliente " + cliente.getNomeFantasia() + " ?");
+					"Você deseja salvar a edição do cliente " + cliente.getNomeFantasia().toUpperCase() + " ?");
 
 			if (result.get() == ButtonType.OK) {
 
 				dao.atualizar(cliente);
+				new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
+						"Cliente editado: " + cliente.getNomeFantasia().toUpperCase());
 
 			}
 

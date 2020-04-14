@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane prefHeight="480.0" prefWidth="420.0" style="-fx-background-color: #E8E8E8;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ServicoFormController">
+<GridPane alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ServicoFormController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -22,45 +22,45 @@
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <VBox prefHeight="462.0" prefWidth="641.0">
+      <VBox alignment="CENTER">
          <children>
-            <AnchorPane prefHeight="30.0" prefWidth="245.0" style="-fx-background-color: gray;">
+            <AnchorPane style="-fx-background-color: gray;">
                <children>
-                  <Label fx:id="labelTituloTela" layoutX="17.0" layoutY="1.0" prefHeight="27.0" prefWidth="378.0" text="Título da Tela" textFill="WHITE">
+                  <Label fx:id="labelTituloTela" layoutX="32.0" layoutY="1.0" prefHeight="27.0" prefWidth="351.0" text="Título da Tela" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="440.0" prefWidth="360.0">
+            <AnchorPane prefHeight="450.0" prefWidth="420.0">
                <children>
                   <Label fx:id="labelNomeFantasia" layoutX="35.0" layoutY="36.0" text="Label">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <Label layoutX="35.0" layoutY="84.0" text="Nome do Serviço de Impressão" />
-                  <TextField fx:id="textFieldNomeDoServico" layoutX="35.0" layoutY="101.0" prefHeight="25.0" prefWidth="351.0" />
-                  <Label layoutX="34.0" layoutY="139.0" text="CNPJ  para Cobrança" />
-                  <TextField fx:id="textFieldCnpjParaCobranca" layoutX="35.0" layoutY="156.0" prefHeight="25.0" prefWidth="151.0" />
-                  <Label layoutX="203.0" layoutY="139.0" text="Valor Unitário" />
-                  <TextField fx:id="textFieldValorUnitario" layoutX="203.0" layoutY="156.0" prefHeight="25.0" prefWidth="80.0" />
-                  <Label layoutX="303.0" layoutY="139.0" text="Limite Mínimo" />
-                  <TextField fx:id="textFieldLimiteMinimo" layoutX="303.0" layoutY="156.0" prefHeight="25.0" prefWidth="80.0" />
-                  <Label layoutX="34.0" layoutY="193.0" text="Produto do Serviço de Impressão" />
-                  <ComboBox fx:id="comboBoxProduto" layoutX="34.0" layoutY="210.0" prefHeight="25.0" prefWidth="351.0" promptText="Selecione..." />
-                  <Label layoutX="35.0" layoutY="247.0" text="Observações do Serviço" />
-                  <TextArea fx:id="textAreaObservacoesDoServico" layoutX="34.0" layoutY="267.0" prefHeight="94.0" prefWidth="351.0" />
-                  <Button fx:id="buttonSalvarServico" defaultButton="true" layoutX="316.0" layoutY="384.0" mnemonicParsing="false" onAction="#onButtonSalvarServicoAction" prefHeight="25.0" prefWidth="70.0" text="Salvar" />
-                  <RadioButton fx:id="radiobuttonFaturamento" layoutX="141.0" layoutY="396.0" mnemonicParsing="false" text="Futurar (++)">
+                  <Label layoutX="35.0" layoutY="135.0" text="Serviço de Impressão" />
+                  <TextField fx:id="textFieldNomeDoServico" layoutX="35.0" layoutY="154.0" prefHeight="30.0" prefWidth="351.0" style="-fx-background-radius: 10;" />
+                  <Label layoutX="34.0" layoutY="190.0" text="CNPJ  para Crédito ou Débito" />
+                  <TextField fx:id="textFieldCnpjParaCobranca" layoutX="35.0" layoutY="209.0" prefHeight="30.0" prefWidth="166.0" style="-fx-background-radius: 10;" />
+                  <Label layoutX="206.0" layoutY="190.0" text="Valor Unitário" />
+                  <TextField fx:id="textFieldValorUnitario" alignment="CENTER" layoutX="206.0" layoutY="209.0" prefHeight="30.0" prefWidth="80.0" style="-fx-background-radius: 10;" />
+                  <Label layoutX="294.0" layoutY="190.0" text="Limite Mín / Max" />
+                  <TextField fx:id="textFieldLimiteMinimo" alignment="CENTER" layoutX="293.0" layoutY="209.0" prefHeight="30.0" prefWidth="90.0" style="-fx-background-radius: 10;" />
+                  <Label layoutX="34.0" layoutY="244.0" text="Produto do Serviço de Impressão" />
+                  <ComboBox fx:id="comboBoxProduto" layoutX="34.0" layoutY="263.0" prefHeight="30.0" prefWidth="351.0" promptText="SELECIONE..." style="-fx-background-radius: 10;" />
+                  <Label layoutX="35.0" layoutY="300.0" text="Observações do Serviço" />
+                  <TextArea fx:id="textAreaObservacoesDoServico" layoutX="34.0" layoutY="320.0" prefHeight="94.0" prefWidth="271.0" />
+                  <Button fx:id="buttonSalvarServico" defaultButton="true" layoutX="316.0" layoutY="389.0" mnemonicParsing="false" onAction="#onButtonSalvarServicoAction" prefHeight="25.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="SALVAR" />
+                  <RadioButton fx:id="radiobuttonFaturamento" layoutX="142.0" layoutY="103.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="127.0" text="FATURAR (++)">
                      <toggleGroup>
                         <ToggleGroup fx:id="groupLancamento" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="radiobuttonSaldo" layoutX="35.0" layoutY="396.0" mnemonicParsing="false" selected="true" text="Saldo (+ / -)" toggleGroup="$groupLancamento" />
+                  <RadioButton fx:id="radiobuttonSaldo" layoutX="36.0" layoutY="103.0" mnemonicParsing="false" selected="true" text="SALDO (+ / -)" toggleGroup="$groupLancamento" />
                   <Label layoutX="35.0" layoutY="19.0" text="Cliente" />
-                  <Label layoutX="35.0" layoutY="370.0" prefHeight="17.0" prefWidth="86.0" text="Tipo de Conta" />
+                  <Label layoutX="36.0" layoutY="77.0" prefHeight="17.0" prefWidth="86.0" text="Tipo de Conta" />
                </children>
             </AnchorPane>
          </children>

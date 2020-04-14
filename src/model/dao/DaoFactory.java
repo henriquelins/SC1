@@ -6,6 +6,7 @@ import model.dao.impl.ContaDaoJDBC;
 import model.dao.impl.ContatoDaoJDBC;
 import model.dao.impl.EnderecoDaoJDBC;
 import model.dao.impl.LancamentoDaoJDBC;
+import model.dao.impl.LogSegurancaDaoJDBC;
 import model.dao.impl.ProdutoDaoJDBC;
 import model.dao.impl.ServicoImpressaoDaoJDBC;
 import model.dao.impl.UnidadeDaoJDBC;
@@ -71,6 +72,12 @@ public class DaoFactory {
 	public static ContaDao createContaDao() {
 	
 		return new ContaDaoJDBC(DB.getConnection());
+		
+	}
+	
+	public static LogSegurancaDao createLogSegurancaDao() {
+		
+		return new LogSegurancaDaoJDBC(DB.getConnection());
 		
 	}
 

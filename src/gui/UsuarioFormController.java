@@ -29,6 +29,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.entities.Usuario;
+import model.services.LogSegurancaService;
 import model.services.UsuarioService;
 
 public class UsuarioFormController implements Initializable, DataChangeListener {
@@ -134,10 +135,12 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 			ok = compararCampos();
 
 			if (ok == false) {
-
+ 
 				service.usuarioNovoOuEditar(usuario);
 				botoesFalso();
 				onDataChanged();
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Usuario cadastrado ou editado: " + usuario.getNome().toUpperCase());
 
 			} else {
 
@@ -228,7 +231,7 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 		txtLogin.setText("");
 		pswSenha.setText("");
 		pswRepetirSenha.setText("");
-		comboBoxAcesso.setValue("Selecione o tipo de acesso...");
+		comboBoxAcesso.setValue("SELECIONE O TIPO DE ACESSO...");
 
 		setUsuario(new Usuario());
 
@@ -264,10 +267,10 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 
 			if (usuario != null) {
 				txtIdUsuario.setText(Constraints.quatroDigitos(usuario.getIdUsuario()));
-				txtNome.setText(usuario.getNome());
+				txtNome.setText(usuario.getNome().toUpperCase());
 				txtLogin.setText(usuario.getLogin());
-				pswSenha.setText(usuario.getSenha());
-				pswRepetirSenha.setText(usuario.getSenha());
+				pswSenha.setText("******");
+				pswRepetirSenha.setText("******");
 				comboBoxAcesso.setValue(selectChoiceBox(usuario.getAcesso()));
 
 				setUsuarioTabela(usuario);
@@ -386,6 +389,13 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 			txtLogin.requestFocus();
 			usuario = null;
 
+		} else if (comboBoxAcesso.getSelectionModel().getSelectedItem().equals("SELECIONE O TIPO DE ACESSO...")) {
+
+			Alerts.showAlert("Novo Usuário", "Campo obrigatório", "Selecione o acesso!", AlertType.INFORMATION);
+
+	 		comboBoxAcesso.requestFocus();
+			usuario = null;
+
 		} else if (pswSenha.getText() == null || pswSenha.getText().trim().equals("")) {
 
 			Alerts.showAlert("Novo Usuário", "Campo obrigatório", "Digite sua senha!", AlertType.INFORMATION);
@@ -410,13 +420,6 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 			pswRepetirSenha.requestFocus();
 			usuario = null;
 
-		} else if (comboBoxAcesso.getSelectionModel().getSelectedItem().equals("Selecione o tipo de acesso...")) {
-
-			Alerts.showAlert("Novo Usuário", "Campo obrigatório", "Selecione o acesso!", AlertType.INFORMATION);
-
-			comboBoxAcesso.requestFocus();
-			usuario = null;
-
 		} else {
 
 			if (txtIdUsuario.getText().equals("")) {
@@ -429,7 +432,8 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 
 			}
 
-			usuario.setNome(txtNome.getText());
+			usuario.setNome(txtNome.getText().toUpperCase());
+
 			usuario.setLogin(txtLogin.getText());
 			usuario.setSenha(pswSenha.getText());
 			usuario.setAcesso(selectAcesso(comboBoxAcesso.getSelectionModel().getSelectedItem()));

@@ -24,301 +24,317 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import model.entities.Usuario;
 import model.entities.Vendedor;
+import model.services.LogSegurancaService;
 import model.services.VendedorService;
 
 public class VendedorFormController implements Initializable, DataChangeListener {
 
 	// Java variáveis
 
-		private Vendedor vendedor;
+	private Vendedor vendedor;
 
-		private Vendedor compararVendedor;
+	private Vendedor compararVendedor;
 
-		private VendedorService vendedorService;
+	private VendedorService vendedorService;
 
-		private static ObservableList<Vendedor> listaVendedor;
+	private static ObservableList<Vendedor> listaVendedor;
 
-		// @FXML variáveis
+	// @FXML variáveis
 
-		@FXML
-		private Label labelTituloTela;
+	@FXML
+	private Label labelTituloTela;
 
-		@FXML
-		private TextField textFieldId;
+	@FXML
+	private TextField textFieldId;
 
-		@FXML
-		private TextField textFieldNome;
+	@FXML
+	private TextField textFieldNome;
 
-		@FXML
-		private TableView<Vendedor> tableViewVendedor;
-		
-		@FXML
-		private TableColumn<Vendedor, String> tableColumnIndex;
+	@FXML
+	private TableView<Vendedor> tableViewVendedor;
 
-		@FXML
-		private TableColumn<Vendedor, String> tableColumnId;
+	@FXML
+	private TableColumn<Vendedor, String> tableColumnIndex;
 
-		@FXML
-		private TableColumn<Vendedor, String> tableColumnNome;
+	@FXML
+	private TableColumn<Vendedor, String> tableColumnId;
 
-		@FXML
-		private Button buttonNovo;
+	@FXML
+	private TableColumn<Vendedor, String> tableColumnNome;
 
-		@FXML
-		private Button buttonSalvar;
+	@FXML
+	private Button buttonNovo;
 
-		@FXML
-		private Button buttonExcluir;
+	@FXML
+	private Button buttonSalvar;
 
-		// FXML eventos
+	@FXML
+	private Button buttonExcluir;
 
-		@FXML
-		public void onButtonNovoAction(ActionEvent event) {
+	private Usuario usuario;
 
-			textFieldId.setText("");
-			textFieldNome.setText("");
-			textFieldNome.requestFocus();
+	// FXML eventos
 
-			Vendedor vendedor = new Vendedor(null, "");
+	@FXML
+	public void onButtonNovoAction(ActionEvent event) {
 
-			setVendedor(vendedor);
+		textFieldId.setText("");
+		textFieldNome.setText("");
+		textFieldNome.requestFocus();
+
+		Vendedor vendedor = new Vendedor(null, "");
+
+		setVendedor(vendedor);
+
+	}
+
+	@FXML
+	public void onButtonSalvarAction(ActionEvent event) {
+
+		try {
+
+			setVendedor(getFormData());
+
+			boolean ok = compararCampos();
+
+			if (ok == false) {
+
+				vendedorService.produtoNovoOuEditar(vendedor);
+				limparCampos();
+				onDataChanged();
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Vendedor cadastrado ou Editado: " + usuario.getNome().toUpperCase());
+
+			} else {
+
+				Alerts.showAlert("Cadastro de Vendedores", "Editar vendedores", "Não houve alteração no registro",
+						AlertType.INFORMATION);
+
+			}
+
+		} catch (java.lang.NullPointerException e) {
 
 		}
 
-		@FXML
-		public void onButtonSalvarAction(ActionEvent event) {
+	}
 
-			try {
+	@FXML
+	public void onButtonExcluirAction(ActionEvent event) {
 
-				setVendedor(getFormData());
+		if (vendedorService == null) {
 
-				boolean ok = compararCampos();
+			throw new IllegalThreadStateException("vendedorService está nulo");
 
-				if (ok == false) {
+		}
+		try {
 
-					vendedorService.produtoNovoOuEditar(vendedor);
-					limparCampos();
+			if (vendedor.getIdVendedor() != null) {
+
+				Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
+						"Você deseja excluir o vendedor " + vendedor.getNomeVendedor() + " ?");
+
+				if (result.get() == ButtonType.OK) {
+
+					vendedorService.excluir(vendedor.getIdVendedor());
 					onDataChanged();
 
-				} else {
-
-					Alerts.showAlert("Cadastro de Vendedores", "Editar vendedores",
-							"Não houve alteração no registro", AlertType.INFORMATION);
-
 				}
-
-			} catch (java.lang.NullPointerException e) {
-
-			}
-
-		}
-
-		@FXML
-		public void onButtonExcluirAction(ActionEvent event) {
-
-			if (vendedorService == null) {
-
-				throw new IllegalThreadStateException("vendedorService está nulo");
-
-			}
-			try {
-
-				if (vendedor.getIdVendedor() != null) {
-
-					Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
-							"Você deseja excluir o vendedor " + vendedor.getNomeVendedor() + " ?");
-
-					if (result.get() == ButtonType.OK) {
-
-						vendedorService.excluir(vendedor.getIdVendedor());
-						onDataChanged();
-
-					}
-
-				} else {
-
-					Alerts.showAlert("Cadastro de Vendedores", "Excluir", "Selecione um registro", AlertType.INFORMATION);
-
-				}
-
-			} catch (DbIntegrityException e) {
-
-				Alerts.showAlert("Cadastro de Vendedores", "Excluir", "Erro ao excluir o vendedor",
-						AlertType.INFORMATION);
-				limparCampos();
-
-			}
-
-		}
-
-		// Inicialização da classe
-
-		@Override
-		public void initialize(URL url, ResourceBundle rb) {
-
-			initializeNodes();
-
-		}
-
-		// Método com os objetos que devem ser inicializados
-
-		private void initializeNodes() {
-			
-			labelTituloTela.setText(Strings.getTitleVendedor());
-
-			vendedor = new Vendedor();
-			compararVendedor = new Vendedor();
-			vendedorService = new VendedorService();
-
-			
-			tableViewVendedor.getSelectionModel().selectedItemProperty()
-					.addListener((observable, oldValue, newValue) -> carregarCampos(newValue));
-			
-			tableColumnIndex.setSortable(false);
-			tableColumnIndex.setCellValueFactory( column -> new ReadOnlyObjectWrapper<String>(Constraints.tresDigitos(
-					tableViewVendedor.getItems().indexOf(column.getValue()) + 1)));
-
-			tableColumnId.setCellValueFactory((param) -> new SimpleStringProperty(Constraints.quatroDigitos(param.getValue().getIdVendedor())));
-			tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("nomeVendedor"));
-
-			atualizarTableView();
-
-		}
-
-		// Listener
-
-		@Override
-		public void onDataChanged() {
-
-			atualizarTableView();
-
-		}
-
-		// Comparar todos os campos
-
-		private boolean compararCampos() {
-
-			boolean ok = false;
-
-			if (getVendedor() == null) {
-
-				return ok;
-
-			} else if (getVendedor().equals(compararVendedor)) {
-
-				ok = true;
-				return ok;
 
 			} else {
 
-				return ok;
+				Alerts.showAlert("Cadastro de Vendedores", "Excluir", "Selecione um registro", AlertType.INFORMATION);
 
 			}
 
+		} catch (DbIntegrityException e) {
+
+			Alerts.showAlert("Cadastro de Vendedores", "Excluir", "Erro ao excluir o vendedor", AlertType.INFORMATION);
+			limparCampos();
+
 		}
 
-		// Carregar campos
+	}
 
-		private void carregarCampos(Vendedor vendedor) {
+	// Inicialização da classe
 
-			labelTituloTela.setText(Strings.getTitleVendedor());
+	@Override
+	public void initialize(URL url, ResourceBundle rb) {
 
-			if (vendedor != null) {
+		initializeNodes();
 
-				textFieldId.setText(Constraints.quatroDigitos(vendedor.getIdVendedor()));
-				textFieldNome.setText(vendedor.getNomeVendedor());
+	}
 
-				setVendedor(vendedor);
-				compararVendedor = vendedor;
+	// Método com os objetos que devem ser inicializados
 
-			} else {
+	private void initializeNodes() {
 
-				limparCampos();
+		labelTituloTela.setText(Strings.getTitleVendedor());
+
+		vendedor = new Vendedor();
+		compararVendedor = new Vendedor();
+		vendedorService = new VendedorService();
+
+		tableViewVendedor.getSelectionModel().selectedItemProperty()
+				.addListener((observable, oldValue, newValue) -> carregarCampos(newValue));
+
+		tableColumnIndex.setSortable(false);
+		tableColumnIndex.setCellValueFactory(column -> new ReadOnlyObjectWrapper<String>(
+				Constraints.tresDigitos(tableViewVendedor.getItems().indexOf(column.getValue()) + 1)));
+
+		tableColumnId.setCellValueFactory(
+				(param) -> new SimpleStringProperty(Constraints.quatroDigitos(param.getValue().getIdVendedor())));
+		tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("nomeVendedor"));
+
+		atualizarTableView();
+
+	}
+
+	// Listener
+
+	@Override
+	public void onDataChanged() {
+
+		atualizarTableView();
+
+	}
+
+	// Comparar todos os campos
+
+	private boolean compararCampos() {
+
+		boolean ok = false;
+
+		if (getVendedor() == null) {
+
+			return ok;
+
+		} else if (getVendedor().equals(compararVendedor)) {
+
+			ok = true;
+			return ok;
+
+		} else {
+
+			return ok;
+
+		}
+
+	}
+
+	// Carregar campos
+
+	private void carregarCampos(Vendedor vendedor) {
+
+		labelTituloTela.setText(Strings.getTitleVendedor());
+
+		if (vendedor != null) {
+
+			textFieldId.setText(Constraints.quatroDigitos(vendedor.getIdVendedor()));
+			textFieldNome.setText(vendedor.getNomeVendedor());
+
+			setVendedor(vendedor);
+			compararVendedor = vendedor;
+
+		} else {
+
+			limparCampos();
+
+		}
+
+	}
+
+	// Atualizar tabela
+
+	private void atualizarTableView() {
+
+		if (vendedorService == null) {
+
+			throw new IllegalStateException("vendedorService está nulo");
+		}
+
+		listaVendedor = FXCollections.observableArrayList(vendedorService.buscarTodos());
+		tableViewVendedor.setItems(listaVendedor);
+
+	}
+
+	public void limparCampos() {
+
+		textFieldId.setText("");
+		textFieldNome.setText("");
+
+		setVendedor(new Vendedor());
+
+	};
+
+	// Tratamento dos campos
+
+	private Vendedor getFormData() {
+
+		Vendedor vendedor = new Vendedor();
+
+		if (textFieldNome.getText() == null || textFieldNome.getText().trim().equals("")) {
+
+			Alerts.showAlert("Cadastro de Vendedores", "Campo obrigatório", "Digite o nome", AlertType.INFORMATION);
+
+			textFieldNome.requestFocus();
+
+			vendedor = null;
+
+		} else {
+
+			if (getVendedor() != null) {
+
+				vendedor.setIdVendedor(getVendedor().getIdVendedor());
 
 			}
 
-		}
-
-		// Atualizar tabela
-
-		private void atualizarTableView() {
-
-			if (vendedorService == null) {
-
-				throw new IllegalStateException("vendedorService está nulo");
-			}
-
-			listaVendedor = FXCollections.observableArrayList(vendedorService.buscarTodos());
-			tableViewVendedor.setItems(listaVendedor);
+			vendedor.setNomeVendedor(textFieldNome.getText());
 
 		}
 
-		public void limparCampos() {
+		return vendedor;
+	}
 
-			textFieldId.setText("");
-			textFieldNome.setText("");
+	// Get and Setters
 
-			setVendedor(new Vendedor());
+	public Vendedor getVendedor() {
+		return vendedor;
+	}
 
-		};
+	public void setVendedor(Vendedor vendedor) {
+		this.vendedor = vendedor;
+	}
 
-		// Tratamento dos campos
+	public Vendedor getCompararVendedor() {
+		return compararVendedor;
+	}
 
-		private Vendedor getFormData() {
+	public void setCompararVendedor(Vendedor compararVendedor) {
+		this.compararVendedor = compararVendedor;
+	}
 
-			Vendedor vendedor = new Vendedor();
+	public VendedorService getVendedorService() {
+		return vendedorService;
+	}
 
-			if (textFieldNome.getText() == null || textFieldNome.getText().trim().equals("")) {
+	public void setVendedorService(VendedorService vendedorService) {
+		this.vendedorService = vendedorService;
+	}
 
-				Alerts.showAlert("Cadastro de Vendedores", "Campo obrigatório", "Digite o nome",
-						AlertType.INFORMATION);
+	public Usuario getUsuario() {
+		return usuario;
+	}
 
-				textFieldNome.requestFocus();
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 
-				vendedor = null;
+	public void carregarCampos(Usuario usuario) {
 
-			} else {
-
-				if (getVendedor() != null) {
-
-					vendedor.setIdVendedor(getVendedor().getIdVendedor());
-
-				}
-
-				vendedor.setNomeVendedor(textFieldNome.getText());
-
-			}
-
-			return vendedor;
-		}
-
-		// Get and Setters
-
-		public Vendedor getVendedor() {
-			return vendedor;
-		}
-
-		public void setVendedor(Vendedor vendedor) {
-			this.vendedor = vendedor;
-		}
-
-		public Vendedor getCompararVendedor() {
-			return compararVendedor;
-		}
-
-		public void setCompararVendedor(Vendedor compararVendedor) {
-			this.compararVendedor = compararVendedor;
-		}
-
-		public VendedorService getVendedorService() {
-			return vendedorService;
-		}
-
-		public void setVendedorService(VendedorService vendedorService) {
-			this.vendedorService = vendedorService;
-		}
-
+		setUsuario(usuario);
 		
-	
+	}
+
 }
