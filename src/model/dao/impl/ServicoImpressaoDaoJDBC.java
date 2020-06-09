@@ -20,7 +20,7 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 	private Connection conn;
 
 	// método para criar a conexão
- 
+
 	public ServicoImpressaoDaoJDBC(Connection conn) {
 
 		this.conn = conn;
@@ -294,7 +294,7 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 
 			while (rs.next()) {
 
-				nome =  rs.getString("nome_fantasia");
+				nome = rs.getString("nome_fantasia");
 
 				conn.commit();
 
@@ -326,7 +326,7 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 
 	@Override
 	public void excluir(Integer id) {
-	
+
 		PreparedStatement st = null;
 
 		try {
@@ -359,14 +359,65 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
 
 			}
-			
+
 		} finally {
 
 			DB.closeStatement(st);
 
 		}
-		
-		
+
+	}
+
+	@Override
+	public ServicoImpressao buscarServicoImpressaoCnpj(String cnpj) {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		ServicoImpressao servicoImpressao = new ServicoImpressao();
+		Conta conta = null;
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement(
+					"SELECT * FROM  cliente as cl inner join servico_impressao as si on cl.id_cliente = si.id_cliente inner join conta as co on si.id_conta = co.id_conta WHERE co.cnpj = ?");
+			st.setString(1, cnpj);
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				servicoImpressao = instantiateServicoImpressao(rs);
+				conta = instantiateConta(rs);
+
+				servicoImpressao.setConta(conta);
+
+			}
+
+			conn.commit();
+
+			return servicoImpressao;
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transaction rolled back. Cause by: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Error trying to rollback. Cause by: " + e.getLocalizedMessage());
+
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+
 	}
 
 }

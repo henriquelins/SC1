@@ -19,12 +19,10 @@ public class Alerts {
 		alert.setHeaderText(header);
 		alert.setContentText(content);
 
-		alert.initModality(Modality.WINDOW_MODAL);
+		alert.initModality(Modality.APPLICATION_MODAL);
 
 		Stage dialogStage = (Stage) alert.getDialogPane().getScene().getWindow();
 		dialogStage.getIcons().add(new Image(Strings.getIcone()));
-
-
 
 		alert.show();
 	}
@@ -42,15 +40,14 @@ public class Alerts {
 		alert.setTitle(title);
 		alert.setHeaderText(null);
 		alert.setContentText(content);
+		
+		alert.initModality(Modality.APPLICATION_MODAL);
 
 		Stage dialogStage = (Stage) alert.getDialogPane().getScene().getWindow();
 		dialogStage.getIcons().add(new Image(Strings.getIcone()));
 
-	
 		return alert.showAndWait();
 
 	}
-	
-	
 
 }

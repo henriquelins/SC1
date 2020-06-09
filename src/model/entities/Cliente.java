@@ -16,8 +16,8 @@ public class Cliente implements Serializable {
 	private Date dataInicioCliente;
 	private String detalhesDoCliente;
 	private boolean entregaNoCliente;
-	private int cod_vendedor;
-	private int unidadeDeAtendimento;
+	private Integer cod_vendedor;
+	private Integer unidadeDeAtendimento;
 	private Contato contato;
 	private Endereco endereco;
 
@@ -26,7 +26,7 @@ public class Cliente implements Serializable {
 
 	public Cliente(Integer idCliente, String nomeFantasia, String razaoSocial, String cnpjCliente,
 			String inscricaoEstadual, String inscricaoMunicipal, Date dataInicioCliente, String detalhesDoCliente,
-			boolean entregaNoCliente, int cod_vendedor, int unidadeDeAtendimento, Contato contato, Endereco endereco) {
+			boolean entregaNoCliente, Integer cod_vendedor, Integer unidadeDeAtendimento, Contato contato, Endereco endereco) {
 		this.idCliente = idCliente;
 		this.nomeFantasia = nomeFantasia;
 		this.razaoSocial = razaoSocial;
@@ -118,7 +118,7 @@ public class Cliente implements Serializable {
 		return cod_vendedor;
 	}
 
-	public void setCod_vendedor(int cod_vendedor) {
+	public void setCod_vendedor(Integer cod_vendedor) {
 		this.cod_vendedor = cod_vendedor;
 	}
 
@@ -126,7 +126,7 @@ public class Cliente implements Serializable {
 		return unidadeDeAtendimento;
 	}
 
-	public void setUnidadeDeAtendimento(int unidadeDeAtendimento) {
+	public void setUnidadeDeAtendimento(Integer unidadeDeAtendimento) {
 		this.unidadeDeAtendimento = unidadeDeAtendimento;
 	}
 

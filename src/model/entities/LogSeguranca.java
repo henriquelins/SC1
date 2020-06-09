@@ -8,7 +8,7 @@ public class LogSeguranca implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private int id_logSeguranca;
+	private Integer id_logSeguranca;
 	private String logado;
 	private String descricao;
 	private Date dataLog;
@@ -18,7 +18,7 @@ public class LogSeguranca implements Serializable {
 
 	}
 
-	public LogSeguranca(int id_logSeguranca, String logado, String descricao, Date dataLog, Time horaLog) {
+	public LogSeguranca(Integer id_logSeguranca, String logado, String descricao, Date dataLog, Time horaLog) {
 
 		this.id_logSeguranca = id_logSeguranca;
 		this.logado = logado;
@@ -32,7 +32,7 @@ public class LogSeguranca implements Serializable {
 		return id_logSeguranca;
 	}
 
-	public void setId_logSeguranca(int id_logSeguranca) {
+	public void setId_logSeguranca(Integer id_logSeguranca) {
 		this.id_logSeguranca = id_logSeguranca;
 	}
 

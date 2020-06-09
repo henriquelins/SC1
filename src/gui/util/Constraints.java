@@ -9,8 +9,10 @@ import java.util.InputMismatchException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -600,7 +602,9 @@ public class Constraints {
 	}
 	
 	public static void mascaraMonetaria(TextField textField) {
-
+		
+		textField.setAlignment(Pos.CENTER_RIGHT);
+		
 		textField.setOnKeyTyped((KeyEvent event) -> {
 			if ("0123456789".contains(event.getCharacter()) == false) {
 				event.consume();
@@ -626,11 +630,14 @@ public class Constraints {
 
 			} else { // escrevendo
 
-				if (textField.getText().length() == 6)
-					event.consume();
-
 				if (textField.getText().length() == 0) {
 					textField.setText("R$ " + event.getCharacter());
+					textField.positionCaret(textField.getText().length());
+					event.consume();
+				}
+				
+				if (textField.getText().length() == 3) {
+					textField.setText(textField.getText() + " " + event.getCharacter());
 					textField.positionCaret(textField.getText().length());
 					event.consume();
 				}
@@ -685,49 +692,67 @@ public class Constraints {
 	
 	}
 	
-	  /**
-     * Monta a mascara para Moeda.
-     *
-     * @param textField TextField
-     */
-    public static void monetaryField(final TextField textField) {
-        //textField.setAlignment(Pos.CENTER_RIGHT);
-        textField.lengthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                String value = textField.getText();
-                value = value.replaceAll("[^0-9]", "");
-                value = value.replaceAll("([0-9]{1})([0-9]{14})$", "$1.$2");
-                value = value.replaceAll("([0-9]{1})([0-9]{11})$", "$1.$2");
-                value = value.replaceAll("([0-9]{1})([0-9]{8})$", "$1.$2");
-                value = value.replaceAll("([0-9]{1})([0-9]{5})$", "$1.$2");
-                value = value.replaceAll("([0-9]{1})([0-9]{2})$", "$1,$2");
-                textField.setText(value);
-                //positionCaret(textField);
+	/**
+	 * Monta a mascara para Moeda.
+	 *
+	 * @param textField TextField
+	 */
+	public static void monetaryField(final TextField textField) {
+		textField.setAlignment(Pos.CENTER_RIGHT);
+		textField.lengthProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
-                textField.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                        if (newValue.length() > 17)
-                            textField.setText(oldValue);
-                    }
-                });
-            }
-        });
+				String value = textField.getText();
+				value = value.replaceAll("[^0-9]", "");
+				value = value.replaceAll("([0-9]{1})([0-9]{14})$", "$1.$2");
+				value = value.replaceAll("([0-9]{1})([0-9]{11})$", "$1.$2");
+				value = value.replaceAll("([0-9]{1})([0-9]{8})$", "$1.$2");
+				value = value.replaceAll("([0-9]{1})([0-9]{5})$", "$1.$2");
+				value = value.replaceAll("([0-9]{1})([0-9]{2})$", "$1,$2");
+				textField.setText(value);
+				positionCaret(textField);
 
-        textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean fieldChange) {
-                if (!fieldChange) {
-                    final int length = textField.getText().length();
-                    if (length > 0 && length < 3) {
-                        textField.setText(textField.getText() + "00");
-                    }
-                }
-            }
-        });
-    }
+				textField.textProperty().addListener(new ChangeListener<String>() {
+					@Override
+					public void changed(ObservableValue<? extends String> observableValue, String oldValue,
+							String newValue) {
+						if (newValue.length() > 17)
+							textField.setText(oldValue);
+					}
+				});
+			}
+		});
 
+		textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean,
+					Boolean fieldChange) {
+				if (!fieldChange) {
+					final int length = textField.getText().length();
+					if (length > 0 && length < 3) {
+						textField.setText(textField.getText() + "00");
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Devido ao incremento dos caracteres das mascaras eh necessario que o cursor
+	 * sempre se posicione no final da string.
+	 *
+	 * @param textField TextField
+	 */
+	private static void positionCaret(final TextField textField) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				// Posiciona o cursor sempre a direita.
+				textField.positionCaret(textField.getText().length());
+			}
+		});
+	}
     
     public static boolean isValidEmailAddressRegex(String email) {
         boolean isEmailIdValid = false;

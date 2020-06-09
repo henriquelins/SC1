@@ -157,6 +157,9 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	private TextField textFieldTipoDeConta;
 
 	@FXML
+	private TextField textFieldStatus;
+
+	@FXML
 	private TextArea textAreaDetalhesDoServico;
 
 	@FXML
@@ -180,6 +183,13 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	@FXML
 	private Button buttonExcluirServico;
 
+	@FXML
+	private Label labelLimite;
+	
+	@FXML
+	private Label labelTotal;
+
+
 	// @FXML event
 
 	// Evento boto relatório do cliente
@@ -187,162 +197,193 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	@FXML
 	public void onButtonRelatorioDoClienteAction(ActionEvent event) {
 
-		Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
+		ServicoÌmpressaoService impressaoService = new ServicoÌmpressaoService();
 
-				"Você deseja ver o relatório do cliente " + cliente.getNomeFantasia().toUpperCase() + " ?");
+		List<ServicoImpressao> ListaSi = new ArrayList<>();
 
-		if (result.get() == ButtonType.OK) {
+		ListaSi = impressaoService.buscarServicosDoCliente(cliente.getIdCliente());
 
-			String serv = "";
-			String saldo = "";
+		if (ListaSi.isEmpty() == true) {
 
-			StringBuffer servicos = new StringBuffer();
-			StringBuffer saldoCnpj = new StringBuffer();
+			Alerts.showAlert("Exportar lista", "Não existem serviços cadastrados para o cliente", "Exportar para Excel",
+					AlertType.ERROR);
 
-			List<String> listaSaldoCliente = new ArrayList<>();
+		} else {
 
-			if (cliente != null) {
+			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
 
-				String cnpj = "";
+					"Você deseja ver o relatório do saldo do cliente " + cliente.getNomeFantasia().toUpperCase()
+							+ " ?");
 
-				saldoCnpj.append("Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n");
+			if (result.get() == ButtonType.OK) {
 
-				saldo = "Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n";
-				listaSaldoCliente.add(saldo);
+				String serv = "";
+				String saldo = "";
 
-				int index = 1;
-				int index2 = 1;
+				StringBuffer servicos = new StringBuffer();
+				StringBuffer saldoCnpj = new StringBuffer();
 
-				ServicoÌmpressaoService impressaoService = new ServicoÌmpressaoService();
+				List<String> listaSaldoCliente = new ArrayList<>();
 
-				List<ServicoImpressao> ListaSi = new ArrayList<>();
+				if (cliente != null) {
 
-				ListaSi = impressaoService.buscarServicosDoCliente(cliente.getIdCliente());
+					String cnpj = "";
 
-				if (!ListaSi.isEmpty() == true) {
+					saldoCnpj.append("Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n");
 
-					for (ServicoImpressao si : ListaSi) {
+					saldo = "Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n";
+					listaSaldoCliente.add(saldo);
 
-						if (!si.getConta().getCnpj().equals(cnpj)) {
+					int index = 1;
+					int index2 = 1;
 
-							saldoCnpj.append(index + " - Saldo ou Fatura no CNPJ: " + si.getConta().getCnpj()
-									+ " - total: " + String.valueOf(si.getConta().getSaldo()) + " Unidades.\n");
+					if (!ListaSi.isEmpty() == true) {
 
-							saldo = index + " - Saldo ou Fatura no CNPJ: " + si.getConta().getCnpj() + " - total: "
-									+ String.valueOf(si.getConta().getSaldo()) + " Unidades.\n";
+						String tipo = "";
 
-							listaSaldoCliente.add(saldo.toString());
+						for (ServicoImpressao si : ListaSi) {
 
-							index++;
+							if (!si.getConta().getCnpj().equals(cnpj)) {
+
+								if (si.getConta().isTipo()) {
+
+									tipo = "SALDO";
+
+								} else {
+
+									tipo = "FATURADO";
+								}
+
+								saldoCnpj.append(index + " - Tipo: " + tipo + " - CNPJ: " + si.getConta().getCnpj()
+										+ " - Serviço: " + si.getNomeDoServico().toUpperCase() + " - total: "
+										+ String.valueOf(si.getConta().getSaldo()) + " Unidades.");
+
+								saldo = index + " - Tipo de conta: " + tipo + " - CNPJ: " + si.getConta().getCnpj()
+										+ " - total: " + String.valueOf(si.getConta().getSaldo()) + " Unidades.\n";
+
+								listaSaldoCliente.add(saldo.toString());
+
+								index++;
+							}
+
+							cnpj = si.getConta().getCnpj();
+
 						}
 
-						cnpj = si.getConta().getCnpj();
+						servicos.append("Cliente: " + cliente.getNomeFantasia().toUpperCase()
+								+ " - Lista por Serviços do cliente - Mesmo CNPJ, compartilham o mesmo total.\n");
 
-						index++;
+						serv = "Cliente: " + cliente.getNomeFantasia().toUpperCase()
+								+ " - Lista por Serviços do cliente - Mesmo CNPJ, compartilham o mesmo total.\n";
 
-					}
-
-					servicos.append("Cliente: " + cliente.getNomeFantasia().toUpperCase()
-							+ " - Lista por Serviços do cliente - Mesmo CNPJ, mesmo total.\n");
-
-					serv = "Cliente: " + cliente.getNomeFantasia().toUpperCase()
-							+ " - Lista por Serviços do cliente - Mesmo CNPJ, mesmo total.\n";
-
-					listaSaldoCliente.add("\n");
-					listaSaldoCliente.add(serv);
-
-					new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
-							"seleção do cliente " + cliente.getNomeFantasia().toUpperCase());
-
-				} else {
-
-					servicos.append("Não existem serviços cadastrados para o cliente.");
-					saldoCnpj.append("Não existem serviços cadastrados para o cliente.");
-
-					servicos = new StringBuffer();
-					saldoCnpj = new StringBuffer();
-
-				}
-
-				if (!ListaSi.isEmpty() == true) {
-
-					for (ServicoImpressao si : ListaSi) {
-
-						servicos.append(index2 + " - CNPJ para cobrança: " + si.getConta().getCnpj() + " - Serviço: "
-								+ si.getNomeDoServico().toUpperCase() + " - total: "
-								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.");
-
-						serv = index2 + " - CNPJ para cobrança: " + si.getConta().getCnpj() + " - Serviço: "
-								+ si.getNomeDoServico().toUpperCase() + " - total: "
-								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.";
-
+						listaSaldoCliente.add("\n");
 						listaSaldoCliente.add(serv);
 
-						if (ListaSi.size() != index2) {
+						new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+								"seleção do cliente " + cliente.getNomeFantasia().toUpperCase());
 
-							servicos.append("\n");
+					} else {
 
-						}
+						servicos.append("Não existem serviços cadastrados para o cliente.");
+						saldoCnpj.append("Não existem serviços cadastrados para o cliente.");
 
-						cnpj = si.getConta().getCnpj();
-
-						index2++;
+						servicos = new StringBuffer();
+						saldoCnpj = new StringBuffer();
 
 					}
 
-				} else {
+					if (!ListaSi.isEmpty() == true) {
 
-					servicos.append("Não existem serviços cadastrados para o cliente.");
-					saldoCnpj.append("Não existem serviços cadastrados para o cliente.");
+						String tipo = "";
 
-					servicos = new StringBuffer();
-					saldoCnpj = new StringBuffer();
+						for (ServicoImpressao si : ListaSi) {
 
-				}
+							if (si.getConta().isTipo()) {
 
-			} else {
+								tipo = "SALDO";
 
-				servicos = new StringBuffer();
-				saldoCnpj = new StringBuffer();
+							} else {
 
-			}
+								tipo = "FATURADO";
+							}
 
-			ExportarListaSaldoClienteXLS exportarXLS = new ExportarListaSaldoClienteXLS();
+							servicos.append(index2 + "- Tipo: " + tipo + " - CNPJ: " + si.getConta().getCnpj()
+									+ " - Serviço: " + si.getNomeDoServico().toUpperCase() + " - total: "
+									+ String.valueOf(si.getConta().getSaldo()) + " Unidades.");
 
-			String caminho = "C:/temp/listaSaldoCliente.xls";
+							serv = index2 + "- Tipo: " + tipo + " - CNPJ: " + si.getConta().getCnpj() + " - Serviço: "
+									+ si.getNomeDoServico().toUpperCase() + " - total: "
+									+ String.valueOf(si.getConta().getSaldo()) + " Unidades.";
 
-			try {
+							listaSaldoCliente.add(serv);
 
-				try {
+							if (ListaSi.size() != index2) {
 
-					if (listaSaldoCliente.isEmpty() != true) {
+								servicos.append("\n");
 
-						try {
+							}
 
-							exportarXLS.exportarListaSaldoClienteXLS(caminho, listaSaldoCliente, cliente);
+							cnpj = si.getConta().getCnpj();
 
-						} catch (WriteException e) {
-
-							Alerts.showAlert("Exportar lista", "Erro ao criar o arquivo!", "Exportar ",
-									AlertType.ERROR);
+							index2++;
 
 						}
 
 					} else {
 
-						Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar para Excel", AlertType.ERROR);
+						servicos.append("Não existem serviços cadastrados para o cliente.");
+						saldoCnpj.append("Não existem serviços cadastrados para o cliente.");
+
+						servicos = new StringBuffer();
+						saldoCnpj = new StringBuffer();
+
 					}
 
-				} catch (HeadlessException | IOException e2) {
+				} else {
 
-					Alerts.showAlert("Exportar lista", "Feche o arquivo primeiro!", "Exportar para Excel",
-							AlertType.ERROR);
+					servicos = new StringBuffer();
+					saldoCnpj = new StringBuffer();
 
 				}
 
-			} catch (java.lang.NullPointerException e) {
+				ExportarListaSaldoClienteXLS exportarXLS = new ExportarListaSaldoClienteXLS();
 
-				Alerts.showAlert("Exportar lista", "Listagem nula", "Exportar para Excel", AlertType.ERROR);
+				String caminho = "C:/temp/listaSaldoCliente.xls";
+
+				try {
+
+					try {
+
+						if (listaSaldoCliente.isEmpty() != true) {
+
+							try {
+
+								exportarXLS.exportarListaSaldoClienteXLS(caminho, listaSaldoCliente, cliente);
+
+							} catch (WriteException e) {
+
+								Alerts.showAlert("Exportar lista", "Erro ao criar o arquivo!", "Exportar ",
+										AlertType.ERROR);
+
+							}
+
+						} else {
+
+							Alerts.showAlert("Exportar lista", "Lista vazia", "Exportar para Excel", AlertType.ERROR);
+						}
+
+					} catch (HeadlessException | IOException e2) {
+
+						Alerts.showAlert("Exportar lista", "Feche o arquivo primeiro!", "Exportar para Excel",
+								AlertType.ERROR);
+
+					}
+
+				} catch (java.lang.NullPointerException e) {
+
+					Alerts.showAlert("Exportar lista", "Listagem nula", "Exportar para Excel", AlertType.ERROR);
+
+				}
 
 			}
 
@@ -453,9 +494,9 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	@FXML
 	public void onButtoEditarClienteServicoAction(ActionEvent event) {
 
-		clienteForm(usuario, cliente, Strings.getClienteView());
+		clienteForm(usuario, getCliente(), Strings.getClienteView());
 		new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
-				"Editar cliente: " + cliente.getNomeFantasia().toUpperCase());
+				"Editar cliente: " + getCliente().getNomeFantasia().toUpperCase());
 
 	}
 
@@ -501,43 +542,56 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 	@FXML
 	public void onComboBoxServicoAction(ActionEvent event) {
 
+		// id_cliente_servico = 0;
+
 		try {
 
-			if (listaServicos().isEmpty() == true) {
+			if (comboBoxServico.getSelectionModel().getSelectedItem() != null
+					|| !comboBoxServico.getSelectionModel().getSelectedItem().trim().equals("") || !comboBoxServico
+							.getSelectionModel().getSelectedItem().equals("ADICIONE UM SERVIÇO DE IMPRESSÃO")) {
 
-				Alerts.showAlert("Serviços do Cliente", "Serviços de impressão", "Selecione o serviço de impressão",
-						AlertType.ERROR);
+				String nome = comboBoxServico.getSelectionModel().getSelectedItem();
 
-			} else {
+				for (int i = 0; listaServicosGeral.size() > i; i++) {
 
-				if (!comboBoxServico.getSelectionModel().getSelectedItem().equals("SELECIONE O SERVIÇO...")) {
+					if (listaServicosGeral.get(i).getNomeDoServico().equals(nome)) {
 
-					String nome = comboBoxServico.getSelectionModel().getSelectedItem();
-
-					new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
-							"Serviço selecionado: " + nome.toUpperCase());
-
-					for (int i = 0; listaServicosGeral.size() > i; i++) {
-
-						if (listaServicosGeral.get(i).getNomeDoServico().equals(nome)) {
-
-							id_cliente_servico = listaServicosGeral.get(i).getIdServicoImpressao();
-
-						}
+						id_cliente_servico = listaServicosGeral.get(i).getIdServicoImpressao();
 
 					}
 
-					setServicoImpressao(servicoÌmpressaoService.buscarPeloIdCliente(id_cliente_servico));
-
-					carregarCamposClienteServico();
-
 				}
+
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						"Serviço selecionado: " + nome.toUpperCase());
+
+				setServicoImpressao(servicoÌmpressaoService.buscarPeloIdCliente(id_cliente_servico));
+
+				carregarCamposClienteServico();
+
+				limparComboBoxServico();
+
+			} else {
+
+				Alerts.showAlert("Serviços do Cliente", "Serviços de impressão", "Adicione um serviço de impressão",
+						AlertType.ERROR);
+
+				limparComboBoxServico();
 
 			}
 
 		} catch (java.lang.NullPointerException e) {
 
+			limparComboBoxServico();
+
 		}
+
+	}
+
+	public void limparComboBoxServico() {
+
+		comboBoxServico.getSelectionModel().clearSelection();
+		comboBoxServico.setItems(FXCollections.observableArrayList(listaServicos()));
 
 	}
 
@@ -550,11 +604,17 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 		listaServicosGeral = impressaoService.buscarServicosDoCliente(idClienteSelecionado);
 
-		listaServicoImpressao.add("SELECIONE O SERVIÇO");
+		if (listaServicosGeral.isEmpty() == true) {
 
-		for (ServicoImpressao cs : listaServicosGeral) {
+			listaServicoImpressao.add("ADICIONE UM SERVIÇO DE IMPRESSÃO");
 
-			listaServicoImpressao.add(cs.getNomeDoServico());
+		} else {
+
+			for (ServicoImpressao cs : listaServicosGeral) {
+
+				listaServicoImpressao.add(cs.getNomeDoServico());
+
+			}
 
 		}
 
@@ -819,28 +879,88 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	public void carregarCamposClienteServico() {
 
-		textFieldServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
-		textFieldProdutoDoServico
-				.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
-		textFieldSaldo.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
-		textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
-		textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()) + " Unidades");
-		textFieldCnpj.setText(servicoImpressao.getConta().getCnpj());
+		if (servicoImpressao.getIdServicoImpressao() == null) {
 
-		String tipo = "";
-
-		if (servicoImpressao.getConta().isTipo()) {
-
-			tipo = "SALDO";
+			limparDadosServicos();
 
 		} else {
 
-			tipo = "FATURADO";
+			textFieldServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
+			textFieldProdutoDoServico
+					.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
+			textFieldSaldo.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
+			textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
+			textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()) + " Unidades");
+			textFieldCnpj.setText(servicoImpressao.getConta().getCnpj());
+			textFieldStatus.setText(statusServicoImpressao(servicoImpressao.getConta().isTipo(),
+					servicoImpressao.getLimiteMinimo(), servicoImpressao.getConta().getSaldo()));
+
+			String tipo = "";
+
+			if (servicoImpressao.getConta().isTipo()) {
+
+				tipo = "SALDO";
+
+				labelLimite.setText("Limite Mínimo");
+				
+				labelTotal.setText("Saldo atual");
+
+			} else {
+
+				tipo = "FATURADO";
+
+				labelLimite.setText("Limite Máximo");
+				
+				labelTotal.setText("Total à faturar");
+				
+			}
+
+			textFieldTipoDeConta.setText(tipo);
+			textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico().toUpperCase());
+
 		}
 
-		textFieldTipoDeConta.setText(tipo);
-		textAreaDetalhesDoServico.setText(servicoImpressao.getObservacoesServico().toUpperCase());
+	}
 
+	public String statusServicoImpressao(boolean tipoConta, Integer limite, int saldo) {
+
+		String status = "";
+
+		if (tipoConta) {
+
+			if (limite < saldo) {
+				
+				status = "SALDO NORMAL, ACOMPANHAR O SALDO DO CLIENTE";
+				
+
+			} else if (limite == saldo) {
+
+				status = "SALDO BAIXO, AVISAR O SALDO AO CLIENTE";
+
+			} else {
+
+				status = "SALDO NEGATIVO, SOLICITAR NOVA COMPRA AO CLIENTE";
+			}
+
+		} else {
+
+			if (limite > saldo) {
+
+				status = "ABAIXO DO LIMITE, MANTENHA A ATENÇÃO COM O CLIENTE";
+
+			} else if (limite == saldo) {
+
+				status = "ATINGIU DO LIMITE, ATENÇÃO COM O CLIENTE";
+
+			} else {
+
+				status = "ACIMA DO LIMITE, SOLICITAR O PAGAMENTO DO CLIENTE";
+
+			}
+
+		}
+
+		return status;
 	}
 
 	// clienteForm com DataChangeList
@@ -897,12 +1017,12 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 
 	// Telea servico
 
-	public void servicoForm(Usuario usuario, Cliente cliente, ServicoImpressao clienteServico, String tela,
+	public void servicoForm(Usuario usuario, Cliente cliente, ServicoImpressao servicoImpressao, String tela,
 			boolean editar) {
 
 		boolean concedido = false;
 		Acesso acesso = new Acesso();
-
+	
 		concedido = acesso.concederAcesso(usuario.getAcesso(), tela);
 
 		if (concedido == true) {
@@ -915,7 +1035,7 @@ public class ClienteSelecionadoFormController implements Initializable, DataChan
 				ServicoFormController controller = loader.getController();
 				controller.setService(new ServicoFormController());
 				controller.subscribeDataChangeListener(this);
-				controller.carregarCampos(cliente, clienteServico, usuario, editar);
+				controller.carregarCampos(cliente, servicoImpressao, usuario, editar);
 
 				ServicoFormController.setServicoFormScene(new Scene(pane));
 

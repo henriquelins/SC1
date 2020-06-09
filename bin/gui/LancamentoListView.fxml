@@ -4,6 +4,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
@@ -17,7 +18,7 @@
          <children>
             <AnchorPane prefHeight="30.0" style="-fx-background-color: gray;">
                <children>
-                  <Label fx:id="labelTituloCliente" layoutX="14.0" layoutY="2.0" prefHeight="27.0" prefWidth="1208.0" text="Título da Tela" textFill="WHITE">
+                  <Label fx:id="labelTituloCliente" layoutX="25.0" layoutY="2.0" prefHeight="27.0" prefWidth="1208.0" text="Título da Tela" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -26,50 +27,58 @@
             </AnchorPane>
             <ToolBar prefHeight="100.0">
                <items>
-                  <AnchorPane prefHeight="90.0" prefWidth="1314.0">
+                  <AnchorPane prefHeight="119.0" prefWidth="1314.0">
                      <children>
-                        <Label layoutX="14.0" layoutY="11.0" text="Data inicial" />
-                        <DatePicker fx:id="datePickerDataInicial" layoutX="14.0" layoutY="29.0" prefHeight="30.0" prefWidth="114.0" />
-                        <Label layoutX="144.0" layoutY="11.0" text="Data Final" />
-                        <DatePicker fx:id="datePickerDataFinal" layoutX="140.0" layoutY="29.0" prefHeight="30.0" prefWidth="114.0" />
-                        <Button fx:id="buttonPesquisar" defaultButton="true" layoutX="264.0" layoutY="29.0" mnemonicParsing="false" onAction="#onButtonPesquisarAction" prefHeight="30.0" prefWidth="90.0" style="-fx-background-radius: 10;" text="PESQUISAR" />
-                        <Label layoutX="786.0" layoutY="14.0" text="Cliente:" />
-                        <Label fx:id="labelNomeCliente" layoutX="834.0" layoutY="12.0" prefHeight="20.0" prefWidth="260.0" text="Label">
+                        <Label layoutX="18.0" layoutY="6.0" text="Data inicial" />
+                        <DatePicker fx:id="datePickerDataInicial" layoutX="18.0" layoutY="24.0" prefHeight="30.0" prefWidth="114.0" />
+                        <Label layoutX="169.0" layoutY="6.0" text="Data Final" />
+                        <DatePicker fx:id="datePickerDataFinal" layoutX="169.0" layoutY="24.0" prefHeight="30.0" prefWidth="114.0" />
+                        <Button fx:id="buttonPesquisar" defaultButton="true" layoutX="320.0" layoutY="24.0" mnemonicParsing="false" onAction="#onButtonPesquisarAction" prefHeight="30.0" prefWidth="90.0" style="-fx-background-radius: 10;" text="PESQUISAR" />
+                        <Label layoutX="460.0" layoutY="-1.0" text="Cliente:" />
+                        <Label fx:id="labelNomeCliente" layoutX="460.0" layoutY="12.0" prefHeight="27.0" prefWidth="400.0" text="Label">
                            <font>
-                              <Font name="System Bold" size="14.0" />
+                              <Font name="System Bold" size="16.0" />
                            </font>
                         </Label>
-                        <Label layoutX="785.0" layoutY="34.0" prefHeight="17.0" text="Servico:" />
-                        <Label layoutX="779.0" layoutY="54.0" text="Produto:" />
-                        <Label fx:id="labelNomeServico" layoutX="834.0" layoutY="32.0" prefHeight="20.0" prefWidth="260.0" text="Label">
+                        <Label layoutX="460.0" layoutY="39.0" prefHeight="17.0" text="Servico:" />
+                        <Label layoutX="460.0" layoutY="78.0" text="Produto:" />
+                        <Label fx:id="labelNomeServico" layoutX="460.0" layoutY="52.0" prefHeight="27.0" prefWidth="400.0" text="Label">
                            <font>
-                              <Font name="System Bold" size="14.0" />
+                              <Font name="System Bold" size="16.0" />
                            </font>
                         </Label>
-                        <Label fx:id="labelNomeProduto" layoutX="834.0" layoutY="52.0" prefHeight="20.0" prefWidth="260.0" text="Label">
+                        <Label fx:id="labelNomeProduto" layoutX="460.0" layoutY="93.0" prefHeight="27.0" prefWidth="400.0" text="Label">
                            <font>
-                              <Font name="System Bold" size="14.0" />
+                              <Font name="System Bold" size="16.0" />
                            </font>
                         </Label>
-                        <Button fx:id="buttonImprimir" layoutX="376.0" layoutY="29.0" mnemonicParsing="false" onAction="#onBtImprimirAction" prefHeight="30.0" prefWidth="208.0" style="-fx-background-radius: 10;" text="IMPRIMIR LISTAGEM MOVIMENTO" />
-                        <Button fx:id="buttonExportar" layoutX="595.0" layoutY="29.0" mnemonicParsing="false" onAction="#onBtExportarAction" prefHeight="30.0" prefWidth="165.0" style="-fx-background-radius: 10;" text="EXPORTAR MOVIMENTO" />
-                        <Label fx:id="labelTotal" layoutX="1208.0" layoutY="32.0" prefHeight="20.0" prefWidth="100.0" text="Label">
+                        <Button fx:id="buttonImprimir" layoutX="18.0" layoutY="80.0" mnemonicParsing="false" onAction="#onBtImprimirAction" prefHeight="30.0" prefWidth="208.0" style="-fx-background-radius: 10;" text="IMPRIMIR LISTAGEM MOVIMENTO" />
+                        <Button fx:id="buttonExportar" layoutX="245.0" layoutY="80.0" mnemonicParsing="false" onAction="#onBtExportarAction" prefHeight="30.0" prefWidth="165.0" style="-fx-background-radius: 10;" text="EXPORTAR MOVIMENTO" />
+                        <Label fx:id="labelTotal" layoutX="880.0" layoutY="94.0" prefHeight="27.0" prefWidth="200.0" text="Label">
                            <font>
-                              <Font name="System Bold" size="14.0" />
+                              <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="labelSaldoAtual" layoutX="1208.0" layoutY="12.0" prefHeight="20.0" prefWidth="100.0" text="Label">
+                        <Label fx:id="labelSaldoAtual" layoutX="880.0" layoutY="52.0" prefHeight="27.0" prefWidth="200.0" text="Label">
                            <font>
-                              <Font name="System Bold" size="14.0" />
+                              <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label layoutX="1135.0" layoutY="14.0" text="Saldo Atual:" />
-                        <Label layoutX="1133.0" layoutY="34.0" prefHeight="17.0" prefWidth="72.0" text="Quantidade:" />
+                        <Label fx:id="labelTotalConta" layoutX="880.0" layoutY="37.0" prefHeight="17.0" prefWidth="160.0" />
+                        <Label layoutX="880.0" layoutY="79.0" prefHeight="17.0" prefWidth="99.0" text="Total Unidades:" />
+                        <Separator layoutX="436.0" layoutY="-2.0" orientation="VERTICAL" prefHeight="122.0" prefWidth="12.0" />
+                        <Separator layoutX="-4.0" layoutY="65.0" prefHeight="5.0" prefWidth="444.0" />
+                        <Label fx:id="labelTipoConta" layoutX="880.0" layoutY="12.0" prefHeight="27.0" prefWidth="200.0" text="Label">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="880.0" layoutY="-1.0" text="Tipo de Conta:" />
                      </children>
                   </AnchorPane>
                </items>
             </ToolBar>
-            <TableView fx:id="tableViewLancamento" VBox.vgrow="SOMETIMES">
+            <TableView fx:id="tableViewLancamento" prefWidth="1342.0" VBox.vgrow="SOMETIMES">
               <columns>
                   <TableColumn fx:id="tableColumnIndex" editable="false" prefWidth="50.0" style="-fx-alignment: CENTER;" text="#" />
                 <TableColumn fx:id="tableColumnId" editable="false" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Código" />

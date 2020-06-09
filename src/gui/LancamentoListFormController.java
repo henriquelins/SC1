@@ -73,6 +73,12 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 	private Label labelNomeProduto;
 
 	@FXML
+	private Label labelTipoConta;
+
+	@FXML
+	private Label labelTotalConta;
+	
+	@FXML
 	private DatePicker datePickerDataInicial;
 
 	@FXML
@@ -133,7 +139,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 			Alerts.showAlert("Ver lançamento", "Campo obrigatório", "A data final não pode ser maior que a inicial",
 					AlertType.ERROR);
 
-		} else { 
+		} else {
 
 			listaVerLancamentos = FXCollections.observableArrayList(lancamentoService.verLancamentos(
 					Constraints.setLocalDateToDateSql(datePickerDataInicial.getValue()),
@@ -166,11 +172,11 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 					}
 
-					labelTotal.setText(String.valueOf(total));
+					labelTotal.setText(Constraints.tresDigitos(total));
 
 				}
 
-				total = 0;
+				total = 000;
 
 			}
 
@@ -194,8 +200,9 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 				if (listaVerLancamentos.isEmpty() != true) {
 
 					try {
-						
-						new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage016() + servicoImpressao.getNomeDoServico().toUpperCase());
+
+						new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+								Strings.getLogMessage016() + servicoImpressao.getNomeDoServico().toUpperCase());
 
 						DateFormat formatBR = new SimpleDateFormat("dd/MM/YYYY");
 
@@ -240,11 +247,12 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		try {
 
 			if (listaVerLancamentos.isEmpty() != true) {
-				
-				new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage017() + servicoImpressao.getNomeDoServico().toUpperCase());
+
+				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+						Strings.getLogMessage017() + servicoImpressao.getNomeDoServico().toUpperCase());
 
 				relatorio.relatorioListaLancamentosPDF(listaVerLancamentos, servicoImpressao, total);
-				
+
 			} else {
 
 				Alerts.showAlert("Relatório", "Lista vazia", "Exportar Relatório", AlertType.ERROR);
@@ -320,9 +328,27 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 		labelNomeCliente.setText(cliente.getNomeFantasia().toUpperCase());
 		labelNomeServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
 		labelNomeProduto.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
-		labelSaldoAtual.setText(String.valueOf(servicoImpressao.getConta().getSaldo()));
+		labelSaldoAtual.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()));
 
-		labelTotal.setText(String.valueOf(total));
+		String tipo = "";
+
+		if (servicoImpressao.getConta().isTipo()) {
+
+			tipo = "SALDO";
+			
+			labelTotalConta.setText("Saldo Atual:");
+
+		} else {
+
+			tipo = "FATURADO";
+			
+			labelTotalConta.setText("Total à Faturar:");
+			
+		}
+
+		labelTipoConta.setText(tipo);
+
+		labelTotal.setText(Constraints.tresDigitos(total));
 
 		setServicoImpressao(servicoImpressao);
 

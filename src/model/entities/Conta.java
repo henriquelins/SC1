@@ -8,9 +8,9 @@ public class Conta implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int idConta;
+	private Integer idConta;
 	private String cnpj;
-	private int saldo;
+	private Integer saldo;
 	private boolean tipo;
 
 	public Conta() {

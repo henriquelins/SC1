@@ -74,7 +74,7 @@ public class SC1Main extends Application {
 			}
 
 		} else {
-
+			
 			Optional<ButtonType> result = Alerts.showConfirmation("Erro ao abrir o banco de dados",
 					"Você deseja configurar as propriedades do banco de dados ?");
 

@@ -50,9 +50,9 @@ public class DB {
 
 			catch (SQLException e) {
 
-				// Alerts.showAlert("Controle de Saldo", "Erro ao abrir o banco de dados",
-				// e.getLocalizedMessage(),
-				// AlertType.ERROR);
+				 Alerts.showAlert("Controle de Saldo", "Erro ao abrir o banco de dados",
+				 e.getLocalizedMessage(),
+				 AlertType.ERROR);
 
 			}
 		}

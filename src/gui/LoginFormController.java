@@ -53,7 +53,7 @@ public class LoginFormController implements Initializable {
 		Usuario usuario = new Usuario();
 		usuario = getFormData();
 
-		if (usuario.getLogin() != null && usuario.getSenha() != null) { 
+		if (usuario.getLogin() != null && usuario.getSenha() != null) {
 
 			try {
 
@@ -68,7 +68,7 @@ public class LoginFormController implements Initializable {
 
 				} else {
 
-					Alerts.showAlert("Login", null, "Login não confirmado", AlertType.ERROR);
+					Alerts.showAlert("Login","Erro de Login", "Login não confirmado", AlertType.ERROR);
 
 					txtLogin.setText("");
 					pswSenha.setText("");
@@ -78,7 +78,7 @@ public class LoginFormController implements Initializable {
 
 			} catch (NullPointerException e) {
 
-				Alerts.showAlert("Login", null, "Login não confirmado", AlertType.ERROR);
+				Alerts.showAlert("Login","Erro de Login", "Login não confirmado", AlertType.ERROR);
 
 				txtLogin.setText("");
 				pswSenha.setText("");
@@ -130,7 +130,7 @@ public class LoginFormController implements Initializable {
 
 		if (txtLogin.getText() == null || txtLogin.getText().trim().equals("")) {
 
-			Alerts.showAlert("Login", null, "Digite seu login", AlertType.INFORMATION);
+			Alerts.showAlert("Login","Campo obrigatório", "Digite seu login", AlertType.INFORMATION);
 
 			txtLogin.requestFocus();
 
@@ -139,7 +139,7 @@ public class LoginFormController implements Initializable {
 
 		} else if (String.valueOf(pswSenha.getText()) == null || pswSenha.getText().trim().equals("")) {
 
-			Alerts.showAlert("Login", null, "Digite sua senha", AlertType.INFORMATION);
+			Alerts.showAlert("Login","Campo obrigatório", "Digite sua senha", AlertType.INFORMATION);
 
 			pswSenha.requestFocus();
 

@@ -182,7 +182,8 @@ public class Forms {
 			try {
 
 				FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
-				VBox pane = loader.load();
+				StackPane pane = loader.load();
+				//VBox pane = loader.load();
 
 				ClienteSelecionadoFormController controller = loader.getController();
 				controller.carregarCampos(cliente, usuario);

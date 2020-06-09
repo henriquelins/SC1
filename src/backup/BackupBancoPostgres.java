@@ -9,7 +9,7 @@ import java.util.List;
 public class BackupBancoPostgres {
 
 	public static List<String> realizaBackup(String ferramenta, String host, String porta, String user, String endereco,
-			String banco, String mensagemSenha, String senha) throws IOException, InterruptedException {
+			String banco, String mensagemSenha, String senha) {
 
 		final List<String> comandos = new ArrayList<String>();
 		List<String> areaTexto = new ArrayList<String>();
@@ -17,7 +17,7 @@ public class BackupBancoPostgres {
 		// comandos.add("C:\\Program Files\\PostgreSQL\\9.4\\bin\\pg_dump.exe"); // esse
 		// é meu caminho w10 64bits
 		comandos.add(ferramenta); // esse é meu caminho w10 64bits
-		comandos.add("-i");
+		// comandos.add("-i");
 		comandos.add("-h");
 		// comandos.add("localhost"); // ou comandos.add("192.168.0.1");
 		comandos.add(host); // ou comandos.add("192.168.0.1");
@@ -44,11 +44,11 @@ public class BackupBancoPostgres {
 		// pb.environment().put("PGPASSWORD", "1006"); // "PGPASSWORD", e senha
 		pb.environment().put(mensagemSenha, senha); // "PGPASSWORD", e senha
 
-		areaTexto.add("Iniciando backup\n");
+		areaTexto.add("Iniciando processo\n");
 
+		Process process = null;
 		try {
-
-			final Process process = pb.start();
+			process = pb.start();
 
 			final BufferedReader r = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
@@ -61,40 +61,41 @@ public class BackupBancoPostgres {
 
 			}
 
-			r.close();
+			if (process.exitValue() == 1) {
 
+				areaTexto.add("\nBackup não realizado. Cod. Processo: " + process.exitValue());
+
+			} else {
+
+				areaTexto.add("\nBackup realizado com sucesso. Cod. Processo: " + process.exitValue());
+
+			}
+
+			r.close();
 			process.waitFor();
+
 			process.destroy();
 
-			areaTexto.add("\nBackup realizado com sucesso.");
+			return areaTexto;
 
-		} catch (IOException e) {
+		} catch (RuntimeException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
 
-			e.printStackTrace();
+			areaTexto.add("\nBackup não realizado. Cod. Processo: " + process.exitValue() + " " + e.getMessage());
 
-			areaTexto.add("\nBackup não realizado. " + e.getMessage());
-
-		} catch (InterruptedException ie) {
-
-			ie.printStackTrace();
-
-			areaTexto.add("\nBackup não realizado. " + ie.getMessage());
-
+			return areaTexto;
 		}
-
-		return areaTexto;
 
 	}
 
 	public static List<String> realizaRestore(String ferramenta, String host, String porta, String user,
-			String endereco, String banco, String mensagemSenha, String senha)
-			throws IOException, InterruptedException {
+			String endereco, String banco, String mensagemSenha, String senha) {
 
 		final List<String> comandos = new ArrayList<String>();
 		List<String> areaTexto = new ArrayList<String>();
 
 		comandos.add(ferramenta); // esse é meu caminho w10 64bits
-		comandos.add("-i");
+		//comandos.add("-i");
 		comandos.add("-h");
 		// comandos.add("localhost"); // ou comandos.add("192.168.0.1");
 		comandos.add(host); // ou comandos.add("192.168.0.1");
@@ -117,10 +118,13 @@ public class BackupBancoPostgres {
 		// pb.environment().put("PGPASSWORD", "1006"); // Somente coloque sua senha
 		pb.environment().put(mensagemSenha, senha); // Somente coloque sua senha
 
-		areaTexto.add("Iniciando restauração\n");
+		areaTexto.add("Iniciando processo\n");
+
+		Process process = null;
 
 		try {
-			final Process process = pb.start();
+
+			process = pb.start();
 
 			final BufferedReader r = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
@@ -133,27 +137,32 @@ public class BackupBancoPostgres {
 
 			}
 
+			if (process.exitValue() == 1) {
+
+				areaTexto.add("\nRestore não realizado. Cod. Processo: " + process.exitValue());
+
+			} else {
+
+				areaTexto.add("\nRestore realizado com sucesso. Cod. Processo: " + process.exitValue());
+
+			}
+
 			r.close();
 
 			process.waitFor();
 			process.destroy();
 
-			areaTexto.add("\nRestore realizado com sucesso.");
+			return areaTexto;
 
-		} catch (IOException e) {
+		} catch (RuntimeException | IOException | InterruptedException e) {
 
 			e.printStackTrace();
 
-			areaTexto.add("\nRestore não realizado." + e.getMessage());
+			areaTexto.add("\nRestore não realizado. Cod. Processo: " + process.exitValue() + " " + e.getMessage());
 
-		} catch (InterruptedException ie) {
+			return areaTexto;
 
-			ie.printStackTrace();
-
-			areaTexto.add("\nRestore não realizado." + ie.getMessage());
 		}
-
-		return areaTexto;
 
 	}
 

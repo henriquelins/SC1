@@ -59,7 +59,7 @@ public class ClienteService {
 	}
 
 	// método lista todos os clientes
-	
+
 	public List<Cliente> findAll() {
 
 		return dao.buscarTodos();
@@ -67,15 +67,20 @@ public class ClienteService {
 	}
 
 	public Cliente buscarPeloId(Integer idCliente) {
-		
+
 		return dao.buscarPeloId(idCliente);
-		
+
 	}
 
-	public  List<Cliente>  buscarPeloVendedor(int codVendedor) {
-		
+	public List<Cliente> buscarPeloVendedor(int codVendedor) {
+
 		return dao.buscarPeloVendedor(codVendedor);
-		
+
+	}
+
+	public Cliente buscarPeloCnpj(String cnpjCliente) {
+
+		return dao.buscarPeloCnpj(cnpjCliente);
 	}
 
 }

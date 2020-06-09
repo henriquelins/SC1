@@ -16,12 +16,12 @@ import gui.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.services.LogSegurancaService;
@@ -232,39 +232,31 @@ public class BackupBancoFormController implements Initializable {
 
 		if (result.get() == ButtonType.OK) {
 
-			try {
-				
-				String ferramenta = textFieldFerramentaDeBackup.getText();
-				String host = textFieldHostBackup.getText();
-				String porta = textFieldPortaBackup.getText();
-				String user = textFieldUserBackup.getText();
-				String endereco = textFieldSalvarArquivoDeBackup.getText();
-				String banco = textFieldNomeDoBancoBackup.getText();
-				String mensagemSenha = MENSAGEM_PASSWORD;
-				String senha = textFieldPasswordBackup.getText();
+			String ferramenta = textFieldFerramentaDeBackup.getText();
+			String host = textFieldHostBackup.getText();
+			String porta = textFieldPortaBackup.getText();
+			String user = textFieldUserBackup.getText();
+			String endereco = textFieldSalvarArquivoDeBackup.getText();
+			String banco = textFieldNomeDoBancoBackup.getText();
+			String mensagemSenha = MENSAGEM_PASSWORD;
+			String senha = textFieldPasswordBackup.getText();
 
-				List<String> areaTexto = new ArrayList<>();
+			List<String> areaTexto = new ArrayList<>();
 
-				areaTexto = BackupBancoPostgres.realizaBackup(ferramenta, host, porta, user, endereco, banco,
-						mensagemSenha, senha);
+			areaTexto = BackupBancoPostgres.realizaBackup(ferramenta, host, porta, user, endereco, banco, mensagemSenha,
+					senha);
 
-				for (String st : areaTexto) {
+			for (String st : areaTexto) {
 
-					textAreaBackup.appendText(st + "\n");
-				}
-
-				backupEditar();
-
-				PropertiesFile.writePropertiesBackup(endereco, host, banco, ferramenta, senha, user, porta);
-				
-				new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(), Strings.getLogMessage025());
-
-			} catch (IOException | InterruptedException e) {
-
-				Alerts.showAlert("Salvar backup do banco de dados", "Erro ao salvar o backup do banco de dados",
-						e.getLocalizedMessage(), AlertType.ERROR);
-
+				textAreaBackup.appendText(st + "\n");
 			}
+
+			backupEditar();
+
+			PropertiesFile.writePropertiesBackup(endereco, host, banco, ferramenta, senha, user, porta);
+
+			new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
+					Strings.getLogMessage024());
 
 		}
 
@@ -307,7 +299,7 @@ public class BackupBancoFormController implements Initializable {
 
 		if (arquivo != null) {
 
-			textFieldFerramentaDeRestore.setText(arquivo.getAbsolutePath());
+			textFieldSalvarArquivoDeRestore.setText(arquivo.getAbsolutePath());
 
 		} else {
 
@@ -383,41 +375,31 @@ public class BackupBancoFormController implements Initializable {
 
 		if (result.get() == ButtonType.OK) {
 
-			try {
-	
-				
-				String ferramenta = textFieldFerramentaDeRestore.getText();
-				String host = textFieldHostRestore.getText();
-				String porta = textFieldPortaRestore.getText();
-				String user = textFieldUserRestore.getText();
-				String endereco = textFieldSalvarArquivoDeRestore.getText();
-				String banco = textFieldNomeDoBancoRestore.getText();
-				String mensagemSenha = MENSAGEM_PASSWORD;
-				String senha = textFieldPasswordRestore.getText();
+			String ferramenta = textFieldFerramentaDeRestore.getText();
+			String host = textFieldHostRestore.getText();
+			String porta = textFieldPortaRestore.getText();
+			String user = textFieldUserRestore.getText();
+			String endereco = textFieldSalvarArquivoDeRestore.getText();
+			String banco = textFieldNomeDoBancoRestore.getText();
+			String mensagemSenha = MENSAGEM_PASSWORD;
+			String senha = textFieldPasswordRestore.getText();
 
-				List<String> areaTexto = new ArrayList<>();
+			List<String> areaTexto = new ArrayList<>();
 
-				areaTexto = BackupBancoPostgres.realizaRestore(ferramenta, host, porta, user, endereco, banco,
-						mensagemSenha, senha);
+			areaTexto = BackupBancoPostgres.realizaRestore(ferramenta, host, porta, user, endereco, banco,
+					mensagemSenha, senha);
 
-				for (String st : areaTexto) {
+			for (String st : areaTexto) {
 
-					textAreaRestore.appendText(st + "\n");
-				}
-
-				restoreEditar();
-
-				PropertiesFile.writePropertiesRestore(endereco, host, banco, ferramenta, senha, user, porta);
-				
-				new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(), Strings.getLogMessage025());
-
-			} catch (IOException | InterruptedException e) {
-
-				Alerts.showAlert("Fazer a restauração do backup do banco de dados",
-						"Erro ao fazer a restauração do backup do banco de dados", e.getLocalizedMessage(),
-						AlertType.ERROR);
-
+				textAreaRestore.appendText(st + "\n");
 			}
+
+			restoreEditar();
+
+			PropertiesFile.writePropertiesRestore(endereco, host, banco, ferramenta, senha, user, porta);
+
+			new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
+					Strings.getLogMessage025());
 
 		}
 

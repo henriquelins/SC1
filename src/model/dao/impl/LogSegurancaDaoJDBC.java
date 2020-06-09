@@ -47,7 +47,7 @@ public class LogSegurancaDaoJDBC implements LogSegurancaDao {
 
 			if (rowsAffected == 0) {
 
-				throw new DbException("Erro ao inserir o cliente! Nenhuma linha afetada no processo!");
+				throw new DbException("Erro ao inserir o log! Nenhuma linha afetada no processo!");
 
 			}
 

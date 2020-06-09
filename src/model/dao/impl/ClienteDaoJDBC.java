@@ -174,7 +174,7 @@ public class ClienteDaoJDBC implements ClienteDao {
 			st = conn.prepareStatement(
 					"SELECT * FROM cliente as cl inner join contato as co on cl.id_cliente = co.id_cliente "
 							+ "inner join endereco as en on cl.id_cliente = en.id_cliente order by cl.id_cliente");
-			
+
 			rs = st.executeQuery();
 
 			while (rs.next()) {
@@ -299,7 +299,6 @@ public class ClienteDaoJDBC implements ClienteDao {
 		return cliente;
 
 	}
-	
 
 	// método buscar pelo id
 
@@ -323,7 +322,6 @@ public class ClienteDaoJDBC implements ClienteDao {
 			while (rs.next()) {
 
 				cliente = instantiateCliente(rs);
-				
 
 			}
 
@@ -351,9 +349,59 @@ public class ClienteDaoJDBC implements ClienteDao {
 		}
 	}
 
+	// método buscar pelo id
+
+	@Override
+	public Cliente buscarPeloCnpj(String cnpj) {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		Cliente cliente = new Cliente();
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement(
+					"SELECT * FROM cliente as cl inner join contato as co on cl.id_cliente = co.id_cliente "
+							+ "inner join endereco as en on cl.id_cliente = en.id_cliente where cl.cnpj_cliente =  ?");
+			st.setString(1, cnpj);
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				cliente = instantiateCliente(rs);
+
+			}
+
+			conn.commit();
+
+			return cliente;
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+
+	}
+
 	@Override
 	public List<Cliente> buscarPeloVendedor(int codVendedor) {
-		
+
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		List<Cliente> list = new ArrayList<>();
@@ -362,9 +410,10 @@ public class ClienteDaoJDBC implements ClienteDao {
 
 			conn.setAutoCommit(false);
 
-			st = conn.prepareStatement("SELECT * FROM cliente as cl inner join contato as co on cl.id_cliente = co.id_cliente "
-					+ "inner join endereco as en on cl.id_cliente = en.id_cliente where cl.cod_vendedor = ? order by cl.id_cliente");
-			st.setInt(1,codVendedor);
+			st = conn.prepareStatement(
+					"SELECT * FROM cliente as cl inner join contato as co on cl.id_cliente = co.id_cliente "
+							+ "inner join endereco as en on cl.id_cliente = en.id_cliente where cl.cod_vendedor = ? order by cl.id_cliente");
+			st.setInt(1, codVendedor);
 			rs = st.executeQuery();
 
 			while (rs.next()) {

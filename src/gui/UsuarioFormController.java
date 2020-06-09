@@ -135,12 +135,12 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 			ok = compararCampos();
 
 			if (ok == false) {
- 
+
 				service.usuarioNovoOuEditar(usuario);
 				botoesFalso();
 				onDataChanged();
 				new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
-						"Usuario cadastrado ou editado: " + usuario.getNome().toUpperCase());
+						"Usuario cadastrado ou editado: " + usuario.getNome());
 
 			} else {
 
@@ -182,26 +182,36 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 
 	protected void editarCamposDoUsuario() {
 
-		if (usuarioTabela.getIdUsuario() != null) {
+		try {
+			
+			if (usuarioTabela.getIdUsuario() != null) {
 
-			txtNome.setEditable(true);
-			txtLogin.setEditable(true);
-			pswSenha.setEditable(true);
-			pswRepetirSenha.setEditable(true);
+				txtNome.setEditable(true);
+				txtLogin.setEditable(true);
+				pswSenha.setEditable(true);
+				pswRepetirSenha.setEditable(true);
 
-			btNovoUsuario.setDisable(false);
-			btCancelarEditarUsuario.setVisible(true);
-			btSalvarUsuario.setVisible(true);
+				btNovoUsuario.setDisable(false);
+				btCancelarEditarUsuario.setVisible(true);
+				btSalvarUsuario.setVisible(true);
 
-			tableViewUsuario.setDisable(true);
+				tableViewUsuario.setDisable(true);
 
-			btNovoUsuario.setDisable(true);
+				btNovoUsuario.setDisable(true);
 
-		} else {
+			} else {
 
-			Alerts.showAlert("Usuários", "Editar Usuário", "Selecione um registro", AlertType.INFORMATION);
+				Alerts.showAlert("Usuários", "Editar Usuário", "Selecione um registro", AlertType.INFORMATION);
 
+			}
+
+		} catch (java.lang.NullPointerException e) {
+
+			Alerts.showAlert("Usuários", "Editar Usuário", "Selecione um registro. erro: " + e.getMessage(),
+					AlertType.INFORMATION);
 		}
+
+	
 
 	}
 
@@ -383,17 +393,17 @@ public class UsuarioFormController implements Initializable, DataChangeListener 
 			txtNome.requestFocus();
 			usuario = null;
 
-		} else if (txtLogin.getText() == null || txtLogin.getText().trim().equals("")) {
-
-			Alerts.showAlert("Novo Usuário", "Campo obrigatório", "Digite seu login!", AlertType.INFORMATION);
-			txtLogin.requestFocus();
-			usuario = null;
-
 		} else if (comboBoxAcesso.getSelectionModel().getSelectedItem().equals("SELECIONE O TIPO DE ACESSO...")) {
 
 			Alerts.showAlert("Novo Usuário", "Campo obrigatório", "Selecione o acesso!", AlertType.INFORMATION);
 
-	 		comboBoxAcesso.requestFocus();
+			comboBoxAcesso.requestFocus();
+			usuario = null;
+
+		} else if (txtLogin.getText() == null || txtLogin.getText().trim().equals("")) {
+
+			Alerts.showAlert("Novo Usuário", "Campo obrigatório", "Digite seu login!", AlertType.INFORMATION);
+			txtLogin.requestFocus();
 			usuario = null;
 
 		} else if (pswSenha.getText() == null || pswSenha.getText().trim().equals("")) {

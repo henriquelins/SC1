@@ -129,19 +129,77 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 	public void onButtonSalvarClienteAction(ActionEvent event) {
 
 		setCliente(getFormData());
+		Cliente clienteCnpj = service.buscarPeloCnpj(getCliente().getCnpjCliente());
 
-		if (cliente != null) {
+		if (getCliente() != null) {
 
 			boolean ok = compararCampos();
 
-			ok = compararCampos();
-
 			if (ok == false) {
 
-				service.clienteNovoOuEditar(getCliente());
-				Utils.fecharTelaClienteFormAction();
-				notifyDataChangeListeners();
-				new LogSegurancaService().novoLogSeguranca(usuario.getNome(), "Cliente cadastrado: " + cliente.getNomeFantasia().toUpperCase());
+				System.out.println("clienteComparar " + clienteComparar);
+				System.out.println("clienteCnpj " + clienteCnpj);
+				System.out.println("getCliente " + getCliente());
+
+				if (getCliente().getIdCliente() == null) {
+
+					if (clienteCnpj.getIdCliente() == null) {
+
+						System.out.println(1);
+
+						service.clienteNovoOuEditar(getCliente());
+						Utils.fecharTelaClienteFormAction();
+						notifyDataChangeListeners();
+						new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+								"Cliente cadastrado: " + cliente.getNomeFantasia().toUpperCase());
+
+					} else {
+
+						System.out.println(3);
+
+						Alerts.showAlert("Cadastro de clientes", "Novo cliente", "CNPJ já cadastrado para o cliente "
+								+ clienteCnpj.getNomeFantasia().toUpperCase() + ",\n verifique o número do CNPJ.",
+								AlertType.ERROR);
+
+						textFieldCnpj.requestFocus();
+					}
+
+				} else {
+
+					if (!getCliente().getCnpjCliente().equals(clienteCnpj.getCnpjCliente())) {
+
+						System.out.println(2);
+
+						service.clienteNovoOuEditar(getCliente());
+						Utils.fecharTelaClienteFormAction();
+						notifyDataChangeListeners();
+						new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+								"Cliente editado: " + cliente.getNomeFantasia().toUpperCase());
+
+					} else if (getCliente().getCnpjCliente().equals(clienteCnpj.getCnpjCliente())
+							&& getCliente().getIdCliente() == clienteCnpj.getIdCliente()) {
+
+						System.out.println(4);
+
+						service.clienteNovoOuEditar(getCliente());
+						Utils.fecharTelaClienteFormAction();
+						notifyDataChangeListeners();
+						new LogSegurancaService().novoLogSeguranca(usuario.getNome(),
+								"Cliente editado: " + cliente.getNomeFantasia().toUpperCase());
+
+					} else {
+
+						System.out.println(3);
+
+						Alerts.showAlert("Cadastro de clientes", "Editar cliente", "CNPJ já cadastrado para o cliente "
+								+ clienteCnpj.getNomeFantasia().toUpperCase() + ",\n verifique o número do CNPJ.",
+								AlertType.ERROR);
+
+						textFieldCnpj.requestFocus();
+
+					}
+
+				}
 
 			} else {
 
@@ -149,10 +207,6 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 						AlertType.INFORMATION);
 
 			}
-
-		} else {
-
-			Alerts.showAlert("Cadastro de clientes", "Cliente null", "Erro cliente nulo", AlertType.ERROR);
 
 		}
 
@@ -199,6 +253,8 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 	private void initializeNodes() {
 
 		service = new ClienteService();
+		clienteComparar = new Cliente();
+		cliente = new Cliente();
 
 		lableTitulo.setText(Strings.getTitleCliente());
 		comboBoxVendedor.setItems(FXCollections.observableArrayList(listaVendedores()));
@@ -313,7 +369,7 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 		} else if (datePickerClienteDesde.getValue() == null) {
 
-			Alerts.showAlert("Cadastro de clientes", "Campos obrigatório",
+			Alerts.showAlert("Cadastro de clientes", "Campo obrigatório",
 					"Selecione a data do início do cadastro do cliente", AlertType.INFORMATION);
 
 			datePickerClienteDesde.requestFocus();

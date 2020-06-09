@@ -249,7 +249,7 @@ public class Strings {
 
 	public static String getTextoSobre() {
 
-		return "Versão do Produto\nEstoqueJavaFX 1.0\nData: 22-07-2019\n\n\nSistema operacional\nWindows 10, amd64, 10.0\n\n\nCopyright (c) 2019, Henrique Lins, Conecta LTDA.";
+		return "Versão do Produto.\nSaldoJavaFX 1.0.\nData: 01-05-2020.\n\n\nSistema operacional\nWindows 7, Windows 10.\n\n\nCopyright (c) 2020, Desenvolvedor Henrique Lins.";
 
 	}
 

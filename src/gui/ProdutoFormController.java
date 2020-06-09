@@ -189,6 +189,8 @@ public class ProdutoFormController implements Initializable, DataChangeListener 
 		tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
 
 		atualizarTableView();
+		
+		
 
 	}
 

@@ -38,7 +38,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jxl.write.WriteException;
@@ -111,7 +111,7 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 	@FXML
 	private MenuItem menuItemLancamentoList;
-	
+
 	@FXML
 	private MenuItem menuItemBackup;
 
@@ -179,8 +179,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 		if (event.getClickCount() == 1) {
 
-			event.consume(); 
- 
+			event.consume();
+
 			String serv = "";
 			String saldo = "";
 
@@ -214,32 +214,43 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 				if (!ListaSi.isEmpty() == true) {
 
+					String tipo = "";
+
 					for (ServicoImpressao si : ListaSi) {
 
 						if (!si.getConta().getCnpj().equals(cnpj)) {
 
-							saldoCnpj.append(index + " - Saldo ou Fatura no CNPJ: " + si.getConta().getCnpj()
+							if (si.getConta().isTipo()) {
+
+								tipo = "SALDO";
+
+							} else {
+
+								tipo = "FATURADO";
+							}
+
+							saldoCnpj.append(index + " - Tipo de conta: " + tipo + " - CNPJ: " + si.getConta().getCnpj()
 									+ " - total: " + String.valueOf(si.getConta().getSaldo()) + " Unidades.\n");
 
-							saldo = index + " - Saldo ou Fatura no CNPJ: " + si.getConta().getCnpj() + " - total: "
+							saldo = index + " - Tipo de conta: " + tipo + " - CNPJ: " + si.getConta().getCnpj() + " - total: "
 									+ String.valueOf(si.getConta().getSaldo()) + " Unidades.\n";
 
 							listaSaldoCliente.add(saldo.toString());
 
 							index++;
-		 				}
+						}
 
 						cnpj = si.getConta().getCnpj();
 
-						index++;
+				
 
 					}
 
 					servicos.append("Cliente: " + cliente.getNomeFantasia().toUpperCase()
-							+ " - Lista por Serviços do cliente - Mesmo CNPJ, mesmo total.\n");
+							+ " - Lista por Serviços do cliente - Mesmo CNPJ, compartilham o mesmo total.\n");
 
 					serv = "Cliente: " + cliente.getNomeFantasia().toUpperCase()
-							+ " - Lista por Serviços do cliente - Mesmo CNPJ, mesmo total.\n";
+							+ " - Lista por Serviços do cliente - Mesmo CNPJ, compartilham o mesmo total.\n";
 
 					listaSaldoCliente.add("\n");
 					listaSaldoCliente.add(serv);
@@ -259,13 +270,24 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 				if (!ListaSi.isEmpty() == true) {
 
+					String tipo = "";
+
 					for (ServicoImpressao si : ListaSi) {
 
-						servicos.append(index2 + " - CNPJ para cobrança: " + si.getConta().getCnpj() + " - Serviço: "
-								+ si.getNomeDoServico().toUpperCase() + " - total: "
+						if (si.getConta().isTipo()) {
+
+							tipo = "SALDO";
+
+						} else {
+
+							tipo = "FATURADO";
+						}
+
+						servicos.append(index2 + "- Tipo: " + tipo + " - CNPJ: " + si.getConta().getCnpj()
+								+ " - Serviço: " + si.getNomeDoServico().toUpperCase() + " - total: "
 								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.");
 
-						serv = index2 + " - CNPJ para cobrança: " + si.getConta().getCnpj() + " - Serviço: "
+						serv = index2 + "- Tipo: " + tipo + " - CNPJ: " + si.getConta().getCnpj() + " - Serviço: "
 								+ si.getNomeDoServico().toUpperCase() + " - total: "
 								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.";
 
@@ -470,7 +492,7 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 		}
 
 	}
- 
+
 	// evento botão pesquisar
 
 	@FXML
@@ -480,13 +502,13 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 			Alerts.showAlert("Pesquisar Clientes", "Campo obrigatório", "Digite no campo de pesquisa", AlertType.ERROR);
 
-			comboBoxListarClientes.getSelectionModel().select(null);
-
 			clearTableView();
+
+			limpaComboBoxListarClientes();
 
 		} else {
 
-			comboBoxListarClientes.getSelectionModel().selectFirst();
+			limpaComboBoxListarClientes();
 
 			List<Cliente> listaCliente = new ArrayList<Cliente>();
 
@@ -507,6 +529,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 				listaSaldoCliente.clear();
 
 				clearTableView();
+
+				limpaComboBoxListarClientes();
 
 			} else {
 
@@ -590,7 +614,7 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 		new Forms().produtoForm(usuario, Strings.getProdutoView());
 
 	}
-	
+
 	// evento menu item backup
 
 	@FXML
@@ -629,7 +653,7 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 		if (concedido == true) {
 
 			new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage022());
-			new Forms().LogSegurancaForm( Strings.getLogSegurancaView());
+			new Forms().LogSegurancaForm(Strings.getLogSegurancaView());
 
 		} else {
 
@@ -655,13 +679,17 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 	@FXML
 	public void onComboBoxListarClientesAction(ActionEvent event) {
 
+		textFieldPesquisar.setText("");
+
 		String nome = comboBoxListarClientes.getSelectionModel().getSelectedItem();
 		int codVendedor = 0;
 
 		try {
 
-			if (comboBoxListarClientes.getSelectionModel().getSelectedItem()
-					.equalsIgnoreCase("CLIENTES POR VENDEDOR")) {
+			if (comboBoxListarClientes.getSelectionModel().getSelectedItem() == null
+					|| comboBoxListarClientes.getSelectionModel().getSelectedItem().trim().equals("")) {
+
+				limpaComboBoxListarClientes();
 
 			} else if (comboBoxListarClientes.getSelectionModel().getSelectedItem().equalsIgnoreCase("TODOS")) {
 
@@ -676,6 +704,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 				textAreaDetalhes.setText("");
 				textAreaSaldoCnpj.setText("");
 				listaSaldoCliente.clear();
+
+				limpaComboBoxListarClientes();
 
 			} else {
 
@@ -707,15 +737,15 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 					Alerts.showAlert("Lista vazia", "A lista já está vazia!",
 							"Clientes não encontrados para o vendedor", AlertType.ERROR);
 
+					limpaComboBoxListarClientes();
+
 				}
 
 			}
 
 		} catch (java.lang.NullPointerException e) {
 
-			// Alerts.showAlert("Lista Clientes", "Lista Vazia",
-			// "java.lang.NullPointerException", AlertType.ERROR);
-
+			limpaComboBoxListarClientes();
 		}
 
 	}
@@ -736,6 +766,11 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 		initializeNodes();
 
+	}
+
+	private void limpaComboBoxListarClientes() {
+		comboBoxListarClientes.getSelectionModel().clearSelection();
+		comboBoxListarClientes.setItems(FXCollections.observableArrayList(listarClientes()));
 	}
 
 	// Método com os objetos que devem ser inicializados
@@ -816,7 +851,6 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 		ListaVendedores = vendedorService.buscarTodos();
 
 		List<String> lista = new ArrayList<>();
-		lista.add("CLIENTES POR VENDEDOR");
 		lista.add("TODOS");
 		lista.add("LIMPAR");
 
@@ -896,7 +930,7 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 			try {
 
 				FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
-				VBox pane = loader.load();
+				StackPane pane = loader.load();
 
 				ClienteSelecionadoFormController controller = loader.getController();
 				controller.setServicoImpressao(new ServicoImpressao());

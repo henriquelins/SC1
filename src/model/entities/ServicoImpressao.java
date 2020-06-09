@@ -13,16 +13,16 @@ public class ServicoImpressao implements Serializable {
 	private String nomeDoServico;
 	private Integer produtoDoServico;
 	private String observacoesServico;
-	private Integer limiteMinimo;	
-	private double valorUnitario;
+	private Integer limiteMinimo;
+	private Double valorUnitario;
 	private Conta conta;
 
-	public ServicoImpressao() {}
+	public ServicoImpressao() {
+	}
 
 	public ServicoImpressao(Integer idServicoImpressao, Integer idCliente, String nomeDoServico,
-			Integer produtoDoServico, String observacoesServico, Integer limiteMinimo, double valorUnitario,
+			Integer produtoDoServico, String observacoesServico, Integer limiteMinimo, Double valorUnitario,
 			Conta conta) {
-	
 		this.idServicoImpressao = idServicoImpressao;
 		this.idCliente = idCliente;
 		this.nomeDoServico = nomeDoServico;
@@ -31,7 +31,6 @@ public class ServicoImpressao implements Serializable {
 		this.limiteMinimo = limiteMinimo;
 		this.valorUnitario = valorUnitario;
 		this.conta = conta;
-		
 	}
 
 	public Integer getIdServicoImpressao() {
@@ -82,11 +81,11 @@ public class ServicoImpressao implements Serializable {
 		this.limiteMinimo = limiteMinimo;
 	}
 
-	public double getValorUnitario() {
+	public Double getValorUnitario() {
 		return valorUnitario;
 	}
 
-	public void setValorUnitario(double valorUnitario) {
+	public void setValorUnitario(Double valorUnitario) {
 		this.valorUnitario = valorUnitario;
 	}
 
@@ -109,9 +108,7 @@ public class ServicoImpressao implements Serializable {
 		result = prime * result + ((nomeDoServico == null) ? 0 : nomeDoServico.hashCode());
 		result = prime * result + ((observacoesServico == null) ? 0 : observacoesServico.hashCode());
 		result = prime * result + ((produtoDoServico == null) ? 0 : produtoDoServico.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(valorUnitario);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((valorUnitario == null) ? 0 : valorUnitario.hashCode());
 		return result;
 	}
 
@@ -159,7 +156,10 @@ public class ServicoImpressao implements Serializable {
 				return false;
 		} else if (!produtoDoServico.equals(other.produtoDoServico))
 			return false;
-		if (Double.doubleToLongBits(valorUnitario) != Double.doubleToLongBits(other.valorUnitario))
+		if (valorUnitario == null) {
+			if (other.valorUnitario != null)
+				return false;
+		} else if (!valorUnitario.equals(other.valorUnitario))
 			return false;
 		return true;
 	}
@@ -172,10 +172,4 @@ public class ServicoImpressao implements Serializable {
 				+ valorUnitario + ", conta=" + conta + "]";
 	}
 
-	
-
-	
-
-	
-	
 }
