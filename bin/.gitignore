@@ -1,11 +1,11 @@
-/gui/
-/imagens/
-/lib/
 /application/
 /backup/
 /criptografia/
 /db/
 /exportarXLS/
+/gui/
+/imagens/
+/lib/
 /model/
 /properties/
 /relatorio/

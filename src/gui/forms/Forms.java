@@ -2,7 +2,7 @@ package gui.forms;
 
 import java.io.IOException;
 
-import application.SC1Main;
+import application.SCS1Main;
 import gui.ClienteSelecionadoFormController;
 import gui.ConfigurarPerpetiesDBFormController;
 import gui.LancamentoListFormController;
@@ -107,11 +107,11 @@ public class Forms {
 			Scene scene = new Scene(root);
 			scene.setFill(Color.TRANSPARENT);
 
-			SC1Main.setMainScene(scene);
+			SCS1Main.setMainScene(scene);
 
 			Stage principalStage = new Stage();
 			principalStage.setTitle(Strings.getTitle());
-			principalStage.setScene(SC1Main.getMainScene());
+			principalStage.setScene(SCS1Main.getMainScene());
 			principalStage.setResizable(false);
 
 			principalStage.initStyle(StageStyle.TRANSPARENT);
@@ -139,7 +139,7 @@ public class Forms {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
 			ScrollPane pane = loader.load();
 
-			SC1Main.setMainScene(new Scene(pane));
+			SCS1Main.setMainScene(new Scene(pane));
 
 			PrincipalFormController controller = loader.getController();
 			controller.setLabelLogado(usuario.toUsuarioLogado());
@@ -150,7 +150,7 @@ public class Forms {
 
 			Stage primaryStage = new Stage();
 			primaryStage.setTitle(Strings.getTitle());
-			primaryStage.setScene(SC1Main.getMainScene());
+			primaryStage.setScene(SCS1Main.getMainScene());
 
 			primaryStage.setResizable(true);
 			primaryStage.setMaximized(true);

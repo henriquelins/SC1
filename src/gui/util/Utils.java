@@ -1,11 +1,12 @@
 package gui.util;
 
-import application.SC1Main;
+import application.SCS1Main;
 import gui.ClienteFormController;
 import gui.LancamentoFormController;
 import gui.ServicoFormController;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Utils {
@@ -22,7 +23,7 @@ public class Utils {
 
 	public static void fecharTelaPrincipalFormAction() {
 
-		Stage stage = (Stage) SC1Main.getMainScene().getWindow(); // Obtendo a janela atual
+		Stage stage = (Stage) SCS1Main.getMainScene().getWindow(); // Obtendo a janela atual
 		stage.close();// Fechando o Stage
 
 	}
@@ -52,6 +53,11 @@ public class Utils {
 		Stage stage = (Stage) LancamentoFormController.getLancamentoFormScene().getWindow();// Obtendo a janela atual
 		stage.close();// Fechando o Stage
 
+	}
+
+	public static void fecharTela(Scene scene) {
+		Stage stage = (Stage) scene.getWindow();// Obtendo a janela atual
+		stage.close();// Fechando o Stage	
 	}
 
 }

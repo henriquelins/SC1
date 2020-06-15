@@ -29,7 +29,7 @@ public class UsuarioService {
 
 	public void usuarioNovoOuEditar(Usuario usuario) {
 
- 		if (usuario.getIdUsuario() == null) {
+		if (usuario.getIdUsuario() == null) {
 
 			Optional<ButtonType> result = Alerts.showConfirmation("Confirmação",
 					"Você deseja salvar o usuário " + usuario.getNome().toUpperCase() + " ?");
@@ -72,5 +72,10 @@ public class UsuarioService {
 
 		return dao.findAll();
 
+	}
+
+	public Usuario find(int id) {
+
+		return dao.findById(id);
 	}
 }

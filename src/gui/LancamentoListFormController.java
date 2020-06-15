@@ -7,7 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-import application.SC1Main;
+import application.SCS1Main;
 import exportarXLS.ExportarListaLancamentosXLS;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
@@ -289,7 +289,7 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 
 		lancamentoService = new LancamentoService();
 
-		Stage stage = (Stage) SC1Main.getMainScene().getWindow();
+		Stage stage = (Stage) SCS1Main.getMainScene().getWindow();
 		tableViewLancamento.prefHeightProperty().bind(stage.heightProperty());
 
 		tableColumnIndex.setSortable(false);

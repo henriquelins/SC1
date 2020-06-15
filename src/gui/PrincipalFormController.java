@@ -38,7 +38,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jxl.write.WriteException;
@@ -930,7 +929,7 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 			try {
 
 				FXMLLoader loader = new FXMLLoader(getClass().getResource(tela));
-				StackPane pane = loader.load();
+				ScrollPane pane = loader.load();
 
 				ClienteSelecionadoFormController controller = loader.getController();
 				controller.setServicoImpressao(new ServicoImpressao());

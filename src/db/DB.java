@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import application.SCS1Main;
 import gui.util.Alerts;
 import javafx.scene.control.Alert.AlertType;
 import properties.PropertiesFile;
@@ -19,14 +20,11 @@ public class DB {
 		if (conn == null) {
 
 			try {
-
 				String url = PropertiesFile.loadPropertiesDB().getProperty("dburl");
 				conn = DriverManager.getConnection(url, PropertiesFile.loadPropertiesDB());
-
 			}
 
 			catch (SQLException e) {
-
 				Alerts.showAlert("Controle de Saldo", "Erro ao abrir o banco de dados", e.getLocalizedMessage(),
 						AlertType.ERROR);
 			}
@@ -39,21 +37,17 @@ public class DB {
 	public static Connection getConnectionTeste() {
 
 		if (conn == null) {
-
+						
 			try {
- 
-				String url = PropertiesFile.loadPropertiesDB().getProperty("dburl");
+ 				String url = PropertiesFile.loadPropertiesDB().getProperty("dburl");
 
 				conn = DriverManager.getConnection(url, PropertiesFile.loadPropertiesDB());
-
 			}
 
 			catch (SQLException e) {
-
-				 Alerts.showAlert("Controle de Saldo", "Erro ao abrir o banco de dados",
-				 e.getLocalizedMessage(),
-				 AlertType.ERROR);
-
+				
+				SCS1Main.erro = e.getLocalizedMessage();
+				
 			}
 		}
 
