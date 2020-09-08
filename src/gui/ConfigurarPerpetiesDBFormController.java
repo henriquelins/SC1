@@ -1,9 +1,5 @@
 package gui;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.Optional;
@@ -18,12 +14,11 @@ import gui.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Stage;
 import properties.PropertiesFile;
 
 public class ConfigurarPerpetiesDBFormController implements Initializable {
@@ -88,41 +83,34 @@ public class ConfigurarPerpetiesDBFormController implements Initializable {
 
 		Utils.currentStage(event).close();
 
-		Connection conn = null;
-		conn = DB.getConnectionTeste();
+		boolean conexao = false;
 
-		if (conn != null) {
+		try {
+
+			conexao = testarConexao();
+
+		} catch (Exception e1) {
+
+			conexao = false;
+		}
+
+		if (conexao) {
 
 			try {
 
-				// impede que seja criada uma nova instância do programa
-				SCS1Main.setPortSocket(Integer
-						.parseInt(PropertiesFile.loadPropertiesSocket().getProperty(Strings.getPropertiessocketPort())));
-				SCS1Main.setServerSocket(new ServerSocket(SCS1Main.getPortSocket()));
-				SCS1Main.setSocket(new Socket(InetAddress.getLocalHost().getHostAddress(), SCS1Main.getPortSocket()));
+				new Forms().splashForm(Strings.getSplashView());
 
-				try {
+			} catch (Exception e) {
 
-					new Forms().splashForm(Strings.getSplashView());
-
-				} catch (Exception e) {
-
-					Alerts.showAlert("Controle de Saldo", "Erro ao abrir a tela", e.getLocalizedMessage(),
-							AlertType.ERROR);
-
-				}
-
-			} catch (IOException e) {
-
-				Alerts.showAlert("Controle de Saldo", "Erro ao abrir o programa",
-						"Já existe uma instância do programa aberta!", AlertType.ERROR);
+				Alerts.showAlert("Controle de Estoque", "Erro ao abrir a tela", e.getLocalizedMessage(),
+						AlertType.ERROR);
 
 			}
 
 		} else {
 
 			Optional<ButtonType> result = Alerts.showConfirmation("Erro ao abrir o banco de dados",
-					"Erro: " + SCS1Main.erro + " .Você deseja configurar as propriedades do banco de dados ?");
+					"Erro: " + SCS1Main.erro + " .Você deseja configurar as propriedades do banco de dados?");
 
 			if (result.get() == ButtonType.OK) {
 
@@ -154,6 +142,23 @@ public class ConfigurarPerpetiesDBFormController implements Initializable {
 		textFieldUrl.setEditable(false);
 		textFieldPassword.setEditable(false);
 		textFieldUser.setEditable(false);
+
+	}
+
+	// testar conexão
+	public static boolean testarConexao() throws Exception {
+
+		boolean conexao = false;
+		Connection connection = new DB().getConnectionTeste();
+
+		if (connection != null) {
+
+			conexao = true;
+		}
+
+		connection.close();
+
+		return conexao;
 
 	}
 

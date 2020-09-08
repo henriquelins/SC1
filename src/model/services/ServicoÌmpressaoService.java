@@ -4,7 +4,6 @@ import java.util.List;
 
 import gui.LoginFormController;
 import gui.util.Strings;
-import model.dao.ContaDao;
 import model.dao.DaoFactory;
 import model.dao.ServicoImpressaoDao;
 import model.entities.ServicoImpressao;
@@ -14,14 +13,12 @@ public class ServicoÌmpressaoService {
 	// java variáveis
 
 	private ServicoImpressaoDao dao = DaoFactory.createServicoImpressaoDao();
-	private ContaDao contaDao = DaoFactory.createContaDao();
+	
 
 	// método novo ou editar cliente serviço
 
 	public void novoServico(ServicoImpressao servicoImpressao) {
 
-		int id_conta = contaDao.inserir(servicoImpressao);
-		servicoImpressao.getConta().setIdConta(id_conta);
 		dao.inserir(servicoImpressao);
 		new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
 				Strings.getLogMessage020() + servicoImpressao.getNomeDoServico().toUpperCase());
@@ -30,8 +27,6 @@ public class ServicoÌmpressaoService {
 
 	public void editarServico(ServicoImpressao servicoImpressao) {
 
-		int id_conta = contaDao.inserir(servicoImpressao);
-		servicoImpressao.getConta().setIdConta(id_conta);
 		dao.atualizar(servicoImpressao);
 		new LogSegurancaService().novoLogSeguranca(LoginFormController.getLogado().getNome(),
 				Strings.getLogMessage021() + servicoImpressao.getNomeDoServico().toUpperCase());
@@ -66,6 +61,12 @@ public class ServicoÌmpressaoService {
 
 		return dao.buscarServicoImpressaoCnpj(cnpj);
 
+	}
+
+	public ServicoImpressao buscarServicoImpressaoIdConta(Integer idConta) {
+		
+		return dao.buscarServicoImpressaoIdConta(idConta);
+		
 	}
 
 }

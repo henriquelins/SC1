@@ -34,24 +34,25 @@ public class DB {
 		return conn;
 	}
 
-	public static Connection getConnectionTeste() {
+	public Connection getConnectionTeste() {
 
-		if (conn == null) {
-						
+		Connection conn_teste = null;
+
+		if (conn_teste == null) {
+
 			try {
- 				String url = PropertiesFile.loadPropertiesDB().getProperty("dburl");
-
-				conn = DriverManager.getConnection(url, PropertiesFile.loadPropertiesDB());
+				String url = PropertiesFile.loadPropertiesDB().getProperty("dburl");
+				conn_teste = DriverManager.getConnection(url, PropertiesFile.loadPropertiesDB());
 			}
 
 			catch (SQLException e) {
-				
+
 				SCS1Main.erro = e.getLocalizedMessage();
-				
+
 			}
 		}
 
-		return conn;
+		return conn_teste;
 	}
 
 	public static void closeConnection() {

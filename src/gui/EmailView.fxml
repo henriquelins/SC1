@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.EmailFormController">
+   <children>
+      <ToolBar prefHeight="40.0" prefWidth="800.0">
+         <items>
+            <AnchorPane prefHeight="30.0" prefWidth="570.0">
+               <children>
+                  <Label fx:id="labelTituloTela" layoutX="50.0" layoutY="-1.0" prefHeight="27.0" prefWidth="502.0" text="Título da Tela">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </items>
+      </ToolBar>
+  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="525.0" prefWidth="800.0">
+         <children>
+            <Label layoutX="30.0" layoutY="35.0" text="E-mail" />
+            <TextField fx:id="textFieldEmail" editable="false" layoutX="30.0" layoutY="56.0" prefHeight="30.0" prefWidth="242.0" promptText="exemplo@contecta.com.br" style="-fx-background-radius: 10;" />
+            <Label layoutX="283.0" layoutY="35.0" text="Descrição" />
+            <TextField fx:id="textFieldDescricao" editable="false" layoutX="281.0" layoutY="56.0" prefHeight="30.0" prefWidth="243.0" promptText="Sr. Exemplo - Setor" style="-fx-background-radius: 10;" />
+            <Label layoutX="536.0" layoutY="35.0" text="Servidor de E-mail" />
+            <TextField fx:id="textFieldNomeServidorEmail" editable="false" layoutX="534.0" layoutY="56.0" prefHeight="30.0" prefWidth="240.0" promptText="Exemplo Servidor" style="-fx-background-radius: 10;" />
+            <Label layoutX="30.0" layoutY="95.0" text="Host" />
+            <TextField fx:id="textFieldHost" editable="false" layoutX="30.0" layoutY="115.0" prefHeight="30.0" prefWidth="241.0" promptText="smtp.exemplo.com" style="-fx-background-radius: 10;" />
+            <Label layoutX="286.0" layoutY="95.0" text="Porta" />
+            <TextField fx:id="textFieldPorta" editable="false" layoutX="281.0" layoutY="115.0" prefHeight="30.0" prefWidth="243.0" promptText="0000" style="-fx-background-radius: 10;" />
+            <Label layoutX="534.0" layoutY="95.0" text="Autenticação" />
+            <PasswordField fx:id="textFieldAutenticacao" editable="false" layoutX="535.0" layoutY="115.0" prefHeight="30.0" prefWidth="239.0" promptText="******" style="-fx-background-radius: 10;" />
+            <AnchorPane layoutX="30.0" layoutY="190.0" prefHeight="234.0" prefWidth="736.0" style="-fx-border-color: lightgray; -fx-background-color: lightgray;" AnchorPane.bottomAnchor="96.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="190.0">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <children>
+                  <Button fx:id="buttonImagemEmail" disable="true" layoutX="579.0" layoutY="179.0" mnemonicParsing="false" onAction="#ontButtonImagemEmailAction" prefHeight="30.0" prefWidth="126.0" style="-fx-background-radius: 10;" text="ASSINATURA EMAIL" />
+                  <ImageView fx:id="ImageViewAssinaturaEmail" fitHeight="170.0" fitWidth="502.0" layoutX="31.0" layoutY="44.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="209.0" AnchorPane.topAnchor="38.0">
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+            <Button fx:id="buttonEditarEmail" layoutX="511.0" layoutY="454.0" mnemonicParsing="false" onAction="#onButtonEditarEmailAction" prefHeight="30.0" prefWidth="86.0" style="-fx-background-radius: 10;" text="EDITAR" />
+            <Button fx:id="buttonSalvarEmail" defaultButton="true" disable="true" layoutX="612.0" layoutY="454.0" mnemonicParsing="false" onAction="#onButtonSalvarEmailAction" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="SALVAR" />
+            <Button fx:id="buttonFechar" alignment="CENTER" layoutX="694.0" layoutY="454.0" mnemonicParsing="false" onAction="#onButtonFecharAction" prefHeight="30.0" prefWidth="70.0" style="-fx-background-radius: 10;" text="FECHAR" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

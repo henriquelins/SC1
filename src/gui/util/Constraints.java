@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.InputMismatchException;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +17,30 @@ import javafx.geometry.Pos;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.input.KeyEvent;
 
 public class Constraints {
+	
+	//Limitar o número de caracteres
+	
+	public static void limitTextField(TextField textField, int limit) {
+        UnaryOperator<Change> textLimitFilter = change -> {
+            if (change.isContentChange()) {
+                int newLength = change.getControlNewText().length();
+                if (newLength > limit) {
+                    String trimmedText = change.getControlNewText().substring(0, limit);
+                    change.setText(trimmedText);
+                    int oldLength = change.getControlText().length();
+                    change.setRange(0, oldLength);
+                }
+            }
+            return change;
+        };
+        
+        textField.setTextFormatter(new TextFormatter(textLimitFilter));
+    } 
 
 	// Passar string para int
 

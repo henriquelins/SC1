@@ -4,6 +4,7 @@ import db.DB;
 import model.dao.impl.ClienteDaoJDBC;
 import model.dao.impl.ContaDaoJDBC;
 import model.dao.impl.ContatoDaoJDBC;
+import model.dao.impl.EmailDaoJDBC;
 import model.dao.impl.EnderecoDaoJDBC;
 import model.dao.impl.LancamentoDaoJDBC;
 import model.dao.impl.LogSegurancaDaoJDBC;
@@ -80,5 +81,12 @@ public class DaoFactory {
 		return new LogSegurancaDaoJDBC(DB.getConnection());
 		
 	}
+	
+	public static EmailDao createEmailDao() {
+		
+		return new EmailDaoJDBC(DB.getConnection());
+		
+	}
+
 
 }

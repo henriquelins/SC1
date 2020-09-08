@@ -4,13 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import db.DB;
 import db.DbException;
 import model.dao.ContaDao;
 import model.entities.Conta;
-import model.entities.ServicoImpressao;
 
 public class ContaDaoJDBC implements ContaDao {
 
@@ -25,7 +25,7 @@ public class ContaDaoJDBC implements ContaDao {
 	}
 
 	@Override
-	public int inserir(ServicoImpressao servicoImpressao) {
+	public int inserir(Conta conta) {
 
 		PreparedStatement st = null;
 		int id_conta = 0;
@@ -37,9 +37,9 @@ public class ContaDaoJDBC implements ContaDao {
 			st = conn.prepareStatement("INSERT INTO conta (cnpj, saldo, tipo) VALUES (?, ?, ?)",
 					java.sql.Statement.RETURN_GENERATED_KEYS);
 
-			st.setString(1, servicoImpressao.getConta().getCnpj());
-			st.setInt(2, servicoImpressao.getConta().getSaldo());
-			st.setBoolean(3,servicoImpressao.getConta().isTipo());
+			st.setString(1, conta.getCnpj());
+			st.setInt(2, conta.getSaldo());
+			st.setBoolean(3,conta.isTipo());
 
 			st.executeUpdate();
 
@@ -76,7 +76,7 @@ public class ContaDaoJDBC implements ContaDao {
 	}
 
 	@Override
-	public void atualizar(ServicoImpressao servicoImpressao) {
+	public void atualizar(Conta conta) {
 
 		PreparedStatement st = null;
 
@@ -86,10 +86,10 @@ public class ContaDaoJDBC implements ContaDao {
 
 			st = conn.prepareStatement("UPDATE conta SET cnpj = ?, saldo = ?, tipo = ? WHERE id_conta = ?");
 
-			st.setString(1, servicoImpressao.getConta().getCnpj());
-			st.setInt(2, servicoImpressao.getConta().getSaldo());
-			st.setBoolean(3,servicoImpressao.getConta().isTipo());
-			st.setInt(4, servicoImpressao.getConta().getIdConta());
+			st.setString(1, conta.getCnpj());
+			st.setInt(2, conta.getSaldo());
+			st.setBoolean(3, conta.isTipo());
+			st.setInt(4, conta.getIdConta());
 
 			st.executeUpdate();
 
@@ -118,7 +118,7 @@ public class ContaDaoJDBC implements ContaDao {
 	// método atualizar saldo
 
 	@Override
-	public void atualizarSaldo(int saldoAtual, int id_conta) {
+	public void atualizarSaldo(int saldoAtualizado, int id_conta) {
 
 		PreparedStatement st = null;
 
@@ -128,7 +128,7 @@ public class ContaDaoJDBC implements ContaDao {
 
 			st = conn.prepareStatement("UPDATE conta SET saldo = ? WHERE id_conta = ?");
 
-			st.setInt(1, saldoAtual);
+			st.setInt(1, saldoAtualizado);
 			st.setInt(2, id_conta);
 
 			st.executeUpdate();
@@ -156,11 +156,11 @@ public class ContaDaoJDBC implements ContaDao {
 	}
 
 	@Override
-	public int buscarConta(String cnpj) {
+	public Conta buscarContaCnjp(String cnpj) {
 
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		int conta = 0;
+		Conta conta = new Conta();
 
 		try {
 
@@ -171,8 +171,55 @@ public class ContaDaoJDBC implements ContaDao {
 			rs = st.executeQuery();
 
 			while (rs.next()) {
+				
+				conta = instantiateConta(rs);
+				
+			}
 
-				conta = rs.getInt("id_conta");
+			conn.commit();
+
+			return conta;
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+	}
+	
+	
+	@Override
+	public Conta buscarContaId(int idConta) {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		Conta conta = new Conta();
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement("SELECT * FROM conta WHERE id_conta = ?");
+			st.setInt(1, idConta);
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+				
+				conta = instantiateConta(rs);
+				
 			}
 
 			conn.commit();
@@ -200,9 +247,111 @@ public class ContaDaoJDBC implements ContaDao {
 	}
 
 	@Override
-	public List<Conta> buscarPeloCnpj(String cnpj) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Conta> listaContas() {
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		Conta conta = new Conta();
+		List <Conta> listaConta = new ArrayList<Conta>();
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement("SELECT * FROM conta");
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				conta = instantiateConta(rs);
+				listaConta.add(conta);
+				
+			}
+
+			conn.commit();
+
+			return listaConta;
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+
+	}
+
+	@Override
+	public List<Conta> listaCnpj(String cnpj) {
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		Conta conta = new Conta();
+		List <Conta> listaConta = new ArrayList<Conta>();
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement("SELECT * FROM conta WERE cnpj = ? ORDER BY id_conta");
+			st.setString(1, cnpj);
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				conta = instantiateConta(rs);
+				listaConta.add(conta);
+				
+			}
+
+			conn.commit();
+
+			return listaConta;
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transação rolled back. Causada por: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Erro ao tentar rollback. Causada por: " + e.getLocalizedMessage());
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+
+	}
+	
+	private Conta instantiateConta(ResultSet rs) throws SQLException {
+
+		Conta conta = new Conta();
+		
+		conta.setIdConta(rs.getInt("id_conta"));
+		conta.setCnpj(rs.getString("cnpj"));
+		conta.setSaldo(rs.getInt("saldo"));
+		conta.setTipo(rs.getBoolean("tipo"));
+		
+		return conta;
+
 	}
 
 }

@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -24,15 +25,19 @@
    <children>
       <VBox>
          <children>
-            <AnchorPane style="-fx-background-color: gray;">
-               <children>
-                  <Label fx:id="labelTituloTela" layoutX="32.0" layoutY="1.0" prefHeight="27.0" prefWidth="351.0" text="Título da Tela" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
+            <ToolBar>
+               <items>
+                  <AnchorPane>
+                     <children>
+                        <Label fx:id="labelTituloTela" layoutX="32.0" layoutY="1.0" prefHeight="27.0" prefWidth="351.0" text="Título da Tela">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </items>
+            </ToolBar>
             <AnchorPane prefHeight="450.0" prefWidth="420.0">
                <children>
                   <Label fx:id="labelNomeFantasia" layoutX="36.0" layoutY="36.0" text="Label">

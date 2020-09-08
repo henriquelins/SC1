@@ -90,6 +90,12 @@ public class Strings {
 		return "Cadastro de Produtos";
 
 	}
+	
+	public static String getTitleEmail() {
+
+		return "Cadastro de E-mail e Servidor E-mail";
+
+	}
 
 	// Properties
 	
@@ -141,7 +147,7 @@ public class Strings {
 
 	public static String getImageSplash() {
 
-		return "/imagens/conecta_2.png";
+		return "/imagens/inicio_scs.png";
 
 	}
 
@@ -243,6 +249,11 @@ public class Strings {
 	public static String getBackupBancoView() {
 
 		return "/gui/BackupBancoView.fxml";
+	}
+	
+	public static String getEmailView() {
+		
+		return "/gui/EmailView.fxml";
 	}
 
 	// Texto sobre
@@ -400,6 +411,12 @@ public class Strings {
 	public static String getLogMessage025() {
 
 		return "Fazer restauração do banco";
+
+	}
+
+	public static String getLogMessage026() {
+
+		return "Tela email";
 
 	}
 

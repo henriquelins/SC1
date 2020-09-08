@@ -16,15 +16,19 @@
    <content>
       <VBox>
          <children>
-            <AnchorPane prefHeight="30.0" style="-fx-background-color: gray;">
-               <children>
-                  <Label fx:id="labelTituloCliente" layoutX="25.0" layoutY="2.0" prefHeight="27.0" prefWidth="1208.0" text="Título da Tela" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
+            <ToolBar>
+               <items>
+                  <AnchorPane prefHeight="30.0">
+                     <children>
+                        <Label fx:id="labelTituloCliente" layoutX="19.0" layoutY="2.0" prefHeight="27.0" prefWidth="1214.0" text="Título da Tela">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </items>
+            </ToolBar>
             <ToolBar prefHeight="100.0">
                <items>
                   <AnchorPane prefHeight="119.0" prefWidth="1314.0">

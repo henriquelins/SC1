@@ -8,6 +8,7 @@ public class Conta implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	private Integer idConta;
 	private String cnpj;
 	private Integer saldo;
@@ -16,7 +17,7 @@ public class Conta implements Serializable {
 	public Conta() {
 	}
 
-	public Conta(int idConta, String cnpj, int saldo, boolean tipo) {
+	public Conta(Integer idConta, String cnpj, int saldo, boolean tipo) {
 
 		this.idConta = idConta;
 		this.cnpj = cnpj;
@@ -24,11 +25,11 @@ public class Conta implements Serializable {
 		this.tipo = tipo;
 	}
 
-	public int getIdConta() {
+	public Integer getIdConta() {
 		return idConta;
 	}
 
-	public void setIdConta(int idConta) {
+	public void setIdConta(Integer idConta) {
 		this.idConta = idConta;
 	}
 
@@ -40,11 +41,11 @@ public class Conta implements Serializable {
 		this.cnpj = cnpj;
 	}
 
-	public int getSaldo() {
+	public Integer getSaldo() {
 		return saldo;
 	}
 
-	public void setSaldo(int saldo) {
+	public void setSaldo(Integer saldo) {
 		this.saldo = saldo;
 	}
 

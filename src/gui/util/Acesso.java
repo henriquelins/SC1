@@ -57,6 +57,10 @@ public class Acesso {
 
 			concedido = true;
 
+		} else if (acesso == 1 && tela.equalsIgnoreCase(Strings.getEmailView())) {
+
+			concedido = true;
+
 		} else {
 
 			concedido = false;

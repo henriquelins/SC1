@@ -42,11 +42,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jxl.write.WriteException;
 import model.entities.Cliente;
+import model.entities.Conta;
 import model.entities.ServicoImpressao;
 import model.entities.Unidade;
 import model.entities.Usuario;
 import model.entities.Vendedor;
 import model.services.ClienteService;
+import model.services.ContaService;
 import model.services.LogSegurancaService;
 import model.services.ServicoÌmpressaoService;
 import model.services.VendedorService;
@@ -107,6 +109,9 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 	@FXML
 	private MenuItem menuItemProduto;
+	
+	@FXML
+	private MenuItem menuItemEmail;
 
 	@FXML
 	private MenuItem menuItemLancamentoList;
@@ -197,9 +202,9 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 				String cnpj = "";
 
-				saldoCnpj.append("Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n");
+				saldoCnpj.append("Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n\n");
 
-				saldo = "Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n";
+				saldo = "Cliente: " + cliente.getNomeFantasia().toUpperCase() + " - Lista por CNPJ.\n\n";
 				listaSaldoCliente.add(saldo);
 
 				int index = 1;
@@ -210,16 +215,20 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 				List<ServicoImpressao> ListaSi = new ArrayList<>();
 
 				ListaSi = impressaoService.buscarServicosDoCliente(cliente.getIdCliente());
+								
+				Conta conta = new Conta();
 
-				if (!ListaSi.isEmpty() == true) {
+				if (!ListaSi.isEmpty()) {
 
-					String tipo = "";
-
+					String tipo = "";					
+					
 					for (ServicoImpressao si : ListaSi) {
+						
+						conta = new ContaService().buscarContaId(si.getIdConta());
 
-						if (!si.getConta().getCnpj().equals(cnpj)) {
+						if (!conta.getCnpj().equals(cnpj)) {
 
-							if (si.getConta().isTipo()) {
+							if (conta.isTipo()) {
 
 								tipo = "SALDO";
 
@@ -228,28 +237,26 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 								tipo = "FATURADO";
 							}
 
-							saldoCnpj.append(index + " - Tipo de conta: " + tipo + " - CNPJ: " + si.getConta().getCnpj()
-									+ " - total: " + String.valueOf(si.getConta().getSaldo()) + " Unidades.\n");
+							saldoCnpj.append(index + " - Tipo de conta: " + tipo + " - CNPJ: " + conta.getCnpj()
+									+ " - total: " + String.valueOf(conta.getSaldo()) + " Unidades.\n");
 
-							saldo = index + " - Tipo de conta: " + tipo + " - CNPJ: " + si.getConta().getCnpj() + " - total: "
-									+ String.valueOf(si.getConta().getSaldo()) + " Unidades.\n";
+							saldo = index + " - Tipo de conta: " + tipo + " - CNPJ: " + conta.getCnpj() + " - total: "
+									+ String.valueOf(conta.getSaldo()) + " Unidades.\n";
 
 							listaSaldoCliente.add(saldo.toString());
 
 							index++;
 						}
 
-						cnpj = si.getConta().getCnpj();
-
-				
+						cnpj = conta.getCnpj();
 
 					}
 
 					servicos.append("Cliente: " + cliente.getNomeFantasia().toUpperCase()
-							+ " - Lista por Serviços do cliente - Mesmo CNPJ, compartilham o mesmo total.\n");
+							+ " - Lista por Serviço - Mesmo CNPJ, compartilham o mesmo total.\n\n");
 
 					serv = "Cliente: " + cliente.getNomeFantasia().toUpperCase()
-							+ " - Lista por Serviços do cliente - Mesmo CNPJ, compartilham o mesmo total.\n";
+							+ " - Lista por Serviço - Mesmo CNPJ, compartilham o mesmo total.\n\n";
 
 					listaSaldoCliente.add("\n");
 					listaSaldoCliente.add(serv);
@@ -272,8 +279,10 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 					String tipo = "";
 
 					for (ServicoImpressao si : ListaSi) {
-
-						if (si.getConta().isTipo()) {
+						
+						conta = new ContaService().buscarContaId(si.getIdConta());
+						
+						if (conta.isTipo()) {
 
 							tipo = "SALDO";
 
@@ -282,13 +291,13 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 							tipo = "FATURADO";
 						}
 
-						servicos.append(index2 + "- Tipo: " + tipo + " - CNPJ: " + si.getConta().getCnpj()
+						servicos.append(index2 + "- Tipo: " + tipo + " - CNPJ: " + conta.getCnpj()
 								+ " - Serviço: " + si.getNomeDoServico().toUpperCase() + " - total: "
-								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.");
+								+ String.valueOf(conta.getSaldo()) + " Unidades.");
 
-						serv = index2 + "- Tipo: " + tipo + " - CNPJ: " + si.getConta().getCnpj() + " - Serviço: "
+						serv = index2 + "- Tipo: " + tipo + " - CNPJ: " + conta.getCnpj() + " - Serviço: "
 								+ si.getNomeDoServico().toUpperCase() + " - total: "
-								+ String.valueOf(si.getConta().getSaldo()) + " Unidades.";
+								+ String.valueOf(conta.getSaldo()) + " Unidades.";
 
 						listaSaldoCliente.add(serv);
 
@@ -298,7 +307,7 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 						}
 
-						cnpj = si.getConta().getCnpj();
+						cnpj = conta.getCnpj();
 
 						index2++;
 
@@ -332,6 +341,8 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 			}
 
 		}
+		
+		
 		if (event.getClickCount() == 2) {
 
 			event.consume();
@@ -538,6 +549,9 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 
 				textFieldPesquisar.setText("");
 				textFieldPesquisar.requestFocus();
+				
+				textAreaDetalhes.setText("");
+				textAreaSaldoCnpj.setText("");
 
 			}
 
@@ -612,6 +626,14 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 		new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage012());
 		new Forms().produtoForm(usuario, Strings.getProdutoView());
 
+	}
+	
+	@FXML
+	public void onMenuItemEmailAction(ActionEvent event) {
+
+		new LogSegurancaService().novoLogSeguranca(usuario.getNome(), Strings.getLogMessage026());
+		new Forms().emailForm(usuario, Strings.getEmailView());
+		
 	}
 
 	// evento menu item backup
@@ -934,6 +956,9 @@ public class PrincipalFormController implements Initializable, DataChangeListene
 				ClienteSelecionadoFormController controller = loader.getController();
 				controller.setServicoImpressao(new ServicoImpressao());
 				controller.carregarCampos(cliente, usuario);
+				
+				pane.setFitToHeight(true);
+				pane.setFitToWidth(true);
 
 				Stage primaryStage = new Stage();
 				primaryStage.setTitle(Strings.getTitle());

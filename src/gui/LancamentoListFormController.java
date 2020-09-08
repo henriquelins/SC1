@@ -30,10 +30,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import jxl.write.WriteException;
 import model.entities.Cliente;
+import model.entities.Conta;
 import model.entities.Lancamento;
 import model.entities.Produto;
 import model.entities.ServicoImpressao;
 import model.entities.Usuario;
+import model.services.ContaService;
 import model.services.LancamentoService;
 import model.services.LogSegurancaService;
 import relatorio.Relatorio;
@@ -321,18 +323,20 @@ public class LancamentoListFormController implements Initializable, DataChangeLi
 	// Carrega os campos da Classe Lançamento Lista
 
 	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario) {
-
+		
+		Conta conta = new ContaService().buscarContaId(servicoImpressao.getIdConta());
+		
 		labelTituloCliente
 				.setText(Strings.getTitleLancamentoList() + " - Cliente: " + cliente.getNomeFantasia().toUpperCase()
 						+ " - Serviço de Impressão: " + servicoImpressao.getNomeDoServico().toUpperCase());
 		labelNomeCliente.setText(cliente.getNomeFantasia().toUpperCase());
 		labelNomeServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
-		labelNomeProduto.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
-		labelSaldoAtual.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()));
+		labelNomeProduto.setText(new Produto().apenasNomeProduto(servicoImpressao.getIdProdutoDoServico()).toUpperCase());
+		labelSaldoAtual.setText(Constraints.tresDigitos(conta.getSaldo()));
 
 		String tipo = "";
 
-		if (servicoImpressao.getConta().isTipo()) {
+		if (conta.isTipo()) {
 
 			tipo = "SALDO";
 			

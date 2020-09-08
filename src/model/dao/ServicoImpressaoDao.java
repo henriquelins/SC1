@@ -13,5 +13,6 @@ public interface ServicoImpressaoDao {
 	String buscarServicosDoClientePeloCnpj(String servicoCNPJ);
 	void excluir(Integer idServicoImpressao);
 	ServicoImpressao buscarServicoImpressaoCnpj(String cnpj);
+	ServicoImpressao buscarServicoImpressaoIdConta(Integer idConta);
 
 }

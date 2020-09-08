@@ -34,6 +34,7 @@ import model.entities.Produto;
 import model.entities.ServicoImpressao;
 import model.entities.Usuario;
 import model.services.ClienteService;
+import model.services.ContaService;
 import model.services.ProdutoService;
 import model.services.ServicoÌmpressaoService;
 
@@ -52,6 +53,8 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	private Usuario usuario;
 
 	private Cliente cliente;
+
+	private Conta conta;
 
 	private ServicoImpressao servicoImpressao;
 
@@ -102,18 +105,18 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	private Label limite;
 
 	// @FXML event
-	
+
 	@FXML
 	public void onRadioAction(ActionEvent event) {
-		
-		if (radiobuttonFaturamento.isSelected()){
-			
+
+		if (radiobuttonFaturamento.isSelected()) {
+
 			limite.setText("Limite Máximo");
-			
+
 		} else if (radiobuttonSaldo.isSelected()) {
-			
+
 			limite.setText("Limite Mínimo");
-			
+
 		}
 	}
 
@@ -123,173 +126,84 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	public void onButtonSalvarServicoAction(ActionEvent event) {
 
 		setServicoImpressao(getFormData());
+	
 		boolean ok = compararCampos();
+	
+		if (ok == false) {
 
-		try {
+			if (getServicoImpressao().getIdServicoImpressao() == null) {
 
-			Cliente clienteCnpj = new ClienteService().buscarPeloCnpj(getServicoImpressao().getConta().getCnpj());
-			ServicoImpressao servicoImpressaoCnpj = service
-					.buscarServicoImpressaoCnpj(getServicoImpressao().getConta().getCnpj());
+				novoServicoImpresao();
 
-			if (ok == false) {
+			} else {
 
-				if (getServicoImpressao().getIdServicoImpressao() == null) {
+				editarServicoImpressao();
 
-					if (clienteCnpj.getIdCliente() == null) {
+			}
 
-						if (servicoImpressaoCnpj.getIdCliente() == getServicoImpressao().getIdCliente()) {
+		} else {
 
-							if (servicoImpressaoCnpj.getConta().getCnpj()
-									.equals(getServicoImpressao().getConta().getCnpj())) {
+			Alerts.showAlert("Cadastro de serviços", "Editar serviços", "Não houve alteração no registro",
+					AlertType.INFORMATION);
 
-								if (servicoImpressaoCnpj.getConta().isTipo() == getServicoImpressao().getConta()
-										.isTipo()) {
+		}
 
-									Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços",
-											"O CNPJ " + getServicoImpressao().getConta().getCnpj()
-													+ " pertence ao serviço "
-													+ servicoImpressaoCnpj.getNomeDoServico().toUpperCase()
-													+ ", você deseja compartilhar com novo serviço de impressão "
-													+ getServicoImpressao().getNomeDoServico().toUpperCase() + " ?");
+	}
 
-									if (result.get() == ButtonType.OK) {
+	private void editarServicoImpressao() {
 
-										service.novoServico(getServicoImpressao());
-										notifyDataChangeListeners();
-										Utils.fecharTelaServicoFormAction();
+		Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços",
 
-									} else {
+				"Deseja editar o serviço de impressão " + getServicoImpressao().getNomeDoServico() + "?");
 
-										textFieldCnpjParaCobranca.setText("");
-										textFieldCnpjParaCobranca.requestFocus();
+		if (result.get() == ButtonType.OK) {
 
-									}
+			service.editarServico(servicoImpressao);
+			notifyDataChangeListeners();
+			Utils.fecharTelaServicoFormAction();
 
-								} else {
-									
-									Alerts.showAlert("Serviço de Impressão", "Tipo de conta diferentes",
-											"Para compartilhar o CNPJ entre serviços de impressão ambos devem ter o mesmo tipo de conta, verifique o tipo de conta.",
-											AlertType.ERROR);
+		} else {
 
-								}
+			Utils.fecharTelaServicoFormAction();
 
-							} else {
+		}
 
-								Alerts.showAlert("Serviço de Impressão", "CNPJ de um serviço de outro cliente",
-										"CNPJ não pertence a um serviço de impressão do cliente "
-												+ clienteCnpj.getNomeFantasia().toUpperCase()
-												+ ", verifique o número do CNPJ.",
-										AlertType.ERROR);
-							}
+	}
 
-						} else {
+	private void novoServicoImpresao() {
 
-							Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços",
-									"Você deseja salvar o novo serviço de impressão "
-											+ getServicoImpressao().getNomeDoServico().toUpperCase() + " no CNPJ "
-											+ getServicoImpressao().getConta().getCnpj() + " ?");
+		Cliente clienteCnpjPesquisado = new ClienteService().buscarPeloCnpj(getConta().getCnpj());
+	
+		 if ((getCliente().getIdCliente().equals(clienteCnpjPesquisado.getIdCliente())) || (clienteCnpjPesquisado.getIdCliente() == null)) {
 
-							if (result.get() == ButtonType.OK) {
+			Conta contaPesquisado = new ContaService().buscarContaCnpj(getCliente().getCnpjCliente());
+		
+			if (contaPesquisado.getCnpj() != clienteCnpjPesquisado.getCnpjCliente()) {
 
-								service.novoServico(getServicoImpressao());
-								notifyDataChangeListeners();
-								Utils.fecharTelaServicoFormAction();
+				contaPesquisado = new ContaService().buscarContaCnpj(getConta().getCnpj());
+			
 
-							} else {
+				if (contaPesquisado.getIdConta() == null) {
 
-								Utils.fecharTelaServicoFormAction();
-
-							}
-
-						}
-
-					} else if (clienteCnpj.getIdCliente() != null) {
-
-						if (servicoImpressaoCnpj.getIdCliente() == getServicoImpressao().getIdCliente()) {
-
-							if (servicoImpressaoCnpj.getConta().getCnpj()
-									.equals(getServicoImpressao().getConta().getCnpj())) {
-
-								if (servicoImpressaoCnpj.getConta().isTipo() == getServicoImpressao().getConta()
-										.isTipo()) {
-
-									Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços",
-											"O CNPJ " + getServicoImpressao().getConta().getCnpj()
-													+ " pertence ao cliente selecionado "
-													+ clienteCnpj.getNomeFantasia().toUpperCase()
-													+ ", você deseja compartilhar com novo serviço de impressão "
-													+ getServicoImpressao().getNomeDoServico().toUpperCase() + " ?");
-
-									if (result.get() == ButtonType.OK) {
-
-										service.novoServico(getServicoImpressao());
-										notifyDataChangeListeners();
-										Utils.fecharTelaServicoFormAction();
-
-									} else {
-
-										textFieldCnpjParaCobranca.setText("");
-										textFieldCnpjParaCobranca.requestFocus();
-
-									}
-
-								} else {
-
-									Alerts.showAlert("Serviço de Impressão", "Tipo de conta diferentes",
-											"Para compartilhar o CNPJ entre serviços de impressão ambos devem ter o mesmo tipo de conta, verifique o tipo de conta.",
-											AlertType.ERROR);
-
-								}
-
-							} else {
-
-								Alerts.showAlert("Serviço de Impressão", "CNPJ de um serviço de outro cliente",
-										"CNPJ não pertence a um serviço de impressão do cliente "
-												+ clienteCnpj.getNomeFantasia().toUpperCase()
-												+ ", verifique o número do CNPJ.",
-										AlertType.ERROR);
-							}
-
-						} else {
-
-							Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços",
-									"Você deseja salvar o novo serviço de impressão "
-											+ getServicoImpressao().getNomeDoServico().toUpperCase() + " no CNPJ "
-											+ getServicoImpressao().getConta().getCnpj() + " ?");
-
-							if (result.get() == ButtonType.OK) {
-
-								service.novoServico(getServicoImpressao());
-								notifyDataChangeListeners();
-								Utils.fecharTelaServicoFormAction();
-
-							} else {
-
-								Utils.fecharTelaServicoFormAction();
-
-							}
-
-						}
-
-					} else if (clienteCnpj.getIdCliente() != null
-							&& !clienteCnpj.getIdCliente().equals(getServicoImpressao().getIdCliente())) {
-
-						Alerts.showAlert(
-								"Serviço de Impressão", "CNPJ de outro cliente", "CNPJ pertence "
-										+ clienteCnpj.getNomeFantasia().toUpperCase() + ", verifique o número do CNPJ.",
-								AlertType.ERROR);
-
-					}
-
+					int idConta = new ContaService().inserirConta(getConta());
+					getServicoImpressao().setIdConta(idConta);
+				
 				} else {
 
-					Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços",
+					getServicoImpressao().setIdConta(getConta().getIdConta());
+				
+				}
 
-							"Deseja editar o serviço de impressão " + getServicoImpressao().getNomeDoServico() + "?");
+				if (!getConta().getCnpj().equals(contaPesquisado.getCnpj())) {
+
+					Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços",
+							"Você deseja salvar o novo serviço de impressão "
+									+ getServicoImpressao().getNomeDoServico().toUpperCase() + " no CNPJ "
+									+ getConta().getCnpj() + " ?");
 
 					if (result.get() == ButtonType.OK) {
 
-						service.editarServico(servicoImpressao);
+						service.novoServico(getServicoImpressao());
 						notifyDataChangeListeners();
 						Utils.fecharTelaServicoFormAction();
 
@@ -299,19 +213,67 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 					}
 
+				} else {
+
+					if (getConta().isTipo() == contaPesquisado.isTipo()) {
+
+						Optional<ButtonType> result = Alerts.showConfirmation("Cadastro de serviços", "O CNPJ "
+								+ conta.getCnpj() + " já foi cadastrado para outro(s) servico(s) do mesmo cliente"
+								+ ", ao compartilhar um CNPJ com outro serviço de impressão , o saldo e os demais"
+								+ " dados também serão compartlhados. Desejar compartilhar o mesmo CNPJ com o"
+								+ " outro(s) serviço(s) de impressão" + "?");
+
+						if (result.get() == ButtonType.OK) {
+
+							ServicoImpressao servicoImpressaoPesquisado = new ServicoÌmpressaoService()
+									.buscarServicoImpressaoIdConta(contaPesquisado.getIdConta());
+
+							getServicoImpressao().setIdConta(contaPesquisado.getIdConta());
+							getServicoImpressao().setValorUnitario(servicoImpressaoPesquisado.getValorUnitario());
+							getServicoImpressao().setLimiteMinimo(servicoImpressaoPesquisado.getLimiteMinimo());
+							getServicoImpressao().setIdProdutoDoServico(servicoImpressaoPesquisado.getIdProdutoDoServico());
+							
+							service.novoServico(getServicoImpressao());
+							notifyDataChangeListeners();
+							Utils.fecharTelaServicoFormAction();
+
+						} else {
+
+							textFieldCnpjParaCobranca.setText("");
+							textFieldCnpjParaCobranca.requestFocus();
+
+						}
+
+					} else {
+
+						Alerts.showAlert("Serviço de Impressão", "Tipo de conta diferentes",
+								"Para compartilhar o CNPJ entre serviços de impressão ambos devem ter o mesmo tipo de conta. Verifique o tipo de conta!",
+								AlertType.ERROR);
+					}
+
 				}
 
 			} else {
 
-				Alerts.showAlert("Cadastro de serviços", "Editar serviços", "Não houve alteração no registro",
-						AlertType.INFORMATION);
+				Alerts.showAlert("Serviço de Impressão", "CNPJ de outro cliente",
+						"O CNPJ do serviço está cadastrado para o cliente "
+								+ clienteCnpjPesquisado.getNomeFantasia().toUpperCase()
+								+ ", verifique o número do CNPJ.",
+						AlertType.ERROR);
 
+				textFieldCnpjParaCobranca.setText("");
+				textFieldCnpjParaCobranca.requestFocus();
 			}
 
-		} catch (
+		} else {
 
-		java.lang.NullPointerException e) {
+			Alerts.showAlert(
+					"Serviço de Impressão", "CNPJ de outro cliente", "O CNPJ está cadastrado para o cliente "
+							+ clienteCnpjPesquisado.getNomeFantasia().toUpperCase() + ", verifique o número do CNPJ.",
+					AlertType.ERROR);
 
+			textFieldCnpjParaCobranca.setText("");
+			textFieldCnpjParaCobranca.requestFocus();
 		}
 
 	}
@@ -319,23 +281,20 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 	// Comparar todos os campos
 
 	private boolean compararCampos() {
-		
+
 		boolean ok = false;
 
-		if (servicoImpressao == null) {
+		if (getServicoImpressao() == null || compararServicoImpressao == null ) {
 
-			return ok;
+			ok = false;
 
 		} else if (servicoImpressao.equals(compararServicoImpressao)) {
 
 			ok = true;
-			return ok;
-
-		} else {
-
-			return ok;
-
-		}
+			
+		} 
+		
+		return ok;
 
 	}
 
@@ -409,7 +368,7 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 		groupLancamento = new ToggleGroup();
 		radiobuttonFaturamento.setToggleGroup(groupLancamento);
 		radiobuttonSaldo.setToggleGroup(groupLancamento);
-		
+
 		groupLancamento.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -417,8 +376,8 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 				// Quando selecionar.
 				if (groupLancamento.getSelectedToggle() != null) {
 
-					tipoLancamento = groupLancamento.getSelectedToggle().equals(radiobuttonSaldo);				
-					
+					tipoLancamento = groupLancamento.getSelectedToggle().equals(radiobuttonSaldo);
+
 				}
 			}
 		});
@@ -427,8 +386,8 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 	// Carregar campos
 
-	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario, boolean editar) {
-
+	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario, boolean editar) {		
+		
 		if (editar == true) {
 
 			radiobuttonFaturamento.setDisable(true);
@@ -446,23 +405,26 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 		}
 
 		if (servicoImpressao != null) {
+			
+			Conta conta = new ContaService().buscarContaId(servicoImpressao.getIdConta());
+			
+			setConta(conta);
 
 			labelTituloTela.setText(Strings.getTitleServicos());
 			labelNomeFantasia.setText(cliente.getNomeFantasia().toUpperCase());
 			textFieldNomeDoServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
-			textFieldCnpjParaCobranca.setText(servicoImpressao.getConta().getCnpj());
+			textFieldCnpjParaCobranca.setText(conta.getCnpj());
 			comboBoxProduto.getSelectionModel()
-					.select(new Produto().nomeProduto(servicoImpressao.getProdutoDoServico()));
+					.select(new Produto().nomeProduto(servicoImpressao.getIdProdutoDoServico()));
 			textFieldValorUnitario.setText(Constraints.dinheiro(servicoImpressao.getValorUnitario()));
 			textFieldLimiteMinimo.setText(Constraints.tresDigitos(servicoImpressao.getLimiteMinimo()));
 			textAreaObservacoesDoServico
 					.setText(String.valueOf(servicoImpressao.getObservacoesServico()).toUpperCase());
 
-			if (servicoImpressao.getConta().isTipo() == true) {
+			if (conta.isTipo() == true) {
 
 				radiobuttonSaldo.setSelected(true);
 				limite.setText("Limite Mínimo");
-				
 
 			} else {
 
@@ -481,9 +443,10 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 		setCliente(cliente);
 		setServicoImpressao(servicoImpressao);
+
 		setCompararServicoImpressao(servicoImpressao);
 		setUsuario(usuario);
-	
+
 	}
 
 	// Tratamento dos campos
@@ -552,39 +515,43 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 
 			if (textFieldCnpjParaCobranca.getText() != null || !textFieldCnpjParaCobranca.getText().trim().equals("")) {
 
+				//if (getServicoImpressao() != null && getConta().equals(null)) {
+					
 				if (getServicoImpressao() != null) {
 
 					servicoImpressao.setIdServicoImpressao(getServicoImpressao().getIdServicoImpressao());
 					servicoImpressao.setIdCliente(getCliente().getIdCliente());
+					servicoImpressao.setIdConta(getConta().getIdConta());
 					servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
-					conta.setCnpj(textFieldCnpjParaCobranca.getText());
-					servicoImpressao.setProdutoDoServico(
+					servicoImpressao.setIdProdutoDoServico(
 							new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 					servicoImpressao
 							.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace(",", ".")));
 					servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
 					servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
-					conta.setSaldo(getServicoImpressao().getConta().getSaldo());
-					conta.setTipo(tipoLancamento);
-					conta.setIdConta(getServicoImpressao().getConta().getIdConta());
 					
-					servicoImpressao.setConta(conta);
+					conta.setCnpj(textFieldCnpjParaCobranca.getText());
+					conta.setSaldo(getConta().getSaldo());
+					conta.setTipo(tipoLancamento);
+
+					setConta(conta);
 
 				} else {
 
 					servicoImpressao.setIdCliente(getCliente().getIdCliente());
 					servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
-					conta.setCnpj(textFieldCnpjParaCobranca.getText());
-					servicoImpressao.setProdutoDoServico(
+					servicoImpressao.setIdProdutoDoServico(
 							new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 					servicoImpressao
 							.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace(",", ".")));
 					servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
 					servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
+					
+					conta.setCnpj(textFieldCnpjParaCobranca.getText());
 					conta.setSaldo(0);
 					conta.setTipo(tipoLancamento);
 
-					servicoImpressao.setConta(conta);
+					setConta(conta);
 
 				}
 
@@ -649,6 +616,14 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 		this.clienteSelecionadoFormController = clienteSelecionadoFormController;
 	}
 
+	public Conta getConta() {
+		return conta;
+	}
+
+	public void setConta(Conta conta) {
+		this.conta = conta;
+	}
+
 	public ServicoImpressao finalizar(ServicoImpressao servicoImpressao, Conta conta) {
 
 		if (getServicoImpressao() != null) {
@@ -657,22 +632,22 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 			servicoImpressao.setIdCliente(getCliente().getIdCliente());
 			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 			conta.setCnpj(textFieldCnpjParaCobranca.getText());
-			servicoImpressao.setProdutoDoServico(
+			servicoImpressao.setIdProdutoDoServico(
 					new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 			servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText().replace("R$", "")));
 			servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
 			servicoImpressao.setObservacoesServico(textAreaObservacoesDoServico.getText().toUpperCase());
-			conta.setSaldo(getServicoImpressao().getConta().getSaldo());
+			conta.setSaldo(getConta().getSaldo());
 			conta.setTipo(tipoLancamento);
 
-			servicoImpressao.setConta(conta);
+			servicoImpressao.setIdConta(conta.getIdConta());
 
 		} else {
 
 			servicoImpressao.setIdCliente(getCliente().getIdCliente());
 			servicoImpressao.setNomeDoServico(textFieldNomeDoServico.getText().toUpperCase());
 			conta.setCnpj(textFieldCnpjParaCobranca.getText());
-			servicoImpressao.setProdutoDoServico(
+			servicoImpressao.setIdProdutoDoServico(
 					new Produto().codProduto(comboBoxProduto.getSelectionModel().getSelectedItem()));
 			servicoImpressao.setValorUnitario(Double.valueOf(textFieldValorUnitario.getText()));
 			servicoImpressao.setLimiteMinimo(Integer.valueOf(textFieldLimiteMinimo.getText()));
@@ -680,7 +655,7 @@ public class ServicoFormController implements Initializable, DataChangeListener 
 			conta.setSaldo(0);
 			conta.setTipo(tipoLancamento);
 
-			servicoImpressao.setConta(conta);
+			servicoImpressao.setIdConta(conta.getIdConta());
 
 		}
 

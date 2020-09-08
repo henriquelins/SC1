@@ -35,9 +35,11 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 			conn.setAutoCommit(false);
 
-			st = conn.prepareStatement("INSERT INTO vendedor (nome_vendedor) VALUES (?)");
+			st = conn.prepareStatement("INSERT INTO vendedor (nome_vendedor, fone, email) VALUES (?, ?, ?)");
 
 			st.setString(1, vendedor.getNomeVendedor().toUpperCase());
+			st.setString(2, vendedor.getFone());
+			st.setString(3, vendedor.getEmail().toLowerCase());
 
 			int linhas = st.executeUpdate();
 
@@ -77,10 +79,12 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 			conn.setAutoCommit(false);
 
-			st = conn.prepareStatement("UPDATE vendedor SET nome_vendedor = ? WHERE id_vendedor = ?");
+			st = conn.prepareStatement("UPDATE vendedor SET nome_vendedor = ?, fone = ?, email = ? WHERE id_vendedor = ?");
 
 			st.setString(1, vendedor.getNomeVendedor().toUpperCase());
-			st.setInt(2, vendedor.getIdVendedor());
+			st.setString(2, vendedor.getFone());
+			st.setString(3, vendedor.getEmail().toLowerCase());
+			st.setInt(4, vendedor.getIdVendedor());
 
 			st.executeUpdate();
 
@@ -200,6 +204,8 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 		vendedor.setIdVendedor(rs.getInt("id_vendedor"));
 		vendedor.setNomeVendedor(rs.getString("nome_vendedor"));
+		vendedor.setFone(rs.getString("fone"));
+		vendedor.setEmail(rs.getString("email"));
 
 		return vendedor;
 	}

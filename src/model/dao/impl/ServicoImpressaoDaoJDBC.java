@@ -10,7 +10,6 @@ import java.util.List;
 import db.DB;
 import db.DbException;
 import model.dao.ServicoImpressaoDao;
-import model.entities.Conta;
 import model.entities.ServicoImpressao;
 
 public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
@@ -34,26 +33,18 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 
 		PreparedStatement st = null;
 
-		ContaDaoJDBC contaDao = new ContaDaoJDBC(conn);
-
 		try {
 
 			conn.setAutoCommit(false);
 
-			if (servicoImpressao.getConta().getIdConta() == 0) {
-
-				servicoImpressao.getConta().setIdConta(contaDao.inserir(servicoImpressao));
-
-			}
-
 			st = conn.prepareStatement(
-					"INSERT INTO servico_impressao (id_cliente, id_conta, nome_servico, produto_servico,"
+					"INSERT INTO servico_impressao (id_cliente, id_conta, nome_servico, id_produto_servico,"
 							+ " observacoes_servico, limite_minimo, valor_unitario)" + " VALUES (?, ?, ?, ? ,?, ?, ?)");
 
 			st.setInt(1, servicoImpressao.getIdCliente());
-			st.setInt(2, servicoImpressao.getConta().getIdConta());
+			st.setInt(2, servicoImpressao.getIdConta());
 			st.setString(3, servicoImpressao.getNomeDoServico().toUpperCase());
-			st.setInt(4, servicoImpressao.getProdutoDoServico());
+			st.setInt(4, servicoImpressao.getIdProdutoDoServico());
 			st.setString(5, servicoImpressao.getObservacoesServico().toUpperCase());
 			st.setInt(6, servicoImpressao.getLimiteMinimo());
 			st.setDouble(7, servicoImpressao.getValorUnitario());
@@ -88,28 +79,24 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 	public void atualizar(ServicoImpressao servicoImpressao) {
 
 		PreparedStatement st = null;
-
-		ContaDaoJDBC contaDao = new ContaDaoJDBC(conn);
-
+		
 		try {
 
 			conn.setAutoCommit(false);
 
 			st = conn.prepareStatement(
-					"UPDATE servico_impressao SET id_cliente = ?, id_conta = ?, nome_servico = ?, produto_servico = ?, "
+					"UPDATE servico_impressao SET id_cliente = ?, id_conta = ?, nome_servico = ?, id_produto_servico = ?, "
 							+ "observacoes_servico = ?, limite_minimo = ?, valor_unitario = ? "
 							+ "WHERE id_servico_impressao = ?");
 
 			st.setInt(1, servicoImpressao.getIdCliente());
-			st.setInt(2, servicoImpressao.getConta().getIdConta());
+			st.setInt(2, servicoImpressao.getIdConta());
 			st.setString(3, servicoImpressao.getNomeDoServico().toUpperCase());
-			st.setInt(4, servicoImpressao.getProdutoDoServico());
+			st.setInt(4, servicoImpressao.getIdProdutoDoServico());
 			st.setString(5, servicoImpressao.getObservacoesServico().toUpperCase());
 			st.setInt(6, servicoImpressao.getLimiteMinimo());
 			st.setDouble(7, servicoImpressao.getValorUnitario());
 			st.setInt(8, servicoImpressao.getIdServicoImpressao());
-
-			contaDao.atualizar(servicoImpressao);
 
 			st.executeUpdate();
 
@@ -156,9 +143,9 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 			if (rs.next()) {
 
 				ServicoImpressao servicoImpressao = instantiateServicoImpressao(rs);
-				Conta conta = instantiateConta(rs);
+				int idConta = rs.getInt("id_conta");
 
-				servicoImpressao.setConta(conta);
+				servicoImpressao.setIdConta(idConta);
 
 				return servicoImpressao;
 
@@ -202,8 +189,8 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 			conn.setAutoCommit(false);
 
 			st = conn.prepareStatement(
-					"SELECT * FROM  servico_impressao as si inner join conta as co on si.id_conta = co.id_conta WHERE si.id_cliente = ? ORDER BY co.cnpj");
-			st.setInt(1, idCliente);
+					"SELECT * FROM servico_impressao WHERE id_cliente = ? ORDER BY id_servico_impressao");
+					st.setInt(1, idCliente);
 			rs = st.executeQuery();
 
 			while (rs.next()) {
@@ -244,36 +231,18 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 	private ServicoImpressao instantiateServicoImpressao(ResultSet rs) throws SQLException {
 
 		ServicoImpressao servicoImpressao = new ServicoImpressao();
-		Conta conta = new Conta();
-
+		
 		servicoImpressao.setIdServicoImpressao(rs.getInt("id_servico_impressao"));
 		servicoImpressao.setIdCliente(rs.getInt("id_cliente"));
+		servicoImpressao.setIdConta(rs.getInt("id_conta"));
 		servicoImpressao.setNomeDoServico(rs.getString("nome_servico"));
-		servicoImpressao.setProdutoDoServico(rs.getInt("produto_servico"));
+		servicoImpressao.setIdProdutoDoServico(rs.getInt("id_produto_servico"));
 		servicoImpressao.setObservacoesServico(rs.getString("observacoes_servico"));
 		servicoImpressao.setLimiteMinimo(rs.getInt("limite_minimo"));
 		servicoImpressao.setValorUnitario(rs.getDouble("valor_unitario"));
 
-		conta.setIdConta(rs.getInt("id_conta"));
-		conta.setCnpj(rs.getString("cnpj"));
-		conta.setSaldo(rs.getInt("saldo"));
-		conta.setTipo(rs.getBoolean("tipo"));
-
-		servicoImpressao.setConta(conta);
-
 		return servicoImpressao;
-	}
-
-	private Conta instantiateConta(ResultSet rs) throws SQLException {
-
-		Conta conta = new Conta();
-
-		conta.setIdConta(rs.getInt("id_conta"));
-		conta.setCnpj(rs.getString("cnpj"));
-		conta.setSaldo(rs.getInt("saldo"));
-		conta.setTipo(rs.getBoolean("tipo"));
-
-		return conta;
+		
 	}
 
 	@Override
@@ -374,8 +343,7 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		ServicoImpressao servicoImpressao = new ServicoImpressao();
-		Conta conta = null;
-
+		
 		try {
 
 			conn.setAutoCommit(false);
@@ -388,9 +356,9 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 			while (rs.next()) {
 
 				servicoImpressao = instantiateServicoImpressao(rs);
-				conta = instantiateConta(rs);
+				int idConta = rs.getInt("id_conta");
 
-				servicoImpressao.setConta(conta);
+				servicoImpressao.setIdConta(idConta);
 
 			}
 
@@ -418,6 +386,53 @@ public class ServicoImpressaoDaoJDBC implements ServicoImpressaoDao {
 
 		}
 
+	}
+
+	@Override
+	public ServicoImpressao buscarServicoImpressaoIdConta(Integer idConta) {
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		ServicoImpressao servicoImpressao = new ServicoImpressao();
+		
+		try {
+
+			conn.setAutoCommit(false);
+
+			st = conn.prepareStatement(
+					"SELECT * FROM servico_impressao WHERE id_conta = ?");
+			st.setInt(1, idConta);
+			rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				servicoImpressao = instantiateServicoImpressao(rs);
+			
+			}
+
+			conn.commit();
+
+			return servicoImpressao;
+
+		} catch (SQLException e) {
+
+			try {
+
+				conn.rollback();
+				throw new DbException("Transaction rolled back. Cause by: " + e.getLocalizedMessage());
+
+			} catch (SQLException e1) {
+
+				throw new DbException("Error trying to rollback. Cause by: " + e.getLocalizedMessage());
+
+			}
+
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
 	}
 
 }

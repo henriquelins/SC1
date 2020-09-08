@@ -15,9 +15,9 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ConfigurarPerpetiesDBFormController">
    <children>
-      <ToolBar prefHeight="36.0" prefWidth="500.0" style="-fx-background-color: gray;">
+      <ToolBar prefHeight="36.0" prefWidth="500.0">
          <items>
-            <Label prefHeight="27.0" prefWidth="456.0" text="Configurar Banco de Dados" textFill="WHITE">
+            <Label prefHeight="27.0" prefWidth="456.0" text="Configurar Banco de Dados">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>

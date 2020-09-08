@@ -10,11 +10,11 @@
 
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LogSegurancaFormController">
    <children>
-      <ToolBar prefHeight="30.0" style="-fx-background-color: gray;">
+      <ToolBar prefHeight="30.0">
          <items>
             <AnchorPane prefHeight="20.0" prefWidth="124.0">
                <children>
-                  <Label fx:id="labelTitle" layoutX="35.0" prefHeight="20.0" prefWidth="422.0" text="Label" textFill="WHITE">
+                  <Label fx:id="labelTitle" layoutX="35.0" prefHeight="20.0" prefWidth="422.0" text="Label">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>

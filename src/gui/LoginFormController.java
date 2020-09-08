@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -39,12 +40,23 @@ public class LoginFormController implements Initializable {
 
 	@FXML
 	private Label labelTitle;
+	
+	@FXML
+	private Hyperlink hyperLinkBancoDados;
 
 	@FXML
 	public void onButtonFecharAction(ActionEvent event) {
 
 		System.exit(0);
 
+	}
+	
+	@FXML
+	public void onHyperLinkBancoDadosAction(ActionEvent event) {
+
+		Utils.currentStage(event).close();
+		new Forms().ConfigurarPerpetiesDBForm(Strings.getConfigurarPerpetiesDBView());
+		
 	}
 
 	@FXML

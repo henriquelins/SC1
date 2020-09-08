@@ -23,8 +23,10 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
+import model.entities.Conta;
 import model.entities.Lancamento;
 import model.entities.ServicoImpressao;
+import model.services.ContaService;
 
 public class ExportarListaLancamentosXLS {
 
@@ -67,8 +69,10 @@ public class ExportarListaLancamentosXLS {
 		addCaption(sheet, 0, 0, "Cliente: " + nomeCliente.toUpperCase());
 
 		addCaption(sheet, 0, 1, "Serviço: " + servicoImpressao.getNomeDoServico());
+			
+		Conta conta = new ContaService().buscarContaId(servicoImpressao.getIdConta());
 
-		addCaption(sheet, 0, 2, "Saldo Atual: " + String.valueOf(servicoImpressao.getConta().getSaldo())
+		addCaption(sheet, 0, 2, "Saldo Atual: " + String.valueOf(conta.getSaldo())
 				+ " / Período pesquisado: " + periodo);
 
 		addCaption(sheet, 0, 3, "#");

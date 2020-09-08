@@ -24,7 +24,7 @@ public class Alerts {
 		Stage dialogStage = (Stage) alert.getDialogPane().getScene().getWindow();
 		dialogStage.getIcons().add(new Image(Strings.getIcone()));
 
-		alert.show();
+		alert.showAndWait();
 	}
 
 	public static void closeAlert(Alert alert) {

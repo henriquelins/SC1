@@ -137,15 +137,9 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 			if (ok == false) {
 
-				System.out.println("clienteComparar " + clienteComparar);
-				System.out.println("clienteCnpj " + clienteCnpj);
-				System.out.println("getCliente " + getCliente());
-
 				if (getCliente().getIdCliente() == null) {
 
 					if (clienteCnpj.getIdCliente() == null) {
-
-						System.out.println(1);
 
 						service.clienteNovoOuEditar(getCliente());
 						Utils.fecharTelaClienteFormAction();
@@ -154,8 +148,6 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 								"Cliente cadastrado: " + cliente.getNomeFantasia().toUpperCase());
 
 					} else {
-
-						System.out.println(3);
 
 						Alerts.showAlert("Cadastro de clientes", "Novo cliente", "CNPJ já cadastrado para o cliente "
 								+ clienteCnpj.getNomeFantasia().toUpperCase() + ",\n verifique o número do CNPJ.",
@@ -168,8 +160,6 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 
 					if (!getCliente().getCnpjCliente().equals(clienteCnpj.getCnpjCliente())) {
 
-						System.out.println(2);
-
 						service.clienteNovoOuEditar(getCliente());
 						Utils.fecharTelaClienteFormAction();
 						notifyDataChangeListeners();
@@ -179,8 +169,6 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 					} else if (getCliente().getCnpjCliente().equals(clienteCnpj.getCnpjCliente())
 							&& getCliente().getIdCliente() == clienteCnpj.getIdCliente()) {
 
-						System.out.println(4);
-
 						service.clienteNovoOuEditar(getCliente());
 						Utils.fecharTelaClienteFormAction();
 						notifyDataChangeListeners();
@@ -188,8 +176,6 @@ public class ClienteFormController implements Initializable, DataChangeListener 
 								"Cliente editado: " + cliente.getNomeFantasia().toUpperCase());
 
 					} else {
-
-						System.out.println(3);
 
 						Alerts.showAlert("Cadastro de clientes", "Editar cliente", "CNPJ já cadastrado para o cliente "
 								+ clienteCnpj.getNomeFantasia().toUpperCase() + ",\n verifique o número do CNPJ.",

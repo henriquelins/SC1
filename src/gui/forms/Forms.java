@@ -5,6 +5,7 @@ import java.io.IOException;
 import application.SCS1Main;
 import gui.ClienteSelecionadoFormController;
 import gui.ConfigurarPerpetiesDBFormController;
+import gui.EmailFormController;
 import gui.LancamentoListFormController;
 import gui.PrincipalFormController;
 import gui.ProdutoFormController;
@@ -31,13 +32,14 @@ import javafx.util.Duration;
 import model.entities.Cliente;
 import model.entities.ServicoImpressao;
 import model.entities.Usuario;
+import model.services.EmailService;
 import model.services.ProdutoService;
 import model.services.UnidadeService;
 import model.services.VendedorService;
 
 public class Forms {
 
-	// forms tela splash
+	/* forms tela splash
 
 	public void splashForm(String tela) throws IOException {
 
@@ -94,7 +96,66 @@ public class Forms {
 
 		}
 
-	}
+	}*/
+	
+	// forms tela splash
+		public void splashForm(String tela) throws IOException {
+
+			try {
+
+				StackPane pane = FXMLLoader.load(getClass().getResource(tela));
+
+				Scene scene = new Scene(pane);
+				scene.setFill(Color.TRANSPARENT);
+						
+				Stage stage = new Stage();
+				stage.setScene(scene);
+				stage.setResizable(false);
+				stage.initStyle(StageStyle.TRANSPARENT);
+
+				Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
+				stage.getIcons().add(applicationIcon);
+
+				stage.show();
+
+				// Carrega a tela splash com fade in effect
+				FadeTransition fadeIn = new FadeTransition(Duration.seconds(4), pane);
+				fadeIn.setFromValue(0);
+				fadeIn.setToValue(3);
+				fadeIn.setCycleCount(1);
+
+				// Termina a tela splash com fade out effect
+				FadeTransition fadeOut = new FadeTransition(Duration.seconds(4), pane);
+				fadeOut.setFromValue(3);
+				fadeOut.setToValue(0);
+				fadeOut.setCycleCount(1);
+
+				fadeIn.play();
+
+				// Depois de fade in, inicia o fade out
+				fadeIn.setOnFinished((e) -> {
+
+					fadeOut.play();
+
+				});
+
+				// Depois do fade out, carrega a tela inicial - login
+				fadeOut.setOnFinished((e) -> {
+
+					stage.close();
+					loginForm(Strings.getLoginView());
+					
+
+				});
+
+			} catch (IOException ex) {
+
+				Alerts.showAlert("Controle de Estoque", "Erro ao carregar o splash", ex.getLocalizedMessage(),
+						AlertType.ERROR);
+
+			}
+
+		}
 
 	// forms tela login
 
@@ -603,6 +664,50 @@ public class Forms {
 		} catch (IOException e) {
 
 			Alerts.showAlert("IO Exception", "Erro ao carregar a tela", e.getCause().toString(), AlertType.ERROR);
+
+		}
+
+	}
+
+	public void emailForm(Usuario usuario, String emailView) {
+		
+		boolean concedido = false;
+		Acesso acesso = new Acesso();
+
+		concedido = acesso.concederAcesso(usuario.getAcesso(), emailView);
+
+		if (concedido == true) {
+
+			try {
+
+				FXMLLoader loader = new FXMLLoader(getClass().getResource(emailView));
+				VBox pane = loader.load();
+
+				EmailFormController controller = loader.getController();
+				controller.setEmailService(new EmailService());
+				controller.carregarCampos(usuario);
+
+				Stage primaryStage = new Stage();
+				primaryStage.setTitle(Strings.getTitle());
+				primaryStage.setScene(new Scene(pane));
+				primaryStage.setResizable(false);
+				primaryStage.initModality(Modality.APPLICATION_MODAL);
+
+				Image applicationIcon = new Image(getClass().getResourceAsStream(Strings.getIcone()));
+				primaryStage.getIcons().add(applicationIcon);
+
+				primaryStage.showAndWait();
+
+			} catch (IOException e) {
+
+				Alerts.showAlert("IO Exception", Strings.erroCarregarTela(), e.getLocalizedMessage(), AlertType.ERROR);
+
+			}
+
+		} else {
+
+			Alerts.showAlert("Acesso negado", "Acesso não concedido ao usuário logado",
+					"Entre em contato com o Administrador do sistema", AlertType.ERROR);
 
 		}
 

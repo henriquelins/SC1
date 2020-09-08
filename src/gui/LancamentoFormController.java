@@ -23,10 +23,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import model.entities.Cliente;
+import model.entities.Conta;
 import model.entities.Lancamento;
 import model.entities.Produto;
 import model.entities.ServicoImpressao;
 import model.entities.Usuario;
+import model.services.ContaService;
 import model.services.LancamentoService;
 
 public class LancamentoFormController implements Initializable, DataChangeListener {
@@ -36,6 +38,8 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 	private static Scene lancamentoFormScene;
 
 	private Cliente cliente;
+
+	private Conta conta;
 
 	private ServicoImpressao servicoImpressao;
 
@@ -98,6 +102,7 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 
 			lancamentoService.lancamentoSaidaOuEntrada(getLancamento(), getServicoImpressao());
 			notifyDataChangeListeners();
+
 			Utils.fecharTelaLancamentoFormAction();
 
 		}
@@ -116,8 +121,10 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 				// Locale brasil = new Locale("pt", "BR"); //Retorna do país e a língua
 				// DateFormat f2 = DateFormat.getDateInstance(DateFormat.FULL, brasil);
 
+				Conta conta = new ContaService().buscarContaId(servicoImpressao.getIdConta());
+
 				textFieldQuantidadeDoLancamento.setEditable(false);
-				textFieldQuantidadeDoLancamento.setText(String.valueOf(getServicoImpressao().getConta().getSaldo()));
+				textFieldQuantidadeDoLancamento.setText(String.valueOf(conta.getSaldo()));
 
 				// textAreaObservacoesDoLancamento.setText("Fatura paga no dia " +
 				// f2.format(data) );
@@ -219,14 +226,16 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 
 	public void carregarCampos(Cliente cliente, ServicoImpressao servicoImpressao, Usuario usuario) {
 
+		Conta conta = new ContaService().buscarContaId(servicoImpressao.getIdConta());
+
 		labelNomeDoCliente.setText(cliente.getNomeFantasia().toUpperCase());
 		textFieldNomeDoServico.setText(servicoImpressao.getNomeDoServico().toUpperCase());
 		textFieldProdutoDoServico
-				.setText(new Produto().apenasNomeProduto(servicoImpressao.getProdutoDoServico()).toUpperCase());
-		textFieldCnpjDoLancamento.setText(servicoImpressao.getConta().getCnpj());
-		textFieldSaldoDoServico.setText(Constraints.tresDigitos(servicoImpressao.getConta().getSaldo()) + " Unidades");
+				.setText(new Produto().apenasNomeProduto(servicoImpressao.getIdProdutoDoServico()).toUpperCase());
+		textFieldCnpjDoLancamento.setText(conta.getCnpj());
+		textFieldSaldoDoServico.setText(Constraints.tresDigitos(conta.getSaldo()) + " Unidades");
 
-		if (servicoImpressao.getConta().isTipo()) {
+		if (conta.isTipo()) {
 
 			comboBoxTipoDoLancamento.setItems(FXCollections.observableArrayList(listarTipoSaldo()));
 
@@ -249,6 +258,7 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 	private Lancamento getFormData() {
 
 		Lancamento lancamento = new Lancamento();
+		Conta contaPesquisado = new ContaService().buscarContaId(getServicoImpressao().getIdConta());
 
 		if (textFieldQuantidadeDoLancamento.getText() == null
 				|| textFieldQuantidadeDoLancamento.getText().trim().equals("")) {
@@ -296,10 +306,10 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 			lancamento
 					.setTipoDoLancamento(comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem().toUpperCase());
 			lancamento.setObservacoesLancamento(textAreaObservacoesDoLancamento.getText().toUpperCase());
-			lancamento.setSaldoAnterior(servicoImpressao.getConta().getSaldo());
-			lancamento.setSaldoAtual(saltoAtual(servicoImpressao.getConta().getSaldo(),
-					Integer.valueOf(textFieldQuantidadeDoLancamento.getText()),
-					comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem()));
+			lancamento.setSaldoAnterior(contaPesquisado.getSaldo());
+			lancamento.setSaldoAtual(
+					saltoAtual(contaPesquisado.getSaldo(), Integer.valueOf(textFieldQuantidadeDoLancamento.getText()),
+							comboBoxTipoDoLancamento.getSelectionModel().getSelectedItem()));
 
 		}
 
@@ -367,6 +377,14 @@ public class LancamentoFormController implements Initializable, DataChangeListen
 
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
+	}
+
+	public Conta getConta() {
+		return conta;
+	}
+
+	public void setConta(Conta conta) {
+		this.conta = conta;
 	}
 
 	public static Scene getLancamentoFormScene() {

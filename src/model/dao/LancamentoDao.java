@@ -4,12 +4,11 @@ import java.sql.Date;
 import java.util.List;
 
 import model.entities.Lancamento;
-import model.entities.ServicoImpressao;
 
 public interface LancamentoDao {
 	
-	void inserir(Lancamento lancamento, ServicoImpressao clienteServico);
-	void atualizar(Lancamento lancamento, ServicoImpressao clienteServico);
+	void inserir(Lancamento lancamento, int id_conta);
+	void atualizar(Lancamento lancamento);
 	List<Lancamento> buscarTodos(Integer idClienteServico);
 	List<Lancamento> verLancamentos(Date dataInicial, Date dataFinal, int idClienteServico);
 	

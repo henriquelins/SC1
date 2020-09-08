@@ -53,6 +53,12 @@ public class VendedorFormController implements Initializable, DataChangeListener
 	private TextField textFieldNome;
 
 	@FXML
+	private TextField textFieldFone;
+
+	@FXML
+	private TextField textFieldEmail;
+
+	@FXML
 	private TableView<Vendedor> tableViewVendedor;
 
 	@FXML
@@ -63,6 +69,12 @@ public class VendedorFormController implements Initializable, DataChangeListener
 
 	@FXML
 	private TableColumn<Vendedor, String> tableColumnNome;
+
+	@FXML
+	private TableColumn<Vendedor, String> tableColumnFone;
+
+	@FXML
+	private TableColumn<Vendedor, String> tableColumnEmail;
 
 	@FXML
 	private Button buttonNovo;
@@ -83,8 +95,10 @@ public class VendedorFormController implements Initializable, DataChangeListener
 		textFieldId.setText("");
 		textFieldNome.setText("");
 		textFieldNome.requestFocus();
+		textFieldFone.setText("");
+		textFieldEmail.setText("");
 
-		Vendedor vendedor = new Vendedor(null, "");
+		Vendedor vendedor = new Vendedor(null, "", null, null);
 
 		setVendedor(vendedor);
 
@@ -186,6 +200,11 @@ public class VendedorFormController implements Initializable, DataChangeListener
 		tableColumnId.setCellValueFactory(
 				(param) -> new SimpleStringProperty(Constraints.quatroDigitos(param.getValue().getIdVendedor())));
 		tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("nomeVendedor"));
+		tableColumnFone.setCellValueFactory(new PropertyValueFactory<>("fone"));
+		tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+		Constraints.mascaraTelefoneCelular(textFieldFone);
+		Constraints.mascaraEmail(textFieldEmail);
 
 		atualizarTableView();
 
@@ -229,19 +248,49 @@ public class VendedorFormController implements Initializable, DataChangeListener
 
 		labelTituloTela.setText(Strings.getTitleVendedor());
 
-		if (vendedor != null) {
+		try {
 
-			textFieldId.setText(Constraints.quatroDigitos(vendedor.getIdVendedor()));
-			textFieldNome.setText(vendedor.getNomeVendedor());
+			if (vendedor != null) {
 
-			setVendedor(vendedor);
-			compararVendedor = vendedor;
+				textFieldId.setText(Constraints.quatroDigitos(vendedor.getIdVendedor()));
+				textFieldNome.setText(vendedor.getNomeVendedor());
+				textFieldFone.setText(vendedor.getFone());
+				textFieldEmail.setText(vendedor.getEmail().toLowerCase());
 
-		} else {
+				setVendedor(vendedor);
+				compararVendedor = vendedor;
+
+				vendedor = null;
+
+			} else {
+
+				limparCampos();
+
+			}
+
+		} catch (Exception e) {
 
 			limparCampos();
-
 		}
+
+		/*
+		 * if (vendedor.getIdVendedor() != null) {
+		 * 
+		 * textFieldId.setText(Constraints.quatroDigitos(vendedor.getIdVendedor()));
+		 * textFieldNome.setText(vendedor.getNomeVendedor());
+		 * textFieldFone.setText(vendedor.getFone());
+		 * textFieldEmail.setText(vendedor.getEmail().toLowerCase());
+		 * 
+		 * setVendedor(vendedor); compararVendedor = vendedor;
+		 * 
+		 * vendedor = null;
+		 * 
+		 * } else {
+		 * 
+		 * limparCampos();
+		 * 
+		 * }
+		 */
 
 	}
 
@@ -263,6 +312,8 @@ public class VendedorFormController implements Initializable, DataChangeListener
 
 		textFieldId.setText("");
 		textFieldNome.setText("");
+		textFieldFone.setText("");
+		textFieldEmail.setText("");
 
 		setVendedor(new Vendedor());
 
@@ -282,6 +333,32 @@ public class VendedorFormController implements Initializable, DataChangeListener
 
 			vendedor = null;
 
+		} else if (textFieldFone.getText() == null || textFieldFone.getText().trim().equals("")) {
+
+			Alerts.showAlert("Cadastro de Vendedores", "Campo obrigatório", "Digite o fone", AlertType.INFORMATION);
+
+			textFieldFone.requestFocus();
+
+			vendedor = null;
+
+		} else if (textFieldEmail.getText() == null || textFieldEmail.getText().trim().equals("")) {
+
+			Alerts.showAlert("Cadastro de Vendedores", "Campo obrigatório", "Digite o e-mail", AlertType.INFORMATION);
+
+			textFieldEmail.requestFocus();
+
+			vendedor = null;
+
+		} else if (Constraints.isValidEmailAddressRegex(textFieldEmail.getText()) != true) {
+
+			Alerts.showAlert("Cadastro de Vendedores", "Campo obrigatório", "O e-mail não é válido",
+					AlertType.INFORMATION);
+
+			textFieldEmail.setText("");
+			textFieldEmail.requestFocus();
+
+			vendedor = null;
+
 		} else {
 
 			if (getVendedor() != null) {
@@ -291,6 +368,8 @@ public class VendedorFormController implements Initializable, DataChangeListener
 			}
 
 			vendedor.setNomeVendedor(textFieldNome.getText());
+			vendedor.setFone(textFieldFone.getText());
+			vendedor.setEmail(textFieldEmail.getText().toLowerCase());
 
 		}
 
@@ -334,7 +413,7 @@ public class VendedorFormController implements Initializable, DataChangeListener
 	public void carregarCampos(Usuario usuario) {
 
 		setUsuario(usuario);
-		
+
 	}
 
 }

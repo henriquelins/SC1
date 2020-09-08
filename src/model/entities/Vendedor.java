@@ -12,13 +12,18 @@ public class Vendedor implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer idVendedor;
 	private String nomeVendedor;
-
+	private String fone;
+	private String email;
+	
 	public Vendedor() {
 	}
 
-	public Vendedor(Integer idVendedor, String nomeVendedor) {
+	public Vendedor(Integer idVendedor, String nomeVendedor, String fone, String email) {
+		super();
 		this.idVendedor = idVendedor;
 		this.nomeVendedor = nomeVendedor;
+		this.fone = fone;
+		this.email = email;
 	}
 
 	public Integer getIdVendedor() {
@@ -37,13 +42,40 @@ public class Vendedor implements Serializable {
 		this.nomeVendedor = nomeVendedor;
 	}
 
+	public String getFone() {
+		return fone;
+	}
+
+	public void setFone(String fone) {
+		this.fone = fone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + idVendedor;
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((fone == null) ? 0 : fone.hashCode());
+		result = prime * result + ((idVendedor == null) ? 0 : idVendedor.hashCode());
 		result = prime * result + ((nomeVendedor == null) ? 0 : nomeVendedor.hashCode());
 		return result;
+	}
+	
+	
+
+	@Override
+	public String toString() {
+		return "Vendedor [idVendedor=" + idVendedor + ", nomeVendedor=" + nomeVendedor + ", fone=" + fone + ", email="
+				+ email + "]";
 	}
 
 	@Override
@@ -55,7 +87,20 @@ public class Vendedor implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Vendedor other = (Vendedor) obj;
-		if (idVendedor != other.idVendedor)
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (fone == null) {
+			if (other.fone != null)
+				return false;
+		} else if (!fone.equals(other.fone))
+			return false;
+		if (idVendedor == null) {
+			if (other.idVendedor != null)
+				return false;
+		} else if (!idVendedor.equals(other.idVendedor))
 			return false;
 		if (nomeVendedor == null) {
 			if (other.nomeVendedor != null)
@@ -65,11 +110,6 @@ public class Vendedor implements Serializable {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "Vendedor [id Vendedor=" + idVendedor + ", Vendedor=" + nomeVendedor + "]";
-	}
-	
 	public String cbVendedor(int id) {
 
 		Vendedor vendedor = new Vendedor();

@@ -11,35 +11,32 @@ import java.util.List;
 import db.DB;
 import db.DbException;
 import model.dao.LancamentoDao;
+import model.entities.Conta;
 import model.entities.Lancamento;
-import model.entities.ServicoImpressao;
+import model.services.ContaService;
 
 public class LancamentoDaoJDBC implements LancamentoDao {
-	
+
 	// connection variável
-	
+
 	private Connection conn;
-	
+
 	// método para criar a conexão
 
 	public LancamentoDaoJDBC(Connection conn) {
 		this.conn = conn;
 	}
-	
+
 	// método inserir
-	
+
 	@Override
-	public void inserir(Lancamento lancamento, ServicoImpressao clienteServico) {
+	public void inserir(Lancamento lancamento, int id_conta) {
 
 		PreparedStatement st = null;
-		
-		ContaDaoJDBC contaDao = new ContaDaoJDBC(conn);
 
 		try {
 
 			conn.setAutoCommit(false);
-			
-			contaDao.atualizarSaldo(lancamento.getSaldoAtual(), clienteServico.getConta().getIdConta());
 
 			st = conn.prepareStatement(
 					"INSERT INTO lancamento (id_servico_impressao, data_do_lancamento, quantidade_do_pedido, saldo_anterior, saldo_atual,"
@@ -61,8 +58,7 @@ public class LancamentoDaoJDBC implements LancamentoDao {
 
 			} else {
 
-				new ContaDaoJDBC(conn).atualizarSaldo(lancamento.getSaldoAtual(),
-						lancamento.getIdServicoImpressao());
+				new ContaService().atualizarSaldoConta(lancamento.getSaldoAtual(), id_conta);
 
 			}
 
@@ -87,22 +83,18 @@ public class LancamentoDaoJDBC implements LancamentoDao {
 		}
 
 	}
-	
+
 	// método atualizar
 
 	@Override
-	public void atualizar(Lancamento lancamento, ServicoImpressao clienteServico) {
+	public void atualizar(Lancamento lancamento) {
 
 		PreparedStatement st = null;
-		
-		ContaDaoJDBC contaDao = new ContaDaoJDBC(conn);
 
 		try {
 
 			conn.setAutoCommit(false);
-			
-			contaDao.atualizarSaldo(lancamento.getSaldoAtual(), clienteServico.getConta().getIdConta());
-			
+
 			st = conn.prepareStatement(
 					"UPDATE lancamento SET id_servico_impressao = ?, data_do_lancamento = ?, quantidade_do_pedido = ?, saldo_anterior = ?, saldo_atual = ?,"
 							+ " tipo_do_lancamento = ?, observacoes_lancamento = ? WHERE id_lancamento = ?");
@@ -139,9 +131,9 @@ public class LancamentoDaoJDBC implements LancamentoDao {
 
 		}
 	}
-	
+
 	// método buscar todos
-	
+
 	@Override
 	public List<Lancamento> buscarTodos(Integer idServicoImpressao) {
 
@@ -192,7 +184,7 @@ public class LancamentoDaoJDBC implements LancamentoDao {
 
 		}
 	}
-	
+
 	// método buscar lançamentos por data
 
 	@Override
@@ -247,9 +239,9 @@ public class LancamentoDaoJDBC implements LancamentoDao {
 		}
 
 	}
-	
+
 	// instanciar classe
-	
+
 	private Lancamento instantiateLancamento(ResultSet rs) throws SQLException {
 
 		Lancamento lancamento = new Lancamento();
@@ -266,5 +258,4 @@ public class LancamentoDaoJDBC implements LancamentoDao {
 		return lancamento;
 	}
 
-	
 }

@@ -24,9 +24,9 @@ import properties.PropertiesFile;
 public class SCS1Main extends Application {
 
 	// Tela principal
-	
+
 	public static String erro;
-	
+
 	public static Scene mainScene;
 
 	private static Socket socket;
@@ -40,10 +40,18 @@ public class SCS1Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
 
-		Connection conn = null;
-		conn = DB.getConnectionTeste();
-				
-		if (conn != null) {
+		boolean conexao = false;
+
+		try {
+
+			conexao = testarConexao();
+
+		} catch (Exception e1) {
+
+			conexao = false;
+		}
+
+		if (conexao) {
 
 			try {
 
@@ -53,13 +61,12 @@ public class SCS1Main extends Application {
 				setServerSocket(new ServerSocket(portSocket));
 				setSocket(new Socket(InetAddress.getLocalHost().getHostAddress(), portSocket));
 
-				try {	
+				try {
 					iniciar();
-					
+
 					// Define o Style
 					// setUserAgentStylesheet(STYLESHEET_CASPIAN);
 					setUserAgentStylesheet(STYLESHEET_MODENA);
-
 					// Application.setUserAgentStylesheet(getClass().getResource(style).toExternalForm());
 
 					new Forms().splashForm(Strings.getSplashView());
@@ -79,16 +86,16 @@ public class SCS1Main extends Application {
 			}
 
 		} else {
-			
+
 			Optional<ButtonType> result = Alerts.showConfirmation("Erro ao abrir o banco de dados",
-					"Erro: " + erro +" .Você deseja configurar as propriedades do banco de dados ?");
+					"Erro: " + erro + " .Você deseja configurar as propriedades do banco de dados ?");
 
 			if (result.get() == ButtonType.OK) {
-				
+
 				new Forms().ConfigurarPerpetiesDBForm(Strings.getConfigurarPerpetiesDBView());
-				
+
 			}
-			
+
 		}
 	}
 
@@ -152,6 +159,23 @@ public class SCS1Main extends Application {
 			new UsuarioService().usuarioNovoOuEditar(usuario);
 
 		}
+
+	}
+
+	// testar conexão
+	public static boolean testarConexao() throws Exception {
+
+		boolean conexao = false;
+		Connection connection = new DB().getConnectionTeste();
+
+		if (connection != null) {
+
+			conexao = true;
+		}
+
+		connection.close();
+
+		return conexao;
 
 	}
 
